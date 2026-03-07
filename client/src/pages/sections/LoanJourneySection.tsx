@@ -100,7 +100,10 @@ export const LoanJourneySection = (): JSX.Element => {
           </div>
         </div>
 
-        <div className="relative max-w-[1440px] mx-auto px-[100px] py-[60px]">
+        <div className="relative w-full py-[60px]">
+          <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(180deg,rgba(151,194,149,1)_0%,rgba(201,245,200,1)_100%)]" />
+          <div className="absolute bottom-0 left-0 w-full h-1/2 bg-white" />
+          <div className="relative max-w-[1440px] mx-auto px-[100px]">
           <div className="flex flex-col items-center gap-[60px]">
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
@@ -185,6 +188,7 @@ export const LoanJourneySection = (): JSX.Element => {
                 src="/figmaAssets/container.svg"
               />
             </Button>
+          </div>
           </div>
         </div>
 
