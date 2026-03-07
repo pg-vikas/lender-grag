@@ -1,5 +1,6 @@
+import { useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const solutionsData = [
   {
@@ -29,13 +30,21 @@ const solutionsData = [
 ];
 
 export const SolutionsWrapperSection = (): JSX.Element => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], [-80, 80]);
+
   return (
-    <section className="flex flex-col lg:flex-row items-stretch justify-between w-full min-h-screen snap-start snap-always bg-neutral-100">
-      <div className="flex-1 relative min-h-[400px] lg:min-h-[821px]">
-        <img
-          className="w-full h-full object-cover"
+    <section ref={sectionRef} className="flex flex-col lg:flex-row items-stretch justify-between w-full min-h-screen snap-start snap-always bg-neutral-100">
+      <div className="flex-1 relative min-h-[400px] lg:min-h-[821px] overflow-hidden">
+        <motion.img
+          className="w-full h-[120%] object-cover absolute top-0 left-0"
           alt="Family with house model"
           src="/figmaAssets/rectangle-41.png"
+          style={{ y: imageY }}
         />
       </div>
 
