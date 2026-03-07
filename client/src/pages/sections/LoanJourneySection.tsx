@@ -237,8 +237,14 @@ export const LoanJourneySection = (): JSX.Element => {
 
             <div className="flex items-center justify-center gap-10 w-full">
               {teamMembers.map((member, index) => (
-                <TiltCard
+                <motion.div
                   key={index}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.12 }}
+                >
+                <TiltCard
                   className="relative w-[280px] h-[380px] rounded-3xl overflow-hidden"
                 >
                   <Card className="w-full h-full rounded-3xl overflow-hidden border-0 bg-transparent">
@@ -294,6 +300,7 @@ export const LoanJourneySection = (): JSX.Element => {
                     </CardContent>
                   </Card>
                 </TiltCard>
+                </motion.div>
               ))}
             </div>
 
@@ -317,13 +324,20 @@ export const LoanJourneySection = (): JSX.Element => {
         <div className="relative w-full flex flex-col items-center py-[160px] bg-[#ffffff]">
           <div className="flex items-center justify-center gap-20 w-[900px] mb-[160px]">
             {statsData.map((stat, index) => (
-              <AnimatedStat
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.15 }}
+              >
+              <AnimatedStat
                 endValue={stat.endValue}
                 suffix={stat.suffix}
                 decimals={stat.decimals}
                 label={stat.label}
               />
+              </motion.div>
             ))}
           </div>
 

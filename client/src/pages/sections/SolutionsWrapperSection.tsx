@@ -56,7 +56,14 @@ export const SolutionsWrapperSection = (): JSX.Element => {
         <div className="flex flex-col items-center gap-12 w-full">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
             {solutionsData.map((solution, index) => (
-              <Card key={index} className="border-0 shadow-none bg-transparent">
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
+              >
+              <Card className="border-0 shadow-none bg-transparent">
                 <CardContent className="flex flex-col items-start gap-6 p-0">
                   <img
                     className="w-12 h-12"
@@ -75,6 +82,7 @@ export const SolutionsWrapperSection = (): JSX.Element => {
                   </div>
                 </CardContent>
               </Card>
+              </motion.div>
             ))}
           </div>
         </div>

@@ -106,12 +106,20 @@ export const TestimonialsWrapperSection = (): JSX.Element => {
       <div className="flex flex-col w-[1440px] items-center gap-10 ml-[-100.00px] mr-[-100.00px]">
         <div className="flex items-center justify-center gap-10 w-full">
           {testimonials.map((testimonial, index) => (
-            <Card
+            <motion.div
               key={testimonial.id}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.15 }}
               className={`
-                ${testimonial.size === "small" ? "w-[550px] h-[309.38px] gap-[41.25px] px-[121px] py-[27.5px] rounded-[27.5px]" : "w-[600px] h-[337.5px] gap-[45px] px-[132px] py-[30px] rounded-[30px]"}
                 ${index === 0 ? "ml-[-170.00px]" : ""}
                 ${index === 2 ? "mr-[-170.00px]" : ""}
+              `}
+            >
+            <Card
+              className={`
+                ${testimonial.size === "small" ? "w-[550px] h-[309.38px] gap-[41.25px] px-[121px] py-[27.5px] rounded-[27.5px]" : "w-[600px] h-[337.5px] gap-[45px] px-[132px] py-[30px] rounded-[30px]"}
                 shadow-[0px_8.25px_27.5px_#00000029] bg-white overflow-hidden border-0
               `}
             >
@@ -165,6 +173,7 @@ export const TestimonialsWrapperSection = (): JSX.Element => {
                 </div>
               </CardContent>
             </Card>
+            </motion.div>
           ))}
         </div>
 

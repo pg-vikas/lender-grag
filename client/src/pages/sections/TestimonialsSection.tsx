@@ -74,8 +74,14 @@ export const TestimonialsSection = (): JSX.Element => {
           {mortgageServices.map((service, index) => {
             const IconComponent = iconComponents[index];
             return (
-              <Card
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
+              >
+              <Card
                 className="bg-[#1b5945] border-0 rounded-[20px] transition-colors duration-200"
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
@@ -107,6 +113,7 @@ export const TestimonialsSection = (): JSX.Element => {
                   </div>
                 </CardContent>
               </Card>
+              </motion.div>
             );
           })}
         </div>
