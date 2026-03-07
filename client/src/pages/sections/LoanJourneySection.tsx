@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, useInView } from "framer-motion";
@@ -69,6 +69,74 @@ function AnimatedStat({ endValue, suffix, decimals, label }: { endValue: number;
       <div className="[font-family:'DM_Sans',Helvetica] font-semibold text-[#454545] text-base tracking-[0] leading-[28.8px]">
         {label}
       </div>
+    </div>
+  );
+}
+
+function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [transform, setTransform] = useState("perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)");
+  const [glareStyle, setGlareStyle] = useState({ opacity: 0, background: "" });
+  const rafId = useRef<number>(0);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    cancelAnimationFrame(rafId.current);
+    rafId.current = requestAnimationFrame(() => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = ((y - centerY) / centerY) * -10;
+      const rotateY = ((x - centerX) / centerX) * 10;
+
+      setTransform(`perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`);
+
+      const glareX = (x / rect.width) * 100;
+      const glareY = (y / rect.height) * 100;
+      setGlareStyle({
+        opacity: 0.15,
+        background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.6) 0%, transparent 60%)`,
+      });
+    });
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    cancelAnimationFrame(rafId.current);
+    setTransform("perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)");
+    setGlareStyle({ opacity: 0, background: "" });
+  }, []);
+
+  useEffect(() => {
+    return () => cancelAnimationFrame(rafId.current);
+  }, []);
+
+  return (
+    <div
+      ref={cardRef}
+      className={className}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transform,
+        transition: "transform 0.15s ease-out",
+        transformStyle: "preserve-3d",
+        willChange: "transform",
+      }}
+    >
+      {children}
+      <div
+        className="absolute inset-0 rounded-3xl pointer-events-none z-20"
+        style={{
+          opacity: glareStyle.opacity,
+          background: glareStyle.background,
+          transition: "opacity 0.3s ease-out",
+        }}
+      />
     </div>
   );
 }
@@ -169,61 +237,63 @@ export const LoanJourneySection = (): JSX.Element => {
 
             <div className="flex items-center justify-center gap-10 w-full">
               {teamMembers.map((member, index) => (
-                <Card
+                <TiltCard
                   key={index}
-                  className="w-[280px] h-[380px] rounded-3xl overflow-hidden border-0 bg-transparent"
+                  className="relative w-[280px] h-[380px] rounded-3xl overflow-hidden"
                 >
-                  <CardContent className="relative w-full h-full p-0 flex flex-col justify-end">
-                    <div
-                      className="absolute left-0 bottom-0 w-[280px] h-[380px] rounded-3xl"
-                      style={{ backgroundImage: cardGradient }}
-                    />
-                    <div
-                      className="absolute left-0 bottom-0 w-[280px] h-[380px] rounded-3xl opacity-[0.12] mix-blend-overlay"
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-                        backgroundRepeat: 'repeat',
-                      }}
-                    />
-
-                    <img
-                      className={`absolute bottom-0 h-[380px] ${member.profileImageClass}`}
-                      alt={member.name}
-                      src={member.profileImage}
-                    />
-
-                    <div className="relative w-full">
+                  <Card className="w-full h-full rounded-3xl overflow-hidden border-0 bg-transparent">
+                    <CardContent className="relative w-full h-full p-0 flex flex-col justify-end">
                       <div
-                        className="absolute inset-0 backdrop-blur-[12px]"
-                        style={{
-                          maskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
-                          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
-                        }}
+                        className="absolute left-0 bottom-0 w-[280px] h-[380px] rounded-3xl"
+                        style={{ backgroundImage: cardGradient }}
                       />
                       <div
-                        className="absolute inset-0"
+                        className="absolute left-0 bottom-0 w-[280px] h-[380px] rounded-3xl opacity-[0.12] mix-blend-overlay"
                         style={{
-                          background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.1) 100%)',
-                          maskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
-                          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+                          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+                          backgroundRepeat: 'repeat',
                         }}
                       />
-                      <div className="relative px-4 py-6 flex flex-col items-start w-full">
-                        <div className="flex flex-col items-start gap-1 w-full">
-                          <h3 className="[font-family:'DM_Sans',Helvetica] font-bold text-white text-lg tracking-[0] leading-[25.2px]">
-                            {member.name}
-                          </h3>
 
-                          <p className="[font-family:'DM_Sans',Helvetica] font-medium italic text-white text-xs tracking-[0] leading-[16.8px]">
-                            {member.title}
-                            <br />
-                            {member.nmls}
-                          </p>
+                      <img
+                        className={`absolute bottom-0 h-[380px] ${member.profileImageClass}`}
+                        alt={member.name}
+                        src={member.profileImage}
+                      />
+
+                      <div className="relative w-full">
+                        <div
+                          className="absolute inset-0 backdrop-blur-[12px]"
+                          style={{
+                            maskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+                            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+                          }}
+                        />
+                        <div
+                          className="absolute inset-0"
+                          style={{
+                            background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.1) 100%)',
+                            maskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+                            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+                          }}
+                        />
+                        <div className="relative px-4 py-6 flex flex-col items-start w-full">
+                          <div className="flex flex-col items-start gap-1 w-full">
+                            <h3 className="[font-family:'DM_Sans',Helvetica] font-bold text-white text-lg tracking-[0] leading-[25.2px]">
+                              {member.name}
+                            </h3>
+
+                            <p className="[font-family:'DM_Sans',Helvetica] font-medium italic text-white text-xs tracking-[0] leading-[16.8px]">
+                              {member.title}
+                              <br />
+                              {member.nmls}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </TiltCard>
               ))}
             </div>
 
