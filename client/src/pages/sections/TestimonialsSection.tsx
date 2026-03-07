@@ -1,40 +1,37 @@
+import { useState } from "react";
 import { ArrowRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
+import { iconComponents } from "@/components/MortgageServiceIcons";
 
 const mortgageServices = [
   {
-    icon: "/figmaAssets/background-border.svg",
     title: "New Mortgage Applications",
     description:
       "Buying a home? We'll guide you through the application process and help you secure the right loan with clarity and confidence.",
     cta: "Start Your Application",
   },
   {
-    icon: "/figmaAssets/background-border-1.svg",
     title: "Mortgage Pre-Qualification",
     description:
       "Know what you can afford before you shop. We'll review your finances and give you a clear, realistic buying range.",
     cta: "Get Pre-Qualified",
   },
   {
-    icon: "/figmaAssets/fi-3967512.svg",
     title: "First-Time Home Buyer Mortgages",
     description:
       "New to homeownership? We simplify the process, explain every step, and help you choose a loan that fits your future.",
     cta: "Start Your Home Journey",
   },
   {
-    icon: "/figmaAssets/fi-426107.svg",
     title: "Mortgage Renewals",
     description:
       "Don't just sign and renew. We review your options, negotiate better terms, and make sure your next term works in your favor.",
     cta: "Review My Renewal Options",
   },
   {
-    icon: "/figmaAssets/fi-8086820.svg",
     title: "Mortgage Refinancing",
     description:
       "Lower your rate, reduce your payments, or access your home equity. We'll help you decide if refinancing makes sense for you.",
@@ -43,6 +40,8 @@ const mortgageServices = [
 ];
 
 export const TestimonialsSection = (): JSX.Element => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   return (
     <section className="flex items-start justify-center gap-[60px] p-[100px] w-full bg-[#024731]">
       <div className="flex flex-col items-start gap-8 flex-1">
@@ -72,36 +71,44 @@ export const TestimonialsSection = (): JSX.Element => {
 
       <ScrollArea className="h-[552px] flex-1">
         <div className="flex flex-col gap-10 pr-4">
-          {mortgageServices.map((service, index) => (
-            <Card key={index} className="bg-[#1b5945] border-0 rounded-[20px]">
-              <CardContent className="flex items-start gap-8 p-8">
-                <img
-                  className="w-[100px] h-[100px] flex-shrink-0"
-                  alt={service.title}
-                  src={service.icon}
-                />
+          {mortgageServices.map((service, index) => {
+            const IconComponent = iconComponents[index];
+            return (
+              <Card
+                key={index}
+                className="bg-[#1b5945] border-0 rounded-[20px] transition-colors duration-200"
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                data-testid={`card-service-${index}`}
+              >
+                <CardContent className="flex items-start gap-8 p-8">
+                  <IconComponent
+                    isHovered={hoveredIndex === index}
+                    className="w-[100px] h-[100px] flex-shrink-0"
+                  />
 
-                <div className="flex flex-col items-start gap-[21px] flex-1">
-                  <div className="flex flex-col items-start gap-5 w-full">
-                    <h3 className="[font-family:'Figtree',Helvetica] font-bold text-white text-2xl leading-[26.4px]">
-                      {service.title}
-                    </h3>
+                  <div className="flex flex-col items-start gap-[21px] flex-1">
+                    <div className="flex flex-col items-start gap-5 w-full">
+                      <h3 className="[font-family:'Figtree',Helvetica] font-bold text-white text-2xl leading-[26.4px]">
+                        {service.title}
+                      </h3>
 
-                    <p className="[font-family:'Figtree',Helvetica] font-normal text-[#e1e1e1] text-base leading-[28.8px]">
-                      {service.description}
-                    </p>
+                      <p className="[font-family:'Figtree',Helvetica] font-normal text-[#e1e1e1] text-base leading-[28.8px]">
+                        {service.description}
+                      </p>
+                    </div>
+
+                    <button className="inline-flex items-center gap-2.5 group cursor-pointer" data-testid={`button-cta-${index}`}>
+                      <span className="[font-family:'Figtree',Helvetica] font-bold text-white text-base leading-6">
+                        {service.cta}
+                      </span>
+                      <ArrowRightIcon className="w-4 h-4 text-white" />
+                    </button>
                   </div>
-
-                  <button className="inline-flex items-center gap-2.5 group cursor-pointer">
-                    <span className="[font-family:'Figtree',Helvetica] font-bold text-white text-base leading-6">
-                      {service.cta}
-                    </span>
-                    <ArrowRightIcon className="w-4 h-4 text-white" />
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </ScrollArea>
     </section>
