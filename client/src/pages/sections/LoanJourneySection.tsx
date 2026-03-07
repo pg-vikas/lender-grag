@@ -192,7 +192,7 @@ export const LoanJourneySection = (): JSX.Element => {
           </div>
         </div>
 
-        <div className="relative w-full bg-neutral-100 flex flex-col items-center py-[132px]">
+        <div className="relative w-full flex flex-col items-center py-[132px] bg-[#ffffff]">
           <div className="flex items-center justify-center gap-20 w-[900px] mb-[132px]">
             {statsData.map((stat, index) => (
               <div key={index} className="flex flex-col items-start flex-1">
