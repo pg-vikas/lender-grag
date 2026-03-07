@@ -1,6 +1,7 @@
 import { PhoneIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -20,20 +21,37 @@ const navigationItems = [
 ];
 
 export const HeroSection = (): JSX.Element => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+
   return (
-    <section className="relative w-full h-[758.77px] bg-[#0022ff] overflow-hidden">
-      <img
+    <section ref={sectionRef} className="relative w-full h-[758.77px] overflow-hidden">
+      <div
+        className="absolute inset-0 animate-hero-gradient pointer-events-none"
+        style={{
+          background: "linear-gradient(135deg, #bcd9bf 0%, #93c290 25%, #a8d5a0 50%, #bcd9bf 75%, #93c290 100%)",
+          backgroundSize: "300% 300%",
+        }}
+      />
+
+      <motion.img
         className="absolute right-0 bottom-[-25px] w-full max-w-[1440px] h-[759px] object-cover"
         alt="Gemini generated background"
         src="/figmaAssets/gemini-generated-image-708wtb708wtb708w-1.png"
+        style={{ y: imageY }}
       />
 
       <div className="absolute left-0 bottom-[139px] w-full max-w-[1440px] h-[620px] bg-[linear-gradient(180deg,rgba(188,217,191,1)_0%,rgba(147,194,144,0)_100%)]" />
 
-      <img
+      <motion.img
         className="absolute right-0 bottom-[-25px] w-full max-w-[1440px] h-[759px] object-cover"
         alt="Gemini generated overlay"
         src="/figmaAssets/gemini-generated-image-708wtb708wtb708w-2.png"
+        style={{ y: imageY }}
       />
 
       <header className="flex w-full items-center px-[60px] py-2.5 absolute top-0 left-0 shadow-[0px_2px_28px_#00000017] z-10">
@@ -95,30 +113,44 @@ export const HeroSection = (): JSX.Element => {
             Let's Find You The Perfect Mortgage
           </motion.h1>
 
-          <p className="[font-family:'DM_Sans',Helvetica] font-semibold text-[#454545] text-lg leading-7">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+            className="[font-family:'DM_Sans',Helvetica] font-semibold text-[#454545] text-lg leading-7"
+          >
             Buying or refinancing doesn't have to feel overwhelming. Lender Greg
             is loan officer that guides you through every step.
-          </p>
+          </motion.p>
         </div>
 
-        <div className="flex items-center gap-5 w-full">
-          <Button className="group h-[52px] bg-[#004733] hover:bg-[#004733]/90 hover:shadow-lg hover:scale-[1.03] rounded-lg px-[38px] py-2 [font-family:'Figtree',Helvetica] font-bold text-white text-lg gap-2 transition-all duration-300">
-            Apply Now
-            <img
-              className="w-5 h-5 brightness-0 invert transition-transform duration-300 group-hover:translate-x-1"
-              alt="Arrow icon"
-              src="/figmaAssets/container.svg"
-            />
-          </Button>
+        <motion.div
+          className="flex items-center gap-5 w-full"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
+        >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 15 }}>
+            <Button className="group h-[52px] bg-[#004733] hover:bg-[#004733]/90 hover:shadow-lg rounded-lg px-[38px] py-2 [font-family:'Figtree',Helvetica] font-bold text-white text-lg gap-2 transition-all duration-300">
+              Apply Now
+              <img
+                className="w-5 h-5 brightness-0 invert transition-transform duration-300 group-hover:translate-x-1"
+                alt="Arrow icon"
+                src="/figmaAssets/container.svg"
+              />
+            </Button>
+          </motion.div>
 
-          <Button
-            variant="secondary"
-            className="group h-[52px] bg-white hover:bg-white/90 hover:shadow-lg hover:scale-[1.03] rounded-lg px-[38px] py-2 [font-family:'Figtree',Helvetica] font-bold text-[#004733] text-lg gap-2 transition-all duration-300"
-          >
-            Book A Call
-            <PhoneIcon className="w-5 h-5 transition-transform duration-300 group-hover:rotate-[15deg] group-hover:scale-110" />
-          </Button>
-        </div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 15 }}>
+            <Button
+              variant="secondary"
+              className="group h-[52px] bg-white hover:bg-white/90 hover:shadow-lg rounded-lg px-[38px] py-2 [font-family:'Figtree',Helvetica] font-bold text-[#004733] text-lg gap-2 transition-all duration-300"
+            >
+              Book A Call
+              <PhoneIcon className="w-5 h-5 transition-transform duration-300 group-hover:rotate-[15deg] group-hover:scale-110" />
+            </Button>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
