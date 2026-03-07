@@ -130,17 +130,34 @@ export const LoanJourneySection = (): JSX.Element => {
                       src={member.profileImage}
                     />
 
-                    <div className="relative px-4 py-6 bg-gradient-to-b from-transparent to-[rgba(0,0,0,0.1)] backdrop-blur-[12px] flex flex-col items-start w-full">
-                      <div className="flex flex-col items-start gap-1 w-full">
-                        <h3 className="[font-family:'DM_Sans',Helvetica] font-bold text-white text-lg tracking-[0] leading-[25.2px]">
-                          {member.name}
-                        </h3>
+                    <div className="relative w-full">
+                      <div
+                        className="absolute inset-0 backdrop-blur-[12px]"
+                        style={{
+                          maskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+                          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+                        }}
+                      />
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.1) 100%)',
+                          maskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+                          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+                        }}
+                      />
+                      <div className="relative px-4 py-6 flex flex-col items-start w-full">
+                        <div className="flex flex-col items-start gap-1 w-full">
+                          <h3 className="[font-family:'DM_Sans',Helvetica] font-bold text-white text-lg tracking-[0] leading-[25.2px]">
+                            {member.name}
+                          </h3>
 
-                        <p className="[font-family:'DM_Sans',Helvetica] font-medium italic text-white text-xs tracking-[0] leading-[16.8px]">
-                          {member.title}
-                          <br />
-                          {member.nmls}
-                        </p>
+                          <p className="[font-family:'DM_Sans',Helvetica] font-medium italic text-white text-xs tracking-[0] leading-[16.8px]">
+                            {member.title}
+                            <br />
+                            {member.nmls}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
