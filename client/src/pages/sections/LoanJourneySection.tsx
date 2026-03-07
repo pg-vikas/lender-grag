@@ -59,37 +59,39 @@ export const LoanJourneySection = (): JSX.Element => {
   return (
     <section className="relative w-full">
       <div className="relative flex flex-col">
-        <div className="relative w-full bg-[linear-gradient(180deg,rgba(201,245,200,1)_0%,rgba(151,194,149,1)_100%)]">
-          <div className="absolute top-px left-0 w-full h-[152px] bg-[linear-gradient(180deg,rgba(200,244,199,1)_0%,rgba(200,244,199,0)_100%)]" />
+        <div className="relative w-full bg-[linear-gradient(180deg,rgba(201,245,200,1)_0%,rgba(151,194,149,1)_100%)] overflow-hidden" style={{ height: '570px' }}>
+          <div className="absolute top-0 left-0 w-full h-[152px] bg-[linear-gradient(180deg,rgba(200,244,199,1)_0%,rgba(200,244,199,0)_100%)] z-[1]" />
 
-          <div className="relative max-w-[1440px] mx-auto px-[100px] py-[80px]">
-            <div className="flex items-center gap-12">
-              <div className="relative flex flex-col w-[509px] shrink-0 items-start gap-12 z-10">
-                <h1 className="[font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-5xl tracking-[-0.48px] leading-[67.2px]">
-                  Proudly Serving <br />
-                  100+ Clients Across San Diego, Southern California.
-                </h1>
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+            <img
+              className="absolute"
+              alt="Southern California Map"
+              src="/figmaAssets/group-2131330293.png"
+              style={{
+                width: '1526px',
+                height: '1382px',
+                left: '143px',
+                top: '-811px',
+              }}
+            />
+          </div>
 
-                <Button className="h-auto bg-[#004733] hover:bg-[#004733]/90 rounded-lg px-[38px] py-3.5 gap-2">
-                  <span className="[font-family:'DM_Sans',Helvetica] font-semibold text-white text-lg leading-6">
-                    Apply Now
-                  </span>
-                  <img
-                    className="flex-shrink-0"
-                    alt="Arrow"
-                    src="/figmaAssets/container.svg"
-                  />
-                </Button>
-              </div>
+          <div className="absolute top-1/2 left-[100px] -translate-y-1/2 flex flex-col w-[509px] items-start gap-12 z-10">
+            <h1 className="[font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-5xl tracking-[-0.48px] leading-[67.2px]">
+              Proudly Serving <br />
+              100+ Clients Across San Diego, Southern California.
+            </h1>
 
-              <div className="flex-1 flex justify-end">
-                <img
-                  className="w-full max-w-[700px] h-auto object-contain"
-                  alt="Southern California Map"
-                  src="/figmaAssets/group-2131330293.png"
-                />
-              </div>
-            </div>
+            <Button className="h-auto bg-[#004733] hover:bg-[#004733]/90 rounded-lg px-[38px] py-3.5 gap-2">
+              <span className="[font-family:'DM_Sans',Helvetica] font-semibold text-white text-lg leading-6">
+                Apply Now
+              </span>
+              <img
+                className="flex-shrink-0"
+                alt="Arrow"
+                src="/figmaAssets/container.svg"
+              />
+            </Button>
           </div>
         </div>
 
