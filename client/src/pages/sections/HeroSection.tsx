@@ -78,7 +78,7 @@ export const HeroSection = (): JSX.Element => {
             </NavigationMenuList>
           </NavigationMenu>
 
-          <Button className="h-auto bg-[#ffffff1a] hover:bg-[#ffffff2a] rounded-lg border border-white backdrop-blur-[2.0px] backdrop-brightness-[110%] [-webkit-backdrop-filter:blur(2.0px)_brightness(110%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.13),inset_-1px_0_1px_rgba(0,0,0,0.11)] px-6 py-2.5 [font-family:'Figtree',Helvetica] font-bold text-[#004733] text-base">
+          <Button className="h-auto bg-[#ffffff1a] hover:bg-[#ffffff3a] hover:scale-[1.05] rounded-lg border border-white backdrop-blur-[2.0px] backdrop-brightness-[110%] [-webkit-backdrop-filter:blur(2.0px)_brightness(110%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.13),inset_-1px_0_1px_rgba(0,0,0,0.11)] px-6 py-2.5 [font-family:'Figtree',Helvetica] font-bold text-[#004733] text-base transition-all duration-300">
             Apply Now
           </Button>
         </div>
@@ -102,10 +102,10 @@ export const HeroSection = (): JSX.Element => {
         </div>
 
         <div className="flex items-center gap-5 w-full">
-          <Button className="h-[52px] bg-[#004733] hover:bg-[#004733]/90 rounded-lg px-[38px] py-2 [font-family:'Figtree',Helvetica] font-bold text-white text-lg gap-2">
+          <Button className="group h-[52px] bg-[#004733] hover:bg-[#004733]/90 hover:shadow-lg hover:scale-[1.03] rounded-lg px-[38px] py-2 [font-family:'Figtree',Helvetica] font-bold text-white text-lg gap-2 transition-all duration-300">
             Apply Now
             <img
-              className="w-5 h-5 brightness-0 invert"
+              className="w-5 h-5 brightness-0 invert transition-transform duration-300 group-hover:translate-x-1"
               alt="Arrow icon"
               src="/figmaAssets/container.svg"
             />
@@ -113,10 +113,10 @@ export const HeroSection = (): JSX.Element => {
 
           <Button
             variant="secondary"
-            className="h-[52px] bg-white hover:bg-white/90 rounded-lg px-[38px] py-2 [font-family:'Figtree',Helvetica] font-bold text-[#004733] text-lg gap-2"
+            className="group h-[52px] bg-white hover:bg-white/90 hover:shadow-lg hover:scale-[1.03] rounded-lg px-[38px] py-2 [font-family:'Figtree',Helvetica] font-bold text-[#004733] text-lg gap-2 transition-all duration-300"
           >
             Book A Call
-            <PhoneIcon className="w-5 h-5" />
+            <PhoneIcon className="w-5 h-5 transition-transform duration-300 group-hover:rotate-[15deg] group-hover:scale-110" />
           </Button>
         </div>
       </div>

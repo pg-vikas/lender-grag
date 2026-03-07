@@ -47,13 +47,13 @@ export const LoanJourneyWrapperSection = (): JSX.Element => {
 
           <Button
             variant="outline"
-            className="h-[52px] gap-2 px-7 py-2 bg-white rounded-lg border-[#e1e1e1] hover:bg-white/90"
+            className="group h-[52px] gap-2 px-7 py-2 bg-white rounded-lg border-[#e1e1e1] hover:bg-white/90 hover:border-[#0c382b] hover:shadow-md hover:scale-[1.03] transition-all duration-300"
           >
             <span className="[font-family:'Figtree',Helvetica] font-semibold text-[#0c382b] text-lg tracking-[0] leading-[27px]">
               View All Guides
             </span>
             <img
-              className="flex-shrink-0"
+              className="flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1"
               alt="Arrow"
               src="/figmaAssets/container.svg"
             />
@@ -84,13 +84,13 @@ export const LoanJourneyWrapperSection = (): JSX.Element => {
                       <div className="flex flex-col items-start pt-3 w-full">
                         <Button
                           variant="link"
-                          className="h-auto p-0 inline-flex items-end gap-2.5 text-white hover:no-underline"
+                          className="group/btn h-auto p-0 inline-flex items-end gap-2.5 text-white hover:no-underline"
                         >
-                          <span className="[font-family:'DM_Sans',Helvetica] font-semibold text-base tracking-[0] leading-6">
+                          <span className="[font-family:'DM_Sans',Helvetica] font-semibold text-base tracking-[0] leading-6 transition-colors duration-200 group-hover/btn:text-[#4CDBC4]">
                             Learn More
                           </span>
                           <img
-                            className="flex-shrink-0"
+                            className="flex-shrink-0 brightness-0 invert transition-transform duration-300 group-hover/btn:translate-x-1"
                             alt="Arrow"
                             src="/figmaAssets/container.svg"
                           />

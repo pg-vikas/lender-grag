@@ -89,13 +89,13 @@ export const TestimonialsWrapperSection = (): JSX.Element => {
 
           <Button
             variant="outline"
-            className="h-[52px] gap-2 px-7 py-2 bg-white rounded-lg border-[#e1e1e1] hover:bg-white"
+            className="group h-[52px] gap-2 px-7 py-2 bg-white rounded-lg border-[#e1e1e1] hover:bg-white hover:border-[#0c382b] hover:shadow-md hover:scale-[1.03] transition-all duration-300"
           >
             <span className="[font-family:'Figtree',Helvetica] font-semibold text-[#0c382b] text-lg tracking-[0] leading-[27px] whitespace-nowrap">
               Read 150+ Reviews on
             </span>
             <img
-              className="w-[59.17px] h-5 object-cover"
+              className="w-[59.17px] h-5 object-cover transition-transform duration-300 group-hover:scale-110"
               alt="Zillow logo"
               src="/figmaAssets/image-18.png"
             />

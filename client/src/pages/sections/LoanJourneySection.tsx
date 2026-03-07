@@ -207,12 +207,12 @@ export const LoanJourneySection = (): JSX.Element => {
               100+ Clients Across San Diego, Southern California.
             </motion.h1>
 
-            <Button className="h-auto bg-[#004733] hover:bg-[#004733]/90 rounded-lg px-[38px] py-3.5 gap-2">
+            <Button className="group h-auto bg-[#004733] hover:bg-[#004733]/90 hover:shadow-lg hover:scale-[1.03] rounded-lg px-[38px] py-3.5 gap-2 transition-all duration-300">
               <span className="[font-family:'DM_Sans',Helvetica] font-semibold text-white text-lg leading-6">
                 Apply Now
               </span>
               <img
-                className="flex-shrink-0"
+                className="flex-shrink-0 brightness-0 invert transition-transform duration-300 group-hover:translate-x-1"
                 alt="Arrow"
                 src="/figmaAssets/container.svg"
               />
@@ -299,13 +299,13 @@ export const LoanJourneySection = (): JSX.Element => {
 
             <Button
               variant="outline"
-              className="h-auto px-7 py-3 rounded-xl border-[#0c382b] gap-2"
+              className="group h-auto px-7 py-3 rounded-xl border-[#0c382b] gap-2 hover:shadow-md hover:scale-[1.03] transition-all duration-300"
             >
               <span className="[font-family:'DM_Sans',Helvetica] font-semibold text-[#0c382b] text-base tracking-[0] leading-6">
                 View All team Members
               </span>
               <img
-                className="flex-shrink-0"
+                className="flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1"
                 alt="Arrow"
                 src="/figmaAssets/container.svg"
               />
@@ -339,12 +339,12 @@ export const LoanJourneySection = (): JSX.Element => {
                 Apply today and let&apos;s find your the perfect Mortgage
               </h3>
 
-              <Button className="h-auto absolute top-[calc(50.00%_-_26px)] left-[529px] bg-white hover:bg-white/90 text-[#0c382b] rounded-lg px-[38px] py-3.5 gap-2">
+              <Button className="group h-auto absolute top-[calc(50.00%_-_26px)] left-[529px] bg-white hover:bg-white/90 hover:shadow-lg hover:scale-[1.03] text-[#0c382b] rounded-lg px-[38px] py-3.5 gap-2 transition-all duration-300">
                 <span className="[font-family:'DM_Sans',Helvetica] font-semibold text-[#0c382b] text-lg text-center tracking-[0] leading-6">
                   Apply Now
                 </span>
                 <img
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1"
                   alt="Arrow"
                   src="/figmaAssets/container.svg"
                 />

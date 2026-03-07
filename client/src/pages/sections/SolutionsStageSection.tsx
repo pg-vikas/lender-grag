@@ -28,12 +28,12 @@ export const SolutionsStageSection = (): JSX.Element => {
             </div>
           </div>
 
-          <Button className="inline-flex items-center gap-2 px-[38px] py-3.5 h-auto bg-white hover:bg-white/90 rounded-lg">
+          <Button className="group inline-flex items-center gap-2 px-[38px] py-3.5 h-auto bg-white hover:bg-white/90 hover:shadow-lg hover:scale-[1.03] rounded-lg transition-all duration-300">
             <span className="[font-family:'DM_Sans',Helvetica] font-semibold text-[#0c382b] text-lg text-center tracking-[0] leading-6 whitespace-nowrap">
               Apply Now
             </span>
             <img
-              className="flex-shrink-0"
+              className="flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1"
               alt="Arrow"
               src="/figmaAssets/container.svg"
             />

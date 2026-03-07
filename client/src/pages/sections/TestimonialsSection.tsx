@@ -61,7 +61,7 @@ export const TestimonialsSection = (): JSX.Element => {
             we'll help you choose the right option.
           </p>
 
-          <Button className="h-[52px] px-[38px] py-2 bg-white hover:bg-white/90 rounded-lg">
+          <Button className="h-[52px] px-[38px] py-2 bg-white hover:bg-white/90 hover:shadow-lg hover:scale-[1.03] rounded-lg transition-all duration-300">
             <span className="[font-family:'Figtree',Helvetica] font-bold text-[#004733] text-lg leading-[27px]">
               View All Mortgage Services
             </span>
@@ -99,10 +99,10 @@ export const TestimonialsSection = (): JSX.Element => {
                     </div>
 
                     <button className="inline-flex items-center gap-2.5 group cursor-pointer" data-testid={`button-cta-${index}`}>
-                      <span className="[font-family:'Figtree',Helvetica] font-bold text-white text-base leading-6">
+                      <span className="[font-family:'Figtree',Helvetica] font-bold text-white text-base leading-6 transition-colors duration-200 group-hover:text-[#4CDBC4]">
                         {service.cta}
                       </span>
-                      <ArrowRightIcon className="w-4 h-4 text-white" />
+                      <ArrowRightIcon className="w-4 h-4 text-white transition-all duration-300 group-hover:translate-x-1.5 group-hover:text-[#4CDBC4]" />
                     </button>
                   </div>
                 </CardContent>
