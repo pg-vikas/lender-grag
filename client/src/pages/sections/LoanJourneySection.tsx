@@ -1,25 +1,77 @@
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 
 const statsData = [
   {
-    value: "500M+",
+    endValue: 500,
+    suffix: "M+",
+    decimals: 0,
     label: "Loans Approved",
   },
   {
-    value: "170+",
+    endValue: 170,
+    suffix: "+",
+    decimals: 0,
     label: "Happy Customers",
   },
   {
-    value: "15yrs",
+    endValue: 15,
+    suffix: "yrs",
+    decimals: 0,
     label: "Experience",
   },
   {
-    value: "4.9/5",
+    endValue: 4.9,
+    suffix: "/5",
+    decimals: 1,
     label: "Rating on Zillow",
   },
 ];
+
+function useCountUp(end: number, decimals: number, shouldStart: boolean, duration = 2000) {
+  const [value, setValue] = useState(0);
+  const startTime = useRef<number | null>(null);
+  const rafId = useRef<number>(0);
+
+  useEffect(() => {
+    if (!shouldStart) return;
+
+    const animate = (timestamp: number) => {
+      if (!startTime.current) startTime.current = timestamp;
+      const progress = Math.min((timestamp - startTime.current) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(parseFloat((eased * end).toFixed(decimals)));
+
+      if (progress < 1) {
+        rafId.current = requestAnimationFrame(animate);
+      }
+    };
+
+    rafId.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId.current);
+  }, [shouldStart, end, decimals, duration]);
+
+  return value;
+}
+
+function AnimatedStat({ endValue, suffix, decimals, label }: { endValue: number; suffix: string; decimals: number; label: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.5 });
+  const count = useCountUp(endValue, decimals, isInView);
+
+  return (
+    <div ref={ref} className="flex flex-col items-start flex-1">
+      <div className="[font-family:'DM_Sans',Helvetica] font-bold text-[#004733] text-[44px] tracking-[0] leading-[66px]">
+        {decimals > 0 ? count.toFixed(decimals) : count}{suffix}
+      </div>
+      <div className="[font-family:'DM_Sans',Helvetica] font-semibold text-[#454545] text-base tracking-[0] leading-[28.8px]">
+        {label}
+      </div>
+    </div>
+  );
+}
 
 const cardGradient = "linear-gradient(-50.75deg, rgb(8, 60, 43) 22.6%, rgb(5, 162, 112) 76.2%)";
 
@@ -195,15 +247,13 @@ export const LoanJourneySection = (): JSX.Element => {
         <div className="relative w-full flex flex-col items-center py-[132px] bg-[#ffffff]">
           <div className="flex items-center justify-center gap-20 w-[900px] mb-[132px]">
             {statsData.map((stat, index) => (
-              <div key={index} className="flex flex-col items-start flex-1">
-                <div className="[font-family:'DM_Sans',Helvetica] font-bold text-[#004733] text-[44px] tracking-[0] leading-[66px]">
-                  {stat.value}
-                </div>
-
-                <div className="[font-family:'DM_Sans',Helvetica] font-semibold text-[#454545] text-base tracking-[0] leading-[28.8px]">
-                  {stat.label}
-                </div>
-              </div>
+              <AnimatedStat
+                key={index}
+                endValue={stat.endValue}
+                suffix={stat.suffix}
+                decimals={stat.decimals}
+                label={stat.label}
+              />
             ))}
           </div>
 
