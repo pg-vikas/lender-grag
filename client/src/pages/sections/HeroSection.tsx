@@ -105,7 +105,7 @@ export const HeroSection = (): JSX.Element => {
           <Button className="h-[52px] bg-[#004733] hover:bg-[#004733]/90 rounded-lg px-[38px] py-2 [font-family:'Figtree',Helvetica] font-bold text-white text-lg gap-2">
             Apply Now
             <img
-              className="w-5 h-5"
+              className="w-5 h-5 brightness-0 invert"
               alt="Arrow icon"
               src="/figmaAssets/container.svg"
             />
