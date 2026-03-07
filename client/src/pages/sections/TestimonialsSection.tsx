@@ -70,16 +70,26 @@ export const TestimonialsSection = (): JSX.Element => {
       </div>
 
       <ScrollArea className="h-[552px] flex-1">
-        <div className="flex flex-col gap-10 pr-4">
+        <motion.div
+          className="flex flex-col gap-10 pr-4"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.15 } },
+          }}
+        >
           {mortgageServices.map((service, index) => {
             const IconComponent = iconComponents[index];
             return (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
+                variants={{
+                  hidden: { opacity: 0, y: 40, scale: 0.95 },
+                  visible: { opacity: 1, y: 0, scale: 1 },
+                }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
               >
               <Card
                 className="bg-[#1b5945] border-0 rounded-[20px] transition-colors duration-200"
@@ -116,7 +126,7 @@ export const TestimonialsSection = (): JSX.Element => {
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </ScrollArea>
     </section>
   );

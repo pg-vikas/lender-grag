@@ -54,14 +54,24 @@ export const SolutionsWrapperSection = (): JSX.Element => {
         </header>
 
         <div className="flex flex-col items-center gap-12 w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.15 } },
+            }}
+          >
             {solutionsData.map((solution, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
+                variants={{
+                  hidden: { opacity: 0, y: 40, scale: 0.95 },
+                  visible: { opacity: 1, y: 0, scale: 1 },
+                }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
               >
               <Card className="border-0 shadow-none bg-transparent">
                 <CardContent className="flex flex-col items-start gap-6 p-0">
@@ -84,7 +94,7 @@ export const SolutionsWrapperSection = (): JSX.Element => {
               </Card>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
