@@ -10,7 +10,7 @@ import { TestimonialsWrapperSection } from "./sections/TestimonialsWrapperSectio
 
 export const HomeScreen = (): JSX.Element => {
   return (
-    <div className="flex flex-col w-full relative">
+    <div className="h-screen overflow-y-auto snap-y snap-mandatory">
       <HeroSection />
       <TestimonialsSection />
       <TestimonialsWrapperSection />

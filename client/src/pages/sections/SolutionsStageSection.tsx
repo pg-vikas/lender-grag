@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export const SolutionsStageSection = (): JSX.Element => {
   return (
-    <section className="flex flex-col items-start justify-center pt-[60px] pb-[140px] px-[100px] w-full bg-[#c6f2c5]">
+    <section className="flex flex-col items-start justify-center px-[100px] w-full min-h-screen snap-start snap-always bg-[#c6f2c5]">
       <div
         className="relative flex items-center w-full rounded-[40px] overflow-hidden pl-[100px]"
         style={{ backgroundImage: "linear-gradient(-61.37deg, rgb(2, 71, 49) 15.97%, rgb(5, 162, 112) 98.24%)" }}

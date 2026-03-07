@@ -29,7 +29,7 @@ export const HeroSection = (): JSX.Element => {
   const imageY = useTransform(scrollYProgress, [0, 1], [0, 80]);
 
   return (
-    <section ref={sectionRef} className="relative w-full h-[758.77px] overflow-hidden">
+    <section ref={sectionRef} className="relative w-full h-screen min-h-screen snap-start snap-always overflow-hidden">
       <div
         className="absolute inset-0 animate-hero-gradient pointer-events-none"
         style={{
@@ -39,16 +39,16 @@ export const HeroSection = (): JSX.Element => {
       />
 
       <motion.img
-        className="absolute right-0 bottom-[-25px] w-full max-w-[1440px] h-[759px] object-cover"
+        className="absolute right-0 bottom-0 w-full h-full object-cover"
         alt="Gemini generated background"
         src="/figmaAssets/gemini-generated-image-708wtb708wtb708w-1.png"
         style={{ y: imageY }}
       />
 
-      <div className="absolute left-0 bottom-[139px] w-full max-w-[1440px] h-[620px] bg-[linear-gradient(180deg,rgba(188,217,191,1)_0%,rgba(147,194,144,0)_100%)]" />
+      <div className="absolute left-0 bottom-[18%] w-full h-[80%] bg-[linear-gradient(180deg,rgba(188,217,191,1)_0%,rgba(147,194,144,0)_100%)]" />
 
       <motion.img
-        className="absolute right-0 bottom-[-25px] w-full max-w-[1440px] h-[759px] object-cover"
+        className="absolute right-0 bottom-0 w-full h-full object-cover"
         alt="Gemini generated overlay"
         src="/figmaAssets/gemini-generated-image-708wtb708wtb708w-2.png"
         style={{ y: imageY }}

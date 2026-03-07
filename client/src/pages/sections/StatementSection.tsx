@@ -15,7 +15,7 @@ export const StatementSection = (): JSX.Element => {
   return (
     <section
       ref={sectionRef}
-      className="relative flex items-center justify-center w-full py-40"
+      className="relative flex items-center justify-center w-full min-h-screen snap-start snap-always"
       style={{
         background: "linear-gradient(180deg, #f0faf6 0%, #ffffff 50%, #f0faf6 100%)",
       }}

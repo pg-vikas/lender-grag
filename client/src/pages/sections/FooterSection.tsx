@@ -35,7 +35,7 @@ const legalLinks = ["Privacy Policy", "Terms of Service", "Disclaimer"];
 
 export const FooterSection = (): JSX.Element => {
   return (
-    <footer className="bg-[#024731] border-r border-b border-l border-[#ffffff3b] px-20 pt-[140px] pb-[60px] w-full">
+    <footer className="bg-[#024731] border-r border-b border-l border-[#ffffff3b] px-20 w-full min-h-screen snap-start snap-always flex flex-col justify-center">
       <div className="max-w-[1380px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[325.98px_1fr] gap-10 mb-10">
           <div className="flex flex-col gap-6">

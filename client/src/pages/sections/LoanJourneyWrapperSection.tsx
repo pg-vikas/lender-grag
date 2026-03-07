@@ -31,7 +31,7 @@ const guides = [
 
 export const LoanJourneyWrapperSection = (): JSX.Element => {
   return (
-    <section className="py-[140px] px-[100px] flex flex-col items-center gap-[80px] w-full bg-[#c6f2c5]">
+    <section className="px-[100px] flex flex-col items-center justify-center gap-[80px] w-full min-h-screen snap-start snap-always bg-[#c6f2c5]">
       <div className="flex flex-col items-start gap-16 w-full">
         <div className="flex items-end gap-24 w-full">
           <motion.h2

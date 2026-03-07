@@ -30,7 +30,7 @@ const solutionsData = [
 
 export const SolutionsWrapperSection = (): JSX.Element => {
   return (
-    <section className="flex flex-col lg:flex-row items-stretch justify-between w-full bg-neutral-100">
+    <section className="flex flex-col lg:flex-row items-stretch justify-between w-full min-h-screen snap-start snap-always bg-neutral-100">
       <div className="flex-1 relative min-h-[400px] lg:min-h-[821px]">
         <img
           className="w-full h-full object-cover"

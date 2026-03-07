@@ -43,7 +43,7 @@ export const TestimonialsSection = (): JSX.Element => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <section className="flex items-start justify-center gap-[80px] py-[140px] px-[100px] w-full bg-[#024731]">
+    <section className="flex items-center justify-center gap-[80px] px-[100px] w-full min-h-screen snap-start snap-always bg-[#024731]">
       <div className="flex flex-col items-start gap-10 flex-1">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
@@ -69,7 +69,7 @@ export const TestimonialsSection = (): JSX.Element => {
         </div>
       </div>
 
-      <ScrollArea className="h-[552px] flex-1">
+      <ScrollArea className="h-[552px] flex-1" style={{ overscrollBehavior: 'contain' }}>
         <motion.div
           className="flex flex-col gap-10 pr-4"
           initial="hidden"

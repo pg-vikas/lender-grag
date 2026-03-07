@@ -178,10 +178,10 @@ export const LoanJourneySection = (): JSX.Element => {
   return (
     <section className="relative w-full">
       <div className="relative flex flex-col">
-        <div className="relative w-full bg-[linear-gradient(180deg,rgba(201,245,200,1)_0%,rgba(151,194,149,1)_100%)] overflow-hidden" style={{ height: '570px' }}>
+        <div className="relative w-full min-h-screen snap-start snap-always flex items-center bg-[linear-gradient(180deg,rgba(201,245,200,1)_0%,rgba(151,194,149,1)_100%)] overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-[152px] bg-[linear-gradient(180deg,rgba(200,244,199,1)_0%,rgba(200,244,199,0)_100%)] z-[1]" />
 
-          <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden">
             <img
               className="absolute"
               alt="Southern California Map"
@@ -220,7 +220,7 @@ export const LoanJourneySection = (): JSX.Element => {
           </div>
         </div>
 
-        <div className="relative w-full py-[100px]">
+        <div className="relative w-full min-h-screen snap-start snap-always flex flex-col items-center justify-center">
           <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(180deg,rgba(151,194,149,1)_0%,rgba(201,245,200,1)_100%)]" />
           <div className="absolute bottom-0 left-0 w-full h-1/2 bg-white" />
           <div className="relative max-w-[1440px] mx-auto px-[100px]">
@@ -321,7 +321,7 @@ export const LoanJourneySection = (): JSX.Element => {
           </div>
         </div>
 
-        <div className="relative w-full flex flex-col items-center py-[160px] bg-[#ffffff]">
+        <div className="relative w-full flex flex-col items-center justify-center min-h-screen snap-start snap-always bg-[#ffffff]">
           <div className="flex items-center justify-center gap-20 w-[900px] mb-[160px]">
             {statsData.map((stat, index) => (
               <motion.div
