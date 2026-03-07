@@ -64,11 +64,11 @@ export const LoanJourneyWrapperSection = (): JSX.Element => {
           {guides.map((guide) => (
             <Card
               key={guide.id}
-              className="w-[280px] h-[380px] rounded-3xl overflow-hidden border-0 bg-transparent"
+              className="w-[280px] h-[380px] rounded-3xl overflow-hidden border-0 bg-transparent cursor-pointer transition-transform duration-300 ease-out hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] group"
             >
               <CardContent className="p-0 relative w-full h-full flex flex-col justify-end">
                 <img
-                  className={`absolute left-0 bottom-0 w-[280px] h-[380px] ${guide.imageClass}`}
+                  className={`absolute left-0 bottom-0 w-[280px] h-[380px] ${guide.imageClass} transition-transform duration-500 ease-out group-hover:scale-110`}
                   alt={guide.title}
                   src={guide.image}
                 />
