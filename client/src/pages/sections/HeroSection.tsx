@@ -1,5 +1,6 @@
 import { PhoneIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -85,9 +86,14 @@ export const HeroSection = (): JSX.Element => {
 
       <div className="flex flex-col max-w-[540px] items-start gap-12 absolute top-[calc(50%_-_167px)] left-[100px] z-10">
         <div className="flex flex-col items-start gap-5 w-full">
-          <h1 className="[font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-[64px] leading-[79.4px]">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="[font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-[64px] leading-[79.4px]"
+          >
             Let's Find You The Perfect Mortgage
-          </h1>
+          </motion.h1>
 
           <p className="[font-family:'DM_Sans',Helvetica] font-semibold text-[#454545] text-lg leading-7">
             Buying or refinancing doesn't have to feel overwhelming. Lender Greg

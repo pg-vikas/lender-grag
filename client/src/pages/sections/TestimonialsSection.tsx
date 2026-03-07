@@ -2,6 +2,7 @@ import { ArrowRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { motion } from "framer-motion";
 
 const mortgageServices = [
   {
@@ -45,9 +46,15 @@ export const TestimonialsSection = (): JSX.Element => {
   return (
     <section className="flex items-start justify-center gap-[60px] p-[100px] w-full bg-[#024731]">
       <div className="flex flex-col items-start gap-8 flex-1">
-        <h2 className="[font-family:'Figtree',Helvetica] font-bold text-white text-[52px] tracking-[-0.52px] leading-[58.2px]">
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="[font-family:'Figtree',Helvetica] font-bold text-white text-[52px] tracking-[-0.52px] leading-[58.2px]"
+        >
           Solutions for Every Stage of Home-ownership
-        </h2>
+        </motion.h2>
 
         <div className="flex flex-col max-w-[528px] items-start justify-end gap-10">
           <p className="[font-family:'DM_Sans',Helvetica] font-semibold text-[#e1e1e1] text-lg leading-7">

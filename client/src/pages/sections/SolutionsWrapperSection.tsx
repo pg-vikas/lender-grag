@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
 
 const solutionsData = [
   {
@@ -40,10 +41,16 @@ export const SolutionsWrapperSection = (): JSX.Element => {
 
       <div className="flex flex-col w-full lg:w-[720px] items-start gap-12 p-8 md:p-16 lg:p-[100px]">
         <header className="flex flex-col">
-          <h2 className="[font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-4xl md:text-5xl tracking-[0] leading-tight md:leading-[59.5px]">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="[font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-4xl md:text-5xl tracking-[0] leading-tight md:leading-[59.5px]"
+          >
             Here&apos;s How We <br />
             Make It Simple.
-          </h2>
+          </motion.h2>
         </header>
 
         <div className="flex flex-col items-center gap-10 w-full">

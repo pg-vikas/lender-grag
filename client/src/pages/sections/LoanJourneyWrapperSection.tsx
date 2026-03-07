@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
 
 const guides = [
   {
@@ -33,10 +34,16 @@ export const LoanJourneyWrapperSection = (): JSX.Element => {
     <section className="p-[100px] flex flex-col items-center gap-[60px] w-full bg-[#c6f2c5]">
       <div className="flex flex-col items-start gap-16 w-full">
         <div className="flex items-end gap-20 w-full">
-          <h2 className="flex-1 [font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-[52px] tracking-[-0.52px] leading-[64.5px]">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="flex-1 [font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-[52px] tracking-[-0.52px] leading-[64.5px]"
+          >
             Latest Guide from <br />
             Greg Wynn
-          </h2>
+          </motion.h2>
 
           <Button
             variant="outline"

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
 
 const testimonials = [
   {
@@ -69,10 +70,16 @@ export const TestimonialsWrapperSection = (): JSX.Element => {
   return (
     <section className="pt-[100px] pb-[60px] px-[100px] flex flex-col items-center gap-[60px] w-full bg-[#c6f2c5]">
       <div className="flex items-center justify-center gap-20 w-full">
-        <h2 className="flex-1 [font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-[52px] tracking-[-0.52px] leading-[64.5px]">
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="flex-1 [font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-[52px] tracking-[-0.52px] leading-[64.5px]"
+        >
           I help you to Own <br />
           Your dream house
-        </h2>
+        </motion.h2>
 
         <div className="flex flex-col items-start gap-6 flex-1">
           <p className="self-stretch [font-family:'DM_Sans',Helvetica] font-semibold text-[#121212] text-lg tracking-[0] leading-7">

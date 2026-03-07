@@ -1,5 +1,6 @@
 import { ArrowRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 export const SolutionsStageSection = (): JSX.Element => {
   return (
@@ -8,9 +9,15 @@ export const SolutionsStageSection = (): JSX.Element => {
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10 p-10 lg:p-20">
           <div className="flex flex-col items-start gap-10 max-w-[500px] z-10">
             <div className="flex flex-col items-start justify-center gap-6 w-full">
-              <h2 className="[font-family:'Figtree',Helvetica] font-bold text-white text-[44px] tracking-[0] leading-[46.8px]">
+              <motion.h2
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+                className="[font-family:'Figtree',Helvetica] font-bold text-white text-[44px] tracking-[0] leading-[46.8px]"
+              >
                 Let&apos;s Begin Your Loan Journey Today
-              </h2>
+              </motion.h2>
 
               <p className="[font-family:'DM_Sans',Helvetica] font-normal text-[#ffffffbf] text-base tracking-[0] leading-[28.8px]">
                 Fill out the Questionnaire on this page to start a discussion

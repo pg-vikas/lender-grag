@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
 
 const statsData = [
   {
@@ -77,10 +78,16 @@ export const LoanJourneySection = (): JSX.Element => {
           </div>
 
           <div className="absolute top-1/2 left-[100px] -translate-y-1/2 flex flex-col w-[509px] items-start gap-12 z-10">
-            <h1 className="[font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-5xl tracking-[-0.48px] leading-[67.2px]">
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="[font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-5xl tracking-[-0.48px] leading-[67.2px]"
+            >
               Proudly Serving <br />
               100+ Clients Across San Diego, Southern California.
-            </h1>
+            </motion.h1>
 
             <Button className="h-auto bg-[#004733] hover:bg-[#004733]/90 rounded-lg px-[38px] py-3.5 gap-2">
               <span className="[font-family:'DM_Sans',Helvetica] font-semibold text-white text-lg leading-6">
@@ -97,9 +104,15 @@ export const LoanJourneySection = (): JSX.Element => {
 
         <div className="relative max-w-[1440px] mx-auto px-[100px] py-[60px]">
           <div className="flex flex-col items-center gap-[60px]">
-            <h2 className="[font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-5xl text-center tracking-[0] leading-[59.5px] max-w-[744px]">
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="[font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-5xl text-center tracking-[0] leading-[59.5px] max-w-[744px]"
+            >
               Experienced Professionals. Personal Service.
-            </h2>
+            </motion.h2>
 
             <div className="flex items-center justify-center gap-10 w-full">
               {teamMembers.map((member, index) => (
