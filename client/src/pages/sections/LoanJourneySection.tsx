@@ -21,38 +21,36 @@ const statsData = [
   },
 ];
 
+const cardGradient = "linear-gradient(-50.75deg, rgb(8, 60, 43) 22.6%, rgb(5, 162, 112) 76.2%)";
+
 const teamMembers = [
   {
     name: "Greg Wynn",
     title: "Branch Manager & Loan Officer",
     nmls: "NMLS 276890",
-    backgroundImage: "/figmaAssets/rectangle-43-5.svg",
     profileImage: "/figmaAssets/rectangle-42.png",
-    profileImageClass: "left-[calc(50.00%_-_132px)] w-[264px]",
+    profileImageClass: "left-1/2 -translate-x-1/2 w-[264px]",
   },
   {
     name: "Christian Griffin",
     title: "Loan Officer",
     nmls: "NMLS 976102",
-    backgroundImage: "/figmaAssets/rectangle-43-7.svg",
     profileImage: "/figmaAssets/rectangle-42-1.png",
-    profileImageClass: "left-[calc(50.00%_-_130px)] w-[260px] object-cover",
+    profileImageClass: "left-1/2 -translate-x-1/2 w-[260px] object-cover",
   },
   {
     name: "Dane Hines",
     title: "Loan Officer",
     nmls: "NMLS 1713910",
-    backgroundImage: "/figmaAssets/rectangle-43-6.svg",
     profileImage: "/figmaAssets/rectangle-42-2.png",
-    profileImageClass: "left-[calc(50.00%_-_130px)] w-[260px]",
+    profileImageClass: "left-1/2 -translate-x-1/2 w-[260px]",
   },
   {
     name: "Josh Lander",
     title: "Loan Officer",
     nmls: "NMLS 766437",
-    backgroundImage: "/figmaAssets/rectangle-43-4.svg",
     profileImage: "/figmaAssets/rectangle-42-3.png",
-    profileImageClass: "left-[calc(50.00%_-_130px)] w-[260px]",
+    profileImageClass: "left-1/2 -translate-x-1/2 w-[260px]",
   },
 ];
 
@@ -121,10 +119,9 @@ export const LoanJourneySection = (): JSX.Element => {
                   className="w-[280px] h-[380px] rounded-3xl overflow-hidden border-0 bg-transparent"
                 >
                   <CardContent className="relative w-full h-full p-0 flex flex-col justify-end">
-                    <img
-                      className="absolute left-0 bottom-0 w-[280px] h-[380px]"
-                      alt="Background"
-                      src={member.backgroundImage}
+                    <div
+                      className="absolute left-0 bottom-0 w-[280px] h-[380px] rounded-3xl"
+                      style={{ backgroundImage: cardGradient }}
                     />
 
                     <img
@@ -133,7 +130,7 @@ export const LoanJourneySection = (): JSX.Element => {
                       src={member.profileImage}
                     />
 
-                    <div className="relative px-4 py-6 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.1)_100%)] flex flex-col items-start gap-[15.1px] backdrop-blur-md backdrop-brightness-[100%] [-webkit-backdrop-filter:blur(12px)_brightness(100%)]">
+                    <div className="relative px-4 py-6 bg-gradient-to-b from-transparent to-[rgba(0,0,0,0.1)] backdrop-blur-[12px] flex flex-col items-start w-full">
                       <div className="flex flex-col items-start gap-1 w-full">
                         <h3 className="[font-family:'DM_Sans',Helvetica] font-bold text-white text-lg tracking-[0] leading-[25.2px]">
                           {member.name}
