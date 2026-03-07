@@ -73,26 +73,29 @@ export const LoanJourneyWrapperSection = (): JSX.Element => {
                   src={guide.image}
                 />
 
-                <div className="pt-10 pb-6 px-4 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.5)_100%)] flex flex-col items-start gap-[15.1px] w-full backdrop-blur-[12px] backdrop-brightness-[100%] [-webkit-backdrop-filter:blur(12px)_brightness(100%)] relative z-10" style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)' }}>
-                  <div className="flex flex-col items-start gap-1 w-full">
-                    <h3 className="[font-family:'DM_Sans',Helvetica] font-bold text-white text-lg tracking-[0] leading-[25.2px]">
-                      {guide.title}
-                    </h3>
+                <div className="relative z-10 w-full">
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.5)_100%)] backdrop-blur-[12px] [-webkit-backdrop-filter:blur(12px)] pointer-events-none" style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)' }} />
+                  <div className="relative pt-10 pb-6 px-4 flex flex-col items-start gap-[15.1px] w-full">
+                    <div className="flex flex-col items-start gap-1 w-full">
+                      <h3 className="[font-family:'DM_Sans',Helvetica] font-bold text-white text-lg tracking-[0] leading-[25.2px]">
+                        {guide.title}
+                      </h3>
 
-                    <div className="flex flex-col items-start pt-3 w-full">
-                      <Button
-                        variant="link"
-                        className="h-auto p-0 inline-flex items-end gap-2.5 text-white hover:no-underline"
-                      >
-                        <span className="[font-family:'DM_Sans',Helvetica] font-semibold text-base tracking-[0] leading-6">
-                          Learn More
-                        </span>
-                        <img
-                          className="flex-shrink-0"
-                          alt="Arrow"
-                          src="/figmaAssets/container.svg"
-                        />
-                      </Button>
+                      <div className="flex flex-col items-start pt-3 w-full">
+                        <Button
+                          variant="link"
+                          className="h-auto p-0 inline-flex items-end gap-2.5 text-white hover:no-underline"
+                        >
+                          <span className="[font-family:'DM_Sans',Helvetica] font-semibold text-base tracking-[0] leading-6">
+                            Learn More
+                          </span>
+                          <img
+                            className="flex-shrink-0"
+                            alt="Arrow"
+                            src="/figmaAssets/container.svg"
+                          />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
