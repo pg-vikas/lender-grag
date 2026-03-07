@@ -3,12 +3,12 @@ import { motion } from "framer-motion";
 
 export const SolutionsStageSection = (): JSX.Element => {
   return (
-    <section className="flex flex-col items-start justify-center pt-10 pb-[100px] px-[100px] w-full bg-[#c6f2c5]">
+    <section className="flex flex-col items-start justify-center pt-[60px] pb-[140px] px-[100px] w-full bg-[#c6f2c5]">
       <div
         className="relative flex items-center w-full rounded-[40px] overflow-hidden pl-[100px]"
         style={{ backgroundImage: "linear-gradient(-61.37deg, rgb(2, 71, 49) 15.97%, rgb(5, 162, 112) 98.24%)" }}
       >
-        <div className="flex flex-col gap-10 items-start relative z-10 w-[500px] shrink-0 py-[60px]">
+        <div className="flex flex-col gap-12 items-start relative z-10 w-[500px] shrink-0 py-[80px]">
           <div className="flex flex-col gap-6 items-start justify-center w-full">
             <motion.h2
               initial={{ opacity: 0, y: 30 }}

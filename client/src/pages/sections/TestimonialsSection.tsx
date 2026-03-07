@@ -43,8 +43,8 @@ export const TestimonialsSection = (): JSX.Element => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <section className="flex items-start justify-center gap-[60px] p-[100px] w-full bg-[#024731]">
-      <div className="flex flex-col items-start gap-8 flex-1">
+    <section className="flex items-start justify-center gap-[80px] py-[140px] px-[100px] w-full bg-[#024731]">
+      <div className="flex flex-col items-start gap-10 flex-1">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -55,7 +55,7 @@ export const TestimonialsSection = (): JSX.Element => {
           Solutions for Every Stage of Home-ownership
         </motion.h2>
 
-        <div className="flex flex-col max-w-[528px] items-start justify-end gap-10">
+        <div className="flex flex-col max-w-[528px] items-start justify-end gap-12">
           <p className="[font-family:'DM_Sans',Helvetica] font-semibold text-[#e1e1e1] text-lg leading-7">
             Whether you're buying your first home, refinancing, or investing,
             we'll help you choose the right option.

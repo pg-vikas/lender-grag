@@ -39,7 +39,7 @@ export const SolutionsWrapperSection = (): JSX.Element => {
         />
       </div>
 
-      <div className="flex flex-col w-full lg:w-[720px] items-start gap-12 p-8 md:p-16 lg:p-[100px]">
+      <div className="flex flex-col w-full lg:w-[720px] items-start gap-16 p-8 md:p-16 lg:py-[140px] lg:px-[100px]">
         <header className="flex flex-col">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
@@ -53,8 +53,8 @@ export const SolutionsWrapperSection = (): JSX.Element => {
           </motion.h2>
         </header>
 
-        <div className="flex flex-col items-center gap-10 w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full">
+        <div className="flex flex-col items-center gap-12 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
             {solutionsData.map((solution, index) => (
               <Card key={index} className="border-0 shadow-none bg-transparent">
                 <CardContent className="flex flex-col items-start gap-6 p-0">

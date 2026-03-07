@@ -68,7 +68,7 @@ const paginationDots = [
 
 export const TestimonialsWrapperSection = (): JSX.Element => {
   return (
-    <section className="pt-[100px] pb-[60px] px-[100px] flex flex-col items-center gap-[60px] w-full bg-[#c6f2c5] overflow-hidden">
+    <section className="pt-[140px] pb-[100px] px-[100px] flex flex-col items-center gap-[80px] w-full bg-[#c6f2c5] overflow-hidden">
       <div className="flex items-center justify-center gap-20 w-full">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}

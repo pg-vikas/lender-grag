@@ -31,9 +31,9 @@ const guides = [
 
 export const LoanJourneyWrapperSection = (): JSX.Element => {
   return (
-    <section className="p-[100px] flex flex-col items-center gap-[60px] w-full bg-[#c6f2c5]">
+    <section className="py-[140px] px-[100px] flex flex-col items-center gap-[80px] w-full bg-[#c6f2c5]">
       <div className="flex flex-col items-start gap-16 w-full">
-        <div className="flex items-end gap-20 w-full">
+        <div className="flex items-end gap-24 w-full">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -60,7 +60,7 @@ export const LoanJourneyWrapperSection = (): JSX.Element => {
           </Button>
         </div>
 
-        <div className="flex items-center justify-between w-full gap-4">
+        <div className="flex items-center justify-between w-full gap-6">
           {guides.map((guide) => (
             <Card
               key={guide.id}
