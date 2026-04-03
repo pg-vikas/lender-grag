@@ -148,7 +148,19 @@ export const HeroSection = (): JSX.Element => {
                 <div>
                   <div className="flex items-center gap-1">
                     {[1,2,3,4,5].map(i => (
-                      <Star key={i} className="w-[18px] h-[18px] fill-amber-400 text-amber-400" />
+                      <motion.span
+                        key={i}
+                        className="relative"
+                        animate={{ y: [0, -4, 0] }}
+                        transition={{ duration: 0.6, delay: 1.6 + i * 0.12, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+                      >
+                        <Star className="w-[18px] h-[18px] fill-amber-400 text-amber-400" />
+                        <motion.span
+                          className="absolute -top-0.5 -right-0.5 w-[6px] h-[6px] rounded-full bg-white"
+                          animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }}
+                          transition={{ duration: 0.8, delay: 1.8 + i * 0.12, repeat: Infinity, repeatDelay: 3.5 }}
+                        />
+                      </motion.span>
                     ))}
                     <span className="text-[17px] font-extrabold text-white ml-2">4.9</span>
                   </div>
