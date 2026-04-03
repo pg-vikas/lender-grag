@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X, Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "wouter";
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "About Greg", href: "/about" },
+  { label: "About", href: "/about" },
   { label: "Loan Options", href: "/loan-options" },
-  { label: "Mortgage Tools", href: "/tools" },
+  { label: "Tools", href: "/tools" },
   { label: "Reviews", href: "/reviews" },
   { label: "Resources", href: "/resources" },
   { label: "FAQ", href: "/faq" },
@@ -30,38 +30,43 @@ export function Header() {
     setMobileOpen(false);
   }, [location]);
 
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
   return (
     <>
       <motion.header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "bg-white/95 backdrop-blur-md shadow-sm py-2"
+            ? "bg-white/[0.92] backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] py-2.5"
             : "bg-transparent py-4"
         }`}
-        initial={{ y: -100 }}
+        initial={{ y: -80 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="max-w-[1320px] mx-auto px-6 flex items-center justify-between">
           <Link href="/" data-testid="link-home-logo">
-            <div className="flex items-center gap-2 cursor-pointer">
-              <div className="w-10 h-10 rounded-xl bg-[#004733] flex items-center justify-center">
-                <span className="text-white font-bold text-lg">LG</span>
+            <div className="flex items-center gap-2.5 cursor-pointer group">
+              <div className="w-9 h-9 rounded-[10px] bg-[#004733] flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:shadow-[#004733]/20 transition-shadow">
+                <span className="text-white font-bold text-[14px] tracking-tight">LG</span>
               </div>
-              <span className={`font-bold text-xl tracking-tight transition-colors ${scrolled ? "text-[#004733]" : "text-[#004733]"}`}>
+              <span className="font-bold text-[18px] tracking-tight text-[#0c1a14]">
                 Lender Greg
               </span>
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1" data-testid="nav-desktop">
+          <nav className="hidden xl:flex items-center gap-0.5" data-testid="nav-desktop">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
                 <span
-                  className={`px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-[13px] font-medium cursor-pointer transition-all duration-200 ${
                     location === link.href
-                      ? "text-[#004733] bg-[#004733]/5"
-                      : "text-gray-600 hover:text-[#004733] hover:bg-[#004733]/5"
+                      ? "text-[#004733] bg-[#004733]/[0.06]"
+                      : "text-gray-500 hover:text-[#004733] hover:bg-[#004733]/[0.04]"
                   }`}
                 >
                   {link.label}
@@ -70,27 +75,28 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden xl:flex items-center gap-2.5">
             <Link href="/contact">
-              <Button variant="outline" className="rounded-xl border-[#004733]/20 text-[#004733] hover:bg-[#004733]/5 gap-2 font-semibold" data-testid="button-book-call">
-                <Phone className="w-4 h-4" />
+              <Button variant="ghost" className="h-9 px-4 rounded-lg text-[13px] text-gray-600 hover:text-[#004733] font-medium gap-1.5 hover:bg-[#004733]/[0.04]" data-testid="button-book-call">
+                <Phone className="w-3.5 h-3.5" />
                 Book a Call
               </Button>
             </Link>
             <Link href="/apply">
-              <Button className="rounded-xl bg-[#004733] hover:bg-[#003626] text-white font-semibold shadow-lg shadow-[#004733]/20" data-testid="button-get-preapproved">
+              <Button className="h-9 px-5 rounded-lg bg-[#004733] hover:bg-[#003525] text-white text-[13px] font-semibold shadow-sm gap-1.5 group transition-all duration-200" data-testid="button-get-preapproved">
                 Get Pre-Approved
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </Button>
             </Link>
           </div>
 
           <button
-            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="xl:hidden w-9 h-9 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
             data-testid="button-mobile-menu"
           >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileOpen ? <X className="w-5 h-5 text-gray-700" /> : <Menu className="w-5 h-5 text-gray-700" />}
           </button>
         </div>
       </motion.header>
@@ -98,42 +104,48 @@ export function Header() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            className="fixed inset-0 z-40 bg-white lg:hidden"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-40 bg-white xl:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
           >
-            <div className="pt-24 px-6 flex flex-col gap-2">
+            <div className="pt-20 px-6 flex flex-col gap-1 h-full overflow-y-auto">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.href}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
+                  transition={{ delay: i * 0.04, duration: 0.3 }}
                 >
                   <Link href={link.href}>
-                    <span className={`block px-4 py-3 rounded-xl text-lg font-medium cursor-pointer transition-colors ${
-                      location === link.href ? "text-[#004733] bg-[#004733]/5" : "text-gray-700 hover:bg-gray-50"
+                    <span className={`block px-4 py-3 rounded-xl text-[17px] font-medium cursor-pointer transition-colors ${
+                      location === link.href ? "text-[#004733] bg-[#004733]/[0.06]" : "text-gray-600 hover:bg-gray-50"
                     }`}>
                       {link.label}
                     </span>
                   </Link>
                 </motion.div>
               ))}
-              <div className="flex flex-col gap-3 mt-6 pt-6 border-t">
+              <motion.div
+                className="flex flex-col gap-2.5 mt-6 pt-6 border-t border-gray-100"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.35 }}
+              >
                 <Link href="/contact">
-                  <Button variant="outline" className="w-full rounded-xl border-[#004733]/20 text-[#004733] font-semibold gap-2 h-12">
+                  <Button variant="outline" className="w-full rounded-xl border-gray-200 text-gray-700 font-semibold gap-2 h-12">
                     <Phone className="w-4 h-4" />
                     Book a Call
                   </Button>
                 </Link>
                 <Link href="/apply">
-                  <Button className="w-full rounded-xl bg-[#004733] hover:bg-[#003626] text-white font-semibold h-12">
+                  <Button className="w-full rounded-xl bg-[#004733] hover:bg-[#003525] text-white font-semibold h-12 gap-2">
                     Get Pre-Approved
+                    <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         )}
