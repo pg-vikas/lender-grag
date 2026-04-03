@@ -1,8 +1,8 @@
-import { ArrowRight, Star, TrendingUp, Shield, Clock, CheckCircle2, ChevronRight } from "lucide-react";
+import { ArrowRight, Star, Shield, Clock, CheckCircle2, ChevronRight, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { useEffect, useRef } from "react";
+import gregPhoto from "@assets/bccb6149-2450-49bb-bcc6-1719871865b3_1775248779071.png";
 
 const stagger = {
   hidden: {},
@@ -14,27 +14,8 @@ const fadeUp = {
 };
 
 export const HeroSection = (): JSX.Element => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
-  const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
-  const rotateX = useTransform(springY, [-300, 300], [4, -4]);
-  const rotateY = useTransform(springX, [-300, 300], [-4, 4]);
-
-  useEffect(() => {
-    const handleMouse = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      mouseX.set(e.clientX - rect.left - rect.width / 2);
-      mouseY.set(e.clientY - rect.top - rect.height / 2);
-    };
-    window.addEventListener("mousemove", handleMouse);
-    return () => window.removeEventListener("mousemove", handleMouse);
-  }, [mouseX, mouseY]);
-
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden" ref={containerRef}>
+    <section className="relative min-h-screen flex items-center overflow-hidden">
       <div className="absolute inset-0 bg-[#fafdf9]" />
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-[200px] -right-[200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#004733]/[0.04] to-transparent" />
@@ -50,7 +31,7 @@ export const HeroSection = (): JSX.Element => {
       </div>
 
       <div className="max-w-[1320px] mx-auto px-6 py-28 lg:py-0 w-full relative">
-        <div className="grid lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-20 items-center min-h-[calc(100vh-80px)]">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-80px)]">
           <motion.div
             className="flex flex-col gap-7"
             initial="hidden"
@@ -130,103 +111,49 @@ export const HeroSection = (): JSX.Element => {
           </motion.div>
 
           <motion.div
-            className="relative hidden lg:flex items-center justify-center"
-            style={{ perspective: 1200 }}
+            className="relative flex items-end justify-center lg:justify-end"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <motion.div
-              className="relative w-full max-w-[520px]"
-              style={{ rotateX, rotateY }}
-              initial={{ opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <div className="bg-white rounded-[28px] shadow-2xl shadow-black/[0.08] border border-gray-100/80 overflow-hidden">
-                <div className="px-7 pt-6 pb-5 border-b border-gray-50">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Dashboard</p>
-                      <p className="text-[22px] font-bold text-[#0c1a14] mt-0.5">Loan Overview</p>
-                    </div>
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-semibold">
-                      <CheckCircle2 className="w-3 h-3" /> Pre-Approved
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-7 space-y-5">
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      { label: "Loan Amount", value: "$360,000", color: "text-[#004733]" },
-                      { label: "Rate", value: "6.25%", color: "text-[#0c1a14]" },
-                      { label: "Monthly", value: "$2,217", color: "text-[#004733]" },
-                    ].map((m, i) => (
-                      <motion.div
-                        key={i}
-                        className="bg-gray-50/80 rounded-xl p-3.5"
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.7 + i * 0.1 }}
-                      >
-                        <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">{m.label}</p>
-                        <p className={`text-[17px] font-bold ${m.color} mt-0.5`}>{m.value}</p>
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  <motion.div
-                    className="bg-gradient-to-r from-[#004733] to-[#0a7a55] rounded-2xl p-5 text-white"
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 1 }}
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <p className="text-[12px] font-medium opacity-80">Approval Progress</p>
-                      <p className="text-[12px] font-bold">85%</p>
-                    </div>
-                    <div className="w-full bg-white/20 rounded-full h-[6px]">
-                      <motion.div
-                        className="bg-white rounded-full h-[6px]"
-                        initial={{ width: 0 }}
-                        animate={{ width: "85%" }}
-                        transition={{ duration: 1.4, delay: 1.3, ease: "easeOut" }}
-                      />
-                    </div>
-                    <div className="flex justify-between mt-3 text-[11px] opacity-70">
-                      <span>Documents</span>
-                      <span>Review</span>
-                      <span>Approved</span>
-                    </div>
-                  </motion.div>
-
-                  <div className="space-y-2.5">
-                    {[
-                      { icon: Shield, text: "Rate locked for 60 days", time: "2h ago" },
-                      { icon: Clock, text: "Estimated close: 21 days", time: "Today" },
-                      { icon: TrendingUp, text: "DTI ratio: 32% — strong", time: "Today" },
-                    ].map((item, i) => (
-                      <motion.div
-                        key={i}
-                        className="flex items-center gap-3 py-2.5 px-3.5 rounded-xl hover:bg-gray-50/80 transition-colors group"
-                        initial={{ opacity: 0, x: -12 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.4, delay: 1.4 + i * 0.12 }}
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-[#004733]/[0.07] flex items-center justify-center flex-shrink-0 group-hover:bg-[#004733]/10 transition-colors">
-                          <item.icon className="w-4 h-4 text-[#004733]" />
-                        </div>
-                        <p className="text-[13px] font-medium text-gray-700 flex-1">{item.text}</p>
-                        <span className="text-[11px] text-gray-400">{item.time}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+            <div className="relative w-full max-w-[520px]">
+              <motion.div
+                className="absolute -inset-4 rounded-[36px] bg-gradient-to-br from-[#004733]/[0.08] to-[#05a270]/[0.04] blur-2xl"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.2, delay: 0.3 }}
+              />
 
               <motion.div
-                className="absolute -top-4 -right-8 bg-white rounded-2xl shadow-xl shadow-black/[0.06] border border-gray-100/80 px-4 py-3 flex items-center gap-3"
-                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                className="relative rounded-[28px] overflow-hidden shadow-2xl shadow-black/[0.12]"
+                initial={{ y: 30, scale: 0.95 }}
+                animate={{ y: 0, scale: 1 }}
+                transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <img
+                  src={gregPhoto}
+                  alt="Greg Wynn — Branch Manager & Loan Officer"
+                  className="w-full h-auto object-cover"
+                  data-testid="img-hero-greg"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#004733]/60 via-transparent to-transparent" />
+
+                <motion.div
+                  className="absolute bottom-0 left-0 right-0 p-6 md:p-8"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.9 }}
+                >
+                  <p className="text-white text-[22px] md:text-[26px] font-extrabold tracking-tight">Greg Wynn</p>
+                  <p className="text-white/70 text-[14px] font-medium">Branch Manager & Loan Officer · NMLS 276890</p>
+                </motion.div>
+              </motion.div>
+
+              <motion.div
+                className="absolute -top-3 -right-3 lg:-right-6 bg-white rounded-2xl shadow-xl shadow-black/[0.08] border border-gray-100/80 px-4 py-3 flex items-center gap-3 z-10"
+                initial={{ opacity: 0, scale: 0.8, y: 16 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.8, type: "spring", stiffness: 200 }}
+                transition={{ duration: 0.5, delay: 1.2, type: "spring", stiffness: 200 }}
                 style={{ animation: "float-slow 7s ease-in-out infinite" }}
               >
                 <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center">
@@ -239,25 +166,59 @@ export const HeroSection = (): JSX.Element => {
               </motion.div>
 
               <motion.div
-                className="absolute -bottom-3 -left-6 bg-white rounded-2xl shadow-xl shadow-black/[0.06] border border-gray-100/80 px-4 py-3"
-                initial={{ opacity: 0, scale: 0.8, y: -20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 2, type: "spring", stiffness: 200 }}
-                style={{ animation: "float-slow 8s ease-in-out infinite", animationDelay: "1s" }}
+                className="absolute top-[30%] -left-4 lg:-left-10 bg-white rounded-2xl shadow-xl shadow-black/[0.08] border border-gray-100/80 px-4 py-3 z-10"
+                initial={{ opacity: 0, scale: 0.8, x: 16 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 1.5, type: "spring", stiffness: 200 }}
+                style={{ animation: "float-slow 8s ease-in-out infinite", animationDelay: "1.5s" }}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-[#004733]/[0.08] flex items-center justify-center">
+                    <Clock className="w-4.5 h-4.5 text-[#004733]" />
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-bold text-[#0c1a14]">21-Day Close</p>
+                    <p className="text-[11px] text-gray-400">Average timeline</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="absolute -bottom-4 -left-3 lg:-left-8 bg-white rounded-2xl shadow-xl shadow-black/[0.08] border border-gray-100/80 px-4 py-3 z-10"
+                initial={{ opacity: 0, scale: 0.8, y: -12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 1.8, type: "spring", stiffness: 200 }}
+                style={{ animation: "float-slow 9s ease-in-out infinite", animationDelay: "3s" }}
+              >
+                <div className="flex items-center gap-2.5">
                   <div className="flex -space-x-1.5">
                     {[1,2,3].map(i => (
                       <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-gradient-to-br from-[#004733] to-[#0a7a55]" />
                     ))}
                   </div>
                   <div>
-                    <p className="text-[12px] font-bold text-[#0c1a14]">500+</p>
-                    <p className="text-[10px] text-gray-400">Families helped</p>
+                    <p className="text-[12px] font-bold text-[#0c1a14]">500+ Families</p>
+                    <p className="text-[10px] text-gray-400">Helped close on homes</p>
                   </div>
                 </div>
               </motion.div>
-            </motion.div>
+
+              <motion.div
+                className="absolute bottom-[25%] -right-3 lg:-right-8 bg-gradient-to-br from-[#004733] to-[#0a6e4e] rounded-2xl shadow-xl shadow-[#004733]/20 px-4 py-3 z-10"
+                initial={{ opacity: 0, scale: 0.8, x: -12 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 2, type: "spring", stiffness: 200 }}
+                style={{ animation: "float-slow 7.5s ease-in-out infinite", animationDelay: "2s" }}
+              >
+                <div className="flex items-center gap-2.5">
+                  <TrendingUp className="w-5 h-5 text-emerald-300" />
+                  <div>
+                    <p className="text-[12px] font-bold text-white">98% Close Rate</p>
+                    <p className="text-[10px] text-white/50">Industry-leading</p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </motion.div>
         </div>
       </div>
