@@ -36,29 +36,64 @@ function AnimatedCounter({ value, suffix, decimals = 0, active }: { value: numbe
 
 export const StatsSection = (): JSX.Element => {
   const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.4 });
+  const inView = useInView(ref, { once: true, amount: 0.3 });
 
   return (
-    <section ref={ref} className="relative py-14 lg:py-16 bg-white border-y border-gray-100/80">
-      <div className="max-w-[1200px] mx-auto px-6">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 lg:gap-0">
+    <section ref={ref} className="relative py-20 lg:py-24 bg-[#004733] overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-[200px] -right-[200px] w-[600px] h-[600px] rounded-full bg-[#05a270]/10 blur-3xl" />
+        <div className="absolute -bottom-[150px] -left-[150px] w-[500px] h-[500px] rounded-full bg-[#05a270]/[0.07] blur-3xl" />
+        <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="stats-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#stats-grid)" />
+        </svg>
+      </div>
+
+      <div className="max-w-[1320px] mx-auto px-6 relative">
+        <motion.div
+          className="text-center mb-14"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white/80 text-[13px] font-semibold tracking-wide mb-4">
+            <Target className="w-3.5 h-3.5" />
+            Proven Track Record
+          </span>
+          <h2 className="text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-extrabold text-white tracking-[-0.02em]">
+            Numbers That Speak
+          </h2>
+        </motion.div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 lg:gap-6">
           {stats.map((stat, i) => (
             <motion.div
               key={i}
-              className={`flex flex-col items-center text-center py-2 ${
-                i < stats.length - 1 ? "lg:border-r lg:border-gray-100" : ""
-              }`}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              className="relative group"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
+              transition={{ duration: 0.5, delay: i * 0.1, type: "spring", stiffness: 150 }}
               data-testid={`stat-${i}`}
             >
-              <stat.icon className="w-5 h-5 text-[#05a270] mb-2" />
-              <div className="text-[28px] md:text-[32px] font-extrabold text-[#004733] tracking-tight leading-none">
-                <AnimatedCounter value={stat.value} suffix={stat.suffix} decimals={stat.decimals} active={inView} />
+              <div className="bg-white/[0.08] backdrop-blur-sm rounded-2xl border border-white/10 p-6 lg:p-7 flex flex-col items-center text-center transition-all duration-300 group-hover:bg-white/[0.14] group-hover:border-white/20 group-hover:scale-[1.03]">
+                <motion.div
+                  className="w-12 h-12 rounded-xl bg-[#05a270]/20 flex items-center justify-center mb-4"
+                  whileHover={{ rotate: 8, scale: 1.1 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <stat.icon className="w-6 h-6 text-[#3be8a0]" />
+                </motion.div>
+                <div className="text-[36px] md:text-[40px] lg:text-[44px] font-extrabold text-white tracking-tight leading-none">
+                  <AnimatedCounter value={stat.value} suffix={stat.suffix} decimals={stat.decimals} active={inView} />
+                </div>
+                <p className="text-[13px] md:text-[14px] text-white/50 font-semibold mt-2 uppercase tracking-wider">{stat.label}</p>
               </div>
-              <p className="text-[12px] text-gray-400 font-semibold mt-1.5 uppercase tracking-wider">{stat.label}</p>
             </motion.div>
           ))}
         </div>
