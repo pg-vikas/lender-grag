@@ -13,6 +13,17 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 },
 };
 
+const pulseGlow = {
+  initial: { boxShadow: "0 0 0 0 rgba(5, 162, 112, 0.4)" },
+  animate: {
+    boxShadow: [
+      "0 0 0 0 rgba(5, 162, 112, 0.4)",
+      "0 0 0 12px rgba(5, 162, 112, 0)",
+      "0 0 0 0 rgba(5, 162, 112, 0)",
+    ],
+  },
+};
+
 export const HeroSection = (): JSX.Element => {
   return (
     <section className="relative min-h-screen flex items-end overflow-hidden">
@@ -20,18 +31,18 @@ export const HeroSection = (): JSX.Element => {
         <img
           src={gregPhoto}
           alt="Greg Wynn — Branch Manager & Loan Officer"
-          className="w-full h-full object-cover object-top"
+          className="w-full h-full object-cover object-[70%_top] lg:object-[65%_top]"
           data-testid="img-hero-greg"
         />
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-[#001a10] via-[#001a10]/70 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#001a10]/80 via-[#001a10]/30 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#001a10] via-[#001a10]/60 to-[#001a10]/10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#001a10]/75 via-[#001a10]/25 to-transparent" />
 
       <div className="relative w-full">
         <div className="max-w-[1320px] mx-auto px-6 pb-16 md:pb-20 lg:pb-24 pt-[40vh]">
           <motion.div
-            className="flex flex-col gap-6 max-w-[640px]"
+            className="flex flex-col gap-6 max-w-[580px]"
             initial="hidden"
             animate="visible"
             variants={stagger}
@@ -72,39 +83,80 @@ export const HeroSection = (): JSX.Element => {
               a process designed to keep you confident from pre-approval to keys.
             </motion.p>
 
-            <motion.div variants={fadeUp} transition={{ duration: 0.6 }} className="flex flex-wrap gap-3 pt-1">
+            <motion.div variants={fadeUp} transition={{ duration: 0.6 }} className="flex flex-wrap items-center gap-4 pt-2">
               <Link href="/apply">
-                <Button className="h-[52px] px-7 rounded-xl bg-[#05a270] hover:bg-[#04895e] text-white text-[15px] font-semibold shadow-lg shadow-black/30 gap-2.5 group transition-all duration-300 hover:shadow-xl" data-testid="button-hero-apply">
-                  Get Pre-Approved
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </Button>
+                <motion.div
+                  initial="initial"
+                  animate="animate"
+                  variants={pulseGlow}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                  className="rounded-2xl"
+                >
+                  <Button className="h-[64px] md:h-[72px] px-10 md:px-14 rounded-2xl bg-[#05a270] hover:bg-[#04895e] text-white text-[18px] md:text-[20px] font-bold shadow-xl shadow-[#05a270]/30 gap-3 group transition-all duration-300 hover:shadow-2xl hover:scale-[1.03] active:scale-[0.98]" data-testid="button-hero-apply">
+                    Get Pre-Approved
+                    <motion.span
+                      animate={{ x: [0, 4, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
+                    </motion.span>
+                  </Button>
+                </motion.div>
               </Link>
               <Link href="/tools">
-                <Button variant="ghost" className="h-[52px] px-7 rounded-xl text-white/90 text-[15px] font-semibold hover:bg-white/10 gap-2 group border border-white/15" data-testid="button-hero-calc">
-                  Calculate Payment
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </Button>
+                <motion.div
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Button variant="ghost" className="h-[56px] md:h-[60px] px-8 md:px-10 rounded-2xl text-white/90 text-[16px] md:text-[17px] font-semibold hover:bg-white/10 gap-2.5 group border border-white/20 backdrop-blur-sm transition-all duration-300 hover:border-white/40" data-testid="button-hero-calc">
+                    Calculate Payment
+                    <motion.span
+                      animate={{ x: [0, 3, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </motion.span>
+                  </Button>
+                </motion.div>
               </Link>
             </motion.div>
 
-            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="flex items-center gap-5 pt-2">
-              <div className="flex -space-x-2.5">
-                {["JM","KD","SR","BW"].map((initials, i) => (
-                  <div key={i} className="w-9 h-9 rounded-full border-[2.5px] border-[#001a10] bg-gradient-to-br from-[#05a270] to-[#004733] flex items-center justify-center text-white text-[10px] font-bold shadow-sm">
-                    {initials}
-                  </div>
-                ))}
-              </div>
-              <div className="h-8 w-px bg-white/20" />
-              <div>
-                <div className="flex items-center gap-0.5">
-                  {[1,2,3,4,5].map(i => (
-                    <Star key={i} className="w-[14px] h-[14px] fill-amber-400 text-amber-400" />
+            <motion.div
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="mt-2"
+            >
+              <motion.div
+                className="inline-flex items-center gap-5 bg-white/[0.08] backdrop-blur-xl rounded-2xl px-6 py-4 border border-white/10"
+                whileHover={{ backgroundColor: "rgba(255,255,255,0.12)" }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="flex -space-x-3">
+                  {["JM","KD","SR","BW","AL"].map((initials, i) => (
+                    <motion.div
+                      key={i}
+                      className="w-11 h-11 rounded-full border-[3px] border-[#001a10]/80 bg-gradient-to-br from-[#05a270] to-[#004733] flex items-center justify-center text-white text-[11px] font-bold shadow-lg"
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 1.2 + i * 0.08, type: "spring", stiffness: 300 }}
+                    >
+                      {initials}
+                    </motion.div>
                   ))}
-                  <span className="text-[13px] font-bold text-white ml-1.5">4.9</span>
                 </div>
-                <p className="text-[12px] text-white/40 mt-0.5">150+ reviews on Zillow</p>
-              </div>
+                <div className="h-10 w-px bg-white/15" />
+                <div>
+                  <div className="flex items-center gap-1">
+                    {[1,2,3,4,5].map(i => (
+                      <Star key={i} className="w-[18px] h-[18px] fill-amber-400 text-amber-400" />
+                    ))}
+                    <span className="text-[17px] font-extrabold text-white ml-2">4.9</span>
+                  </div>
+                  <p className="text-[14px] text-white/50 mt-1 font-medium">
+                    <span className="text-white/80 font-bold">150+</span> five-star reviews on Zillow
+                  </p>
+                </div>
+              </motion.div>
             </motion.div>
           </motion.div>
         </div>
