@@ -20,6 +20,9 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [location] = useLocation();
 
+  const isHome = location === "/";
+  const transparent = isHome && !scrolled;
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -50,10 +53,14 @@ export function Header() {
         <div className="max-w-[1320px] mx-auto px-6 flex items-center justify-between">
           <Link href="/" data-testid="link-home-logo">
             <div className="flex items-center gap-2.5 cursor-pointer group">
-              <div className="w-9 h-9 rounded-[10px] bg-[#004733] flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:shadow-[#004733]/20 transition-shadow">
+              <div className={`w-9 h-9 rounded-[10px] flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow ${
+                transparent ? "bg-white/15 backdrop-blur-sm group-hover:shadow-white/10" : "bg-[#004733] group-hover:shadow-[#004733]/20"
+              }`}>
                 <span className="text-white font-bold text-[14px] tracking-tight">LG</span>
               </div>
-              <span className="font-bold text-[18px] tracking-tight text-[#0c1a14]">
+              <span className={`font-bold text-[18px] tracking-tight transition-colors duration-300 ${
+                transparent ? "text-white" : "text-[#0c1a14]"
+              }`}>
                 Lender Greg
               </span>
             </div>
@@ -64,9 +71,13 @@ export function Header() {
               <Link key={link.href} href={link.href}>
                 <span
                   className={`px-3 py-1.5 rounded-lg text-[13px] font-medium cursor-pointer transition-all duration-200 ${
-                    location === link.href
-                      ? "text-[#004733] bg-[#004733]/[0.06]"
-                      : "text-gray-500 hover:text-[#004733] hover:bg-[#004733]/[0.04]"
+                    transparent
+                      ? location === link.href
+                        ? "text-white bg-white/15"
+                        : "text-white/70 hover:text-white hover:bg-white/10"
+                      : location === link.href
+                        ? "text-[#004733] bg-[#004733]/[0.06]"
+                        : "text-gray-500 hover:text-[#004733] hover:bg-[#004733]/[0.04]"
                   }`}
                 >
                   {link.label}
@@ -77,13 +88,21 @@ export function Header() {
 
           <div className="hidden xl:flex items-center gap-2.5">
             <Link href="/contact">
-              <Button variant="ghost" className="h-9 px-4 rounded-lg text-[13px] text-gray-600 hover:text-[#004733] font-medium gap-1.5 hover:bg-[#004733]/[0.04]" data-testid="button-book-call">
+              <Button variant="ghost" className={`h-9 px-4 rounded-lg text-[13px] font-medium gap-1.5 transition-colors duration-300 ${
+                transparent
+                  ? "text-white/80 hover:text-white hover:bg-white/10"
+                  : "text-gray-600 hover:text-[#004733] hover:bg-[#004733]/[0.04]"
+              }`} data-testid="button-book-call">
                 <Phone className="w-3.5 h-3.5" />
                 Book a Call
               </Button>
             </Link>
             <Link href="/apply">
-              <Button className="h-9 px-5 rounded-lg bg-[#004733] hover:bg-[#003525] text-white text-[13px] font-semibold shadow-sm gap-1.5 group transition-all duration-200" data-testid="button-get-preapproved">
+              <Button className={`h-9 px-5 rounded-lg text-[13px] font-semibold shadow-sm gap-1.5 group transition-all duration-200 ${
+                transparent
+                  ? "bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border border-white/20"
+                  : "bg-[#004733] hover:bg-[#003525] text-white"
+              }`} data-testid="button-get-preapproved">
                 Get Pre-Approved
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </Button>
@@ -91,12 +110,17 @@ export function Header() {
           </div>
 
           <button
-            className="xl:hidden w-9 h-9 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
+            className={`xl:hidden w-9 h-9 rounded-lg transition-colors flex items-center justify-center ${
+              transparent ? "hover:bg-white/10" : "hover:bg-gray-100"
+            }`}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
             data-testid="button-mobile-menu"
           >
-            {mobileOpen ? <X className="w-5 h-5 text-gray-700" /> : <Menu className="w-5 h-5 text-gray-700" />}
+            {mobileOpen
+              ? <X className="w-5 h-5 text-gray-700" />
+              : <Menu className={`w-5 h-5 ${transparent ? "text-white" : "text-gray-700"}`} />
+            }
           </button>
         </div>
       </motion.header>
