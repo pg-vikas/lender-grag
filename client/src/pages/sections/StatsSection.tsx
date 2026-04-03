@@ -39,60 +39,29 @@ export const StatsSection = (): JSX.Element => {
   const inView = useInView(ref, { once: true, amount: 0.3 });
 
   return (
-    <section ref={ref} className="relative py-20 lg:py-24 bg-[#004733] overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-[200px] -right-[200px] w-[600px] h-[600px] rounded-full bg-[#05a270]/10 blur-3xl" />
-        <div className="absolute -bottom-[150px] -left-[150px] w-[500px] h-[500px] rounded-full bg-[#05a270]/[0.07] blur-3xl" />
-        <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="stats-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#stats-grid)" />
-        </svg>
-      </div>
-
-      <div className="max-w-[1320px] mx-auto px-6 relative">
-        <motion.div
-          className="text-center mb-14"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white/80 text-[13px] font-semibold tracking-wide mb-4">
-            <Target className="w-3.5 h-3.5" />
-            Proven Track Record
-          </span>
-          <h2 className="text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-extrabold text-white tracking-[-0.02em]">
-            Numbers That Speak
-          </h2>
-        </motion.div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 lg:gap-6">
+    <section ref={ref} className="relative py-14 lg:py-16 bg-[#1a1a1a]">
+      <div className="max-w-[1320px] mx-auto px-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-5">
           {stats.map((stat, i) => (
             <motion.div
               key={i}
               className="relative group"
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              initial={{ opacity: 0, y: 24, scale: 0.95 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1, type: "spring", stiffness: 150 }}
+              transition={{ duration: 0.5, delay: i * 0.08, type: "spring", stiffness: 160 }}
               data-testid={`stat-${i}`}
             >
-              <div className="bg-white/[0.08] backdrop-blur-sm rounded-2xl border border-white/10 p-6 lg:p-7 flex flex-col items-center text-center transition-all duration-300 group-hover:bg-white/[0.14] group-hover:border-white/20 group-hover:scale-[1.03]">
-                <motion.div
-                  className="w-12 h-12 rounded-xl bg-[#05a270]/20 flex items-center justify-center mb-4"
-                  whileHover={{ rotate: 8, scale: 1.1 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <stat.icon className="w-6 h-6 text-[#3be8a0]" />
-                </motion.div>
-                <div className="text-[36px] md:text-[40px] lg:text-[44px] font-extrabold text-white tracking-tight leading-none">
+              <div className="relative rounded-xl overflow-hidden p-5 lg:p-6 flex flex-col items-center text-center bg-gradient-to-b from-[#d4a94c] via-[#c4953a] to-[#a07a2e] shadow-lg shadow-black/30 border border-[#e2c06e]/40 transition-transform duration-300 group-hover:scale-[1.04]">
+                <div className="absolute inset-[1px] rounded-[11px] bg-gradient-to-b from-[#f0d88a]/20 via-transparent to-black/15 pointer-events-none" />
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#f5e6b0]/60 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#8a6520]/60 to-transparent" />
+
+                <stat.icon className="w-5 h-5 text-[#1a1a1a]/60 mb-2.5 relative" />
+                <div className="text-[32px] md:text-[36px] lg:text-[40px] font-extrabold text-[#1a1a1a] tracking-tight leading-none relative drop-shadow-[0_1px_0_rgba(240,216,138,0.5)]">
                   <AnimatedCounter value={stat.value} suffix={stat.suffix} decimals={stat.decimals} active={inView} />
                 </div>
-                <p className="text-[13px] md:text-[14px] text-white/50 font-semibold mt-2 uppercase tracking-wider">{stat.label}</p>
+                <p className="text-[11px] md:text-[12px] text-[#1a1a1a]/50 font-bold mt-2 uppercase tracking-wider relative">{stat.label}</p>
               </div>
             </motion.div>
           ))}
