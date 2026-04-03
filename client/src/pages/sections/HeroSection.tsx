@@ -31,13 +31,13 @@ export const HeroSection = (): JSX.Element => {
         <img
           src={gregPhoto}
           alt="Greg Wynn — Branch Manager & Loan Officer"
-          className="w-full h-full object-cover object-[70%_top] lg:object-[65%_top]"
+          className="w-full h-full object-cover object-[80%_top] lg:object-[75%_top]"
           data-testid="img-hero-greg"
         />
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-[#001a10] via-[#001a10]/60 to-[#001a10]/10" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#001a10]/75 via-[#001a10]/25 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/5" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
 
       <div className="relative w-full">
         <div className="max-w-[1320px] mx-auto px-6 pb-16 md:pb-20 lg:pb-24 pt-[40vh]">
