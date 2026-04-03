@@ -1,129 +1,80 @@
-import { MailIcon, MapPinIcon, PhoneIcon } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
+import { Link } from "wouter";
 
-const quickLinks = [
-  "About Us",
-  "Contact Us",
-  "Blog",
-  "FAQ's",
-  "Privacy Policy",
-];
-
-const loanOptions = [
-  "Fixed Rate Mortgage",
-  "FHA Home Loan",
-  "VA Home Loan",
-  "Rehab Loan",
-  "USDA Loan",
-];
-
-const contactInfo = [
+const navCols = [
   {
-    icon: PhoneIcon,
-    text: "(619) 550-9885",
+    title: "Quick Links",
+    links: [
+      { label: "Home", href: "/" },
+      { label: "About Greg", href: "/about" },
+      { label: "Loan Options", href: "/loan-options" },
+      { label: "Mortgage Tools", href: "/tools" },
+    ],
   },
   {
-    icon: MailIcon,
-    text: "greg@maverickmtg.com",
-  },
-  {
-    icon: MapPinIcon,
-    text: "514 Via De La Valle Unit 202\nSolana Beach, CA 92075",
+    title: "Resources",
+    links: [
+      { label: "Reviews", href: "/reviews" },
+      { label: "Resources", href: "/resources" },
+      { label: "FAQ", href: "/faq" },
+      { label: "Contact", href: "/contact" },
+    ],
   },
 ];
-
-const legalLinks = ["Privacy Policy", "Terms of Service", "Disclaimer"];
 
 export const FooterSection = (): JSX.Element => {
   return (
-    <footer className="bg-[#024731] border-r border-b border-l border-[#ffffff3b] px-20 w-full min-h-screen snap-start snap-always flex flex-col justify-center">
-      <div className="max-w-[1380px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-[325.98px_1fr] gap-10 mb-10">
-          <div className="flex flex-col gap-6">
-            <img
-              className="h-[58.19px] w-auto"
-              alt="Company Logo"
-              src="/figmaAssets/container-5.svg"
-            />
-            <p className="[font-family:'DM_Sans',Helvetica] font-normal text-white text-base leading-6">
-              With almost 50 years combined experience in the mortgage business,
-              our professionals will mind all the details of your purchase or
-              refinance loan and our on-track closing times can&apos;t be beat.
+    <footer className="bg-[#0c1a14] text-white">
+      <div className="max-w-[1320px] mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+          <div className="lg:col-span-2">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-9 h-9 rounded-xl bg-[#004733] flex items-center justify-center">
+                <span className="text-white font-bold text-sm">LG</span>
+              </div>
+              <span className="font-bold text-lg">Lender Greg</span>
+            </div>
+            <p className="text-white/60 leading-relaxed max-w-[340px] mb-6 text-sm">
+              Smart mortgage strategy, responsive communication, and smoother closings. Serving families across San Diego and Southern California.
             </p>
-            <img
-              className="h-9 w-auto"
-              alt="Social Media Icons"
-              src="/figmaAssets/container-19.svg"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="flex flex-col gap-[25px]">
-              <h3 className="[font-family:'Figtree',Helvetica] font-bold text-white text-[22px] leading-[26.4px]">
-                Quick Links
-              </h3>
-              <nav className="flex flex-col gap-[17px]">
-                {quickLinks.map((link, index) => (
-                  <a
-                    key={index}
-                    href="#"
-                    className="[font-family:'DM_Sans',Helvetica] font-normal text-white text-base leading-6 hover:underline"
-                  >
-                    {link}
-                  </a>
-                ))}
-              </nav>
-            </div>
-
-            <div className="flex flex-col gap-[25px]">
-              <h3 className="[font-family:'Figtree',Helvetica] font-bold text-white text-[22px] leading-[26.4px]">
-                Loan Options
-              </h3>
-              <nav className="flex flex-col gap-[17px]">
-                {loanOptions.map((option, index) => (
-                  <a
-                    key={index}
-                    href="#"
-                    className="[font-family:'DM_Sans',Helvetica] font-normal text-white text-base leading-6 hover:underline"
-                  >
-                    {option}
-                  </a>
-                ))}
-              </nav>
-            </div>
-
-            <div className="flex flex-col gap-[25px]">
-              <h3 className="[font-family:'Figtree',Helvetica] font-bold text-white text-[22px] leading-[26.4px]">
-                Our Contact
-              </h3>
-              <div className="flex flex-col gap-[17px]">
-                {contactInfo.map((contact, index) => (
-                  <div key={index} className="flex items-start gap-2">
-                    <contact.icon className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                    <span className="[font-family:'DM_Sans',Helvetica] font-normal text-white text-base leading-6 whitespace-pre-line">
-                      {contact.text}
-                    </span>
-                  </div>
-                ))}
+            <div className="space-y-2.5">
+              <a href="tel:+16195551234" className="flex items-center gap-2.5 text-white/60 hover:text-white transition-colors text-sm">
+                <Phone className="w-4 h-4" /> (619) 555-1234
+              </a>
+              <a href="mailto:greg@lendergreg.com" className="flex items-center gap-2.5 text-white/60 hover:text-white transition-colors text-sm">
+                <Mail className="w-4 h-4" /> greg@lendergreg.com
+              </a>
+              <div className="flex items-start gap-2.5 text-white/60 text-sm">
+                <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" /> San Diego, CA
               </div>
             </div>
           </div>
+
+          {navCols.map((col, i) => (
+            <div key={i}>
+              <h4 className="font-semibold text-sm mb-4">{col.title}</h4>
+              <ul className="space-y-2.5">
+                {col.links.map((link, j) => (
+                  <li key={j}>
+                    <Link href={link.href}>
+                      <span className="text-white/60 hover:text-white transition-colors text-sm cursor-pointer">{link.label}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-[#fffefe1a] gap-4">
-          <p className="[font-family:'DM_Sans',Helvetica] font-medium text-[#fffefe99] text-sm leading-5">
-            © 2026 company. All rights reserved.
+        <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between gap-4">
+          <p className="text-white/40 text-xs">
+            © {new Date().getFullYear()} Lender Greg. All rights reserved. NMLS 276890. Equal Housing Lender.
           </p>
-          <nav className="flex items-center gap-6">
-            {legalLinks.map((link, index) => (
-              <a
-                key={index}
-                href="#"
-                className="[font-family:'DM_Sans',Helvetica] font-medium text-[#fffefe99] text-sm leading-5 hover:text-white"
-              >
-                {link}
-              </a>
-            ))}
-          </nav>
+          <div className="flex gap-6">
+            <a href="#" className="text-white/40 hover:text-white/60 transition-colors text-xs">Privacy Policy</a>
+            <a href="#" className="text-white/40 hover:text-white/60 transition-colors text-xs">Terms of Service</a>
+            <a href="#" className="text-white/40 hover:text-white/60 transition-colors text-xs">Disclaimer</a>
+          </div>
         </div>
       </div>
     </footer>

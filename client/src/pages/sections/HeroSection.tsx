@@ -1,156 +1,163 @@
-import { PhoneIcon } from "lucide-react";
+import { ArrowRight, Shield, Clock, TrendingUp, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+import { motion } from "framer-motion";
+import { Link } from "wouter";
 
-const navigationItems = [
-  { label: "Home", href: "#", active: true },
-  { label: "About Us", href: "#", hasDropdown: true },
-  { label: "Guide", href: "#" },
-  { label: "Calculator", href: "#" },
-  { label: "Pre-Qualify", href: "#" },
-  { label: "Loan Options", href: "#" },
+const floatingCards = [
+  { icon: Shield, label: "Pre-Approved in 24hrs", value: "Fast Track", delay: 0 },
+  { icon: Clock, label: "Avg. Close Time", value: "21 Days", delay: 0.8 },
+  { icon: TrendingUp, label: "Rate Lock", value: "Secured", delay: 1.6 },
+  { icon: Star, label: "Client Rating", value: "4.9/5", delay: 2.4 },
 ];
 
 export const HeroSection = (): JSX.Element => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-  const imageY = useTransform(scrollYProgress, [0, 1], [0, 80]);
-
   return (
-    <section ref={sectionRef} className="relative w-full h-screen min-h-screen snap-start snap-always overflow-hidden">
-      <div
-        className="absolute inset-0 animate-hero-gradient pointer-events-none"
-        style={{
-          background: "linear-gradient(135deg, #bcd9bf 0%, #93c290 25%, #a8d5a0 50%, #bcd9bf 75%, #93c290 100%)",
-          backgroundSize: "300% 300%",
-        }}
-      />
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-[#f0faf6] via-white to-[#e8f5ee]">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-[20%] w-[500px] h-[500px] rounded-full bg-[#004733]/5 blur-3xl animate-glow-pulse" />
+        <div className="absolute bottom-20 left-[10%] w-[400px] h-[400px] rounded-full bg-[#05a270]/5 blur-3xl animate-glow-pulse" style={{ animationDelay: "2s" }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border border-[#004733]/5" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-[#004733]/5" />
+      </div>
 
-      <motion.img
-        className="absolute right-0 bottom-0 w-full h-full object-cover"
-        alt="Gemini generated background"
-        src="/figmaAssets/gemini-generated-image-708wtb708wtb708w-1.png"
-        style={{ y: imageY }}
-      />
-
-      <div className="absolute left-0 bottom-[18%] w-full h-[80%] bg-[linear-gradient(180deg,rgba(188,217,191,1)_0%,rgba(147,194,144,0)_100%)]" />
-
-      <motion.img
-        className="absolute right-0 bottom-0 w-full h-full object-cover"
-        alt="Gemini generated overlay"
-        src="/figmaAssets/gemini-generated-image-708wtb708wtb708w-2.png"
-        style={{ y: imageY }}
-      />
-
-      <header className="flex w-full items-center px-[60px] py-2.5 absolute top-0 left-0 shadow-[0px_2px_28px_#00000017] z-10">
-        <div className="flex max-w-[1380px] items-center justify-between w-full mx-auto">
-          <img
-            className="w-[186.91px] h-[50px]"
-            alt="Company Logo"
-            src="/figmaAssets/frame-2.svg"
-          />
-
-          <NavigationMenu className="flex-1 mx-8">
-            <NavigationMenuList className="flex items-center justify-center gap-0">
-              {navigationItems.map((item, index) => (
-                <NavigationMenuItem key={index}>
-                  {item.hasDropdown ? (
-                    <>
-                      <NavigationMenuTrigger className="h-auto px-3 py-3.5 bg-transparent hover:bg-transparent data-[state=open]:bg-transparent [font-family:'Figtree',Helvetica] font-bold text-[#121212] text-base">
-                        {item.label}
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <div className="w-[200px] p-4">
-                          <NavigationMenuLink className="block p-2 hover:bg-accent rounded-md">
-                            Dropdown Item
-                          </NavigationMenuLink>
-                        </div>
-                      </NavigationMenuContent>
-                    </>
-                  ) : (
-                    <NavigationMenuLink
-                      href={item.href}
-                      className={`h-auto px-3 py-3.5 [font-family:'Figtree',Helvetica] font-bold text-base inline-flex items-center ${
-                        item.active
-                          ? "text-white underline"
-                          : "text-[#121212] hover:text-[#121212]/80"
-                      }`}
-                    >
-                      {item.label}
-                    </NavigationMenuLink>
-                  )}
-                </NavigationMenuItem>
-              ))}
-            </NavigationMenuList>
-          </NavigationMenu>
-
-          <Button className="h-auto bg-[#ffffff1a] hover:bg-[#ffffff3a] hover:scale-[1.05] rounded-lg border border-white backdrop-blur-[2.0px] backdrop-brightness-[110%] [-webkit-backdrop-filter:blur(2.0px)_brightness(110%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.13),inset_-1px_0_1px_rgba(0,0,0,0.11)] px-6 py-2.5 [font-family:'Figtree',Helvetica] font-bold text-[#004733] text-base transition-all duration-300">
-            Apply Now
-          </Button>
-        </div>
-      </header>
-
-      <div className="flex flex-col max-w-[540px] items-start gap-12 absolute top-[calc(50%_-_167px)] left-[100px] z-10">
-        <div className="flex flex-col items-start gap-5 w-full">
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className="[font-family:'Figtree',Helvetica] font-bold text-[#0c382b] text-[64px] leading-[79.4px]"
+      <div className="max-w-[1320px] mx-auto px-6 py-32 lg:py-0 w-full">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <motion.div
+            className="flex flex-col gap-8"
+            initial="hidden"
+            animate="visible"
+            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15 } } }}
           >
-            Let's Find You The Perfect Mortgage
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-            className="[font-family:'DM_Sans',Helvetica] font-semibold text-[#454545] text-lg leading-7"
-          >
-            Buying or refinancing doesn't have to feel overwhelming. Lender Greg
-            is loan officer that guides you through every step.
-          </motion.p>
-        </div>
-
-        <motion.div
-          className="flex items-center gap-5 w-full"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
-        >
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 15 }}>
-            <Button className="group h-[52px] bg-[#004733] hover:bg-[#004733]/90 hover:shadow-lg rounded-lg px-[38px] py-2 [font-family:'Figtree',Helvetica] font-bold text-white text-lg gap-2 transition-all duration-300">
-              Apply Now
-              <img
-                className="w-5 h-5 brightness-0 invert transition-transform duration-300 group-hover:translate-x-1"
-                alt="Arrow icon"
-                src="/figmaAssets/container.svg"
-              />
-            </Button>
-          </motion.div>
-
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 15 }}>
-            <Button
-              variant="secondary"
-              className="group h-[52px] bg-white hover:bg-white/90 hover:shadow-lg rounded-lg px-[38px] py-2 [font-family:'Figtree',Helvetica] font-bold text-[#004733] text-lg gap-2 transition-all duration-300"
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
             >
-              Book A Call
-              <PhoneIcon className="w-5 h-5 transition-transform duration-300 group-hover:rotate-[15deg] group-hover:scale-110" />
-            </Button>
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#004733]/10 text-[#004733] text-sm font-semibold mb-4">
+                <Star className="w-3.5 h-3.5 fill-[#004733]" />
+                Trusted by 500+ Families
+              </span>
+            </motion.div>
+
+            <motion.h1
+              variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="text-5xl md:text-6xl lg:text-[68px] font-bold text-[#0c1a14] leading-[1.1] tracking-tight"
+              data-testid="text-hero-headline"
+            >
+              Smart Mortgage
+              <br />
+              <span className="text-[#004733]">Strategy,</span> Built
+              <br />
+              Around You
+            </motion.h1>
+
+            <motion.p
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="text-lg text-gray-600 max-w-[480px] leading-relaxed"
+            >
+              Confident home financing backed by clear communication, 
+              fast execution, and a strategy that puts your goals first.
+            </motion.p>
+
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="flex flex-wrap gap-4"
+            >
+              <Link href="/apply">
+                <Button className="h-14 px-8 rounded-2xl bg-[#004733] hover:bg-[#003626] text-white text-lg font-semibold shadow-xl shadow-[#004733]/25 gap-2 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]" data-testid="button-hero-apply">
+                  Get Pre-Approved
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
+              <Link href="/contact">
+                <Button variant="outline" className="h-14 px-8 rounded-2xl border-2 border-[#004733]/20 text-[#004733] text-lg font-semibold hover:bg-[#004733]/5 transition-all duration-300" data-testid="button-hero-call">
+                  Book a Free Call
+                </Button>
+              </Link>
+            </motion.div>
+
+            <motion.div
+              variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+              transition={{ duration: 0.6 }}
+              className="flex items-center gap-6 pt-4"
+            >
+              <div className="flex -space-x-3">
+                {[1,2,3,4].map(i => (
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-[#004733] to-[#05a270] flex items-center justify-center text-white text-xs font-bold">
+                    {String.fromCharCode(64 + i)}
+                  </div>
+                ))}
+              </div>
+              <div>
+                <div className="flex items-center gap-1">
+                  {[1,2,3,4,5].map(i => (
+                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <p className="text-sm text-gray-500 mt-0.5">150+ five-star reviews on Zillow</p>
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
+
+          <div className="relative hidden lg:block h-[560px]">
+            {floatingCards.map((card, i) => {
+              const positions = [
+                "top-0 right-0",
+                "top-[180px] right-[220px]",
+                "bottom-[100px] right-[40px]",
+                "bottom-0 left-0",
+              ];
+              return (
+                <motion.div
+                  key={i}
+                  className={`absolute ${positions[i]} w-[240px]`}
+                  initial={{ opacity: 0, y: 40, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 + i * 0.15 }}
+                >
+                  <div
+                    className="bg-white/80 backdrop-blur-xl rounded-2xl p-5 shadow-lg border border-white/60 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                    style={{ animation: `float-slow ${6 + i}s ease-in-out infinite`, animationDelay: `${card.delay}s` }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-xl bg-[#004733]/10 flex items-center justify-center">
+                        <card.icon className="w-5 h-5 text-[#004733]" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium">{card.label}</p>
+                        <p className="text-lg font-bold text-[#004733]">{card.value}</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+
+            <motion.div
+              className="absolute top-[60px] left-[20px] w-[280px]"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+            >
+              <div className="bg-gradient-to-br from-[#004733] to-[#05a270] rounded-2xl p-6 text-white shadow-2xl shadow-[#004733]/30">
+                <p className="text-sm font-medium opacity-80 mb-1">Estimated Payment</p>
+                <p className="text-3xl font-bold">$2,847</p>
+                <p className="text-xs opacity-60 mt-1">Based on $450K · 30yr · 6.5%</p>
+                <div className="mt-4 w-full bg-white/20 rounded-full h-2">
+                  <motion.div
+                    className="bg-white rounded-full h-2"
+                    initial={{ width: 0 }}
+                    animate={{ width: "72%" }}
+                    transition={{ duration: 1.5, delay: 1.2, ease: "easeOut" }}
+                  />
+                </div>
+                <p className="text-xs opacity-60 mt-1">Debt-to-income: 32%</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

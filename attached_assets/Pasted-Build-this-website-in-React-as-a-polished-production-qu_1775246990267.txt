@@ -1,0 +1,483 @@
+Build this website in React as a polished, production quality, premium lender website for Lender Greg.
+
+Use a modern frontend architecture with reusable components, clean section composition, smooth animations, and responsive design. The final result should feel like a high end agency built it, not a mortgage template.
+
+STACK AND TECHNICAL DIRECTION
+
+Use:
+- React
+- Tailwind CSS
+- Framer Motion
+- Lucide React icons
+- Clean component based architecture
+- Modular section files
+- Reusable UI primitives where appropriate
+
+The site should be built with strong visual quality, excellent spacing, refined typography, and smooth motion. Keep the code organized, scalable, and easy to edit.
+
+DESIGN SYSTEM DIRECTION
+
+Style direction:
+- Bold, modern, premium, high contrast
+- Dark or deep neutral base with a strong accent color
+- Large typography
+- Strong visual hierarchy
+- Rounded cards
+- Subtle gradients
+- Soft glow effects
+- Layered backgrounds
+- Premium hover states
+- Glassmorphism only if tasteful
+- No cheap stock site feeling
+- No dull bank website feeling
+
+Create a site that feels:
+- Confident
+- Elegant
+- Dynamic
+- Professional
+- High conversion
+- Trustworthy
+
+GLOBAL REQUIREMENTS
+
+- Fully responsive
+- Mobile first behavior
+- Sticky animated header
+- Smooth scroll experience
+- Section reveal animations
+- Reusable CTA buttons
+- Reusable card components
+- Clean layout container system
+- Good performance despite motion
+- Clear component naming
+- Placeholder content structured for easy replacement later
+- Accessibility mindful
+- No broken layouts on mobile
+
+SITE STRUCTURE
+
+Create these pages and routes:
+- /
+- /about
+- /loan-options
+- /tools
+- /reviews
+- /resources
+- /faq
+- /contact
+- /apply
+
+If building all pages is too much in one pass, fully build the homepage first but scaffold the others cleanly with strong hero sections and structure placeholders.
+
+COMPONENT ARCHITECTURE
+
+Create reusable components such as:
+- Header
+- MobileMenu
+- Footer
+- HeroSection
+- SectionHeading
+- CTAButton
+- StatsStrip
+- FeatureCard
+- LoanOptionCard
+- CalculatorCard
+- TestimonialCard
+- FAQAccordion
+- TimelineStep
+- ResourceCard
+- ContactForm
+- FinalCTA
+- PageHero
+- AnimatedBackground
+- SectionWrapper
+
+HOMEPAGE BUILD REQUIREMENTS
+
+Build the homepage with these sections in this order:
+
+1. Header
+2. Hero
+3. Trust Stats Strip
+4. Why Work With Greg
+5. Loan Options Overview
+6. Mortgage Tools
+7. Process Timeline
+8. Reviews
+9. About Greg Preview
+10. Resources Preview
+11. FAQ Preview
+12. Final CTA
+13. Footer
+
+HEADER
+
+Build a sticky header with:
+- Logo on left
+- Main nav links
+- CTA buttons on right
+- Mobile menu
+- Header shrinks or slightly changes style on scroll
+- Smooth transition on scroll state change
+
+Nav links:
+- Home
+- About Greg
+- Loan Options
+- Mortgage Tools
+- Reviews
+- Resources
+- FAQ
+- Contact
+
+CTA buttons:
+- Get Pre Approved
+- Book a Call
+
+On mobile:
+- Hamburger opens full screen or panel menu
+- Include nav links and primary CTA
+- Smooth animated entrance and exit
+
+HERO SECTION
+
+Build a visually powerful hero section.
+
+Must include:
+- Large bold headline
+- Supporting subheadline
+- Primary CTA
+- Secondary CTA
+- Animated trust metrics
+- Premium lender themed visual system
+- Floating cards or dashboard style mini elements
+- Optional small mortgage payment teaser module
+
+Hero layout:
+- Left side content
+- Right side visual composition or interactive cards
+- On mobile stack cleanly
+
+Hero animation ideas:
+- Initial staggered text reveal
+- Floating cards with slow movement
+- Mouse reactive background shapes
+- Gradient glow movement
+- Subtle parallax scroll effect
+
+Example placeholder elements:
+- “Closed in as little as 21 days”
+- “Trusted by hundreds of buyers”
+- “Fast communication”
+- “Smart lending strategy”
+
+TRUST STATS STRIP
+
+Build a horizontal stats section below hero.
+
+Include 4 to 6 animated counters with labels like:
+- Families Helped
+- Loans Closed
+- Avg Response Speed
+- Years Experience
+- Closing Success
+- Client Satisfaction
+
+Use count up animation on load or when scrolled into view.
+Style it as a premium strip with subtle borders, soft gradients, or translucent panels.
+
+WHY WORK WITH GREG
+
+Build a section using feature cards.
+
+Include 4 to 6 cards.
+Each card should have:
+- Icon
+- Strong title
+- 2 to 3 lines of explanatory copy
+
+Suggested points:
+- Fast communication
+- Clear loan strategy
+- Smooth closings
+- Honest guidance
+- Problem solving mindset
+- Buyer education
+
+Interaction:
+- Hover lift
+- Border glow or background shift
+- Slight tilt or motion response if tasteful
+
+LOAN OPTIONS OVERVIEW
+
+Build a section of responsive cards for:
+- Conventional
+- FHA
+- VA
+- Jumbo
+- First Time Buyer
+- Refinance
+- Investment Property
+
+Each card should include:
+- Loan title
+- 1 line summary
+- Small bullet style benefit list
+- Learn more CTA
+
+Design:
+- Premium card grid
+- Strong icons or subtle visual markers
+- Hover animation
+- Clean spacing
+
+Optional:
+- Allow cards to expand slightly on hover
+- Add mini comparison cue such as best for, low down payment, flexible, premium property, etc.
+
+MORTGAGE TOOLS SECTION
+
+This section must feel useful and custom.
+
+Create cards or modules for:
+- Monthly Payment Calculator
+- Affordability Calculator
+- Refinance Savings Estimator
+- Down Payment Scenario Tool
+
+At least one calculator should be functional on the homepage.
+Use React state and inputs with live updating values.
+Make the UI feel premium and integrated with the site.
+
+For example the monthly payment calculator can include:
+- Home price
+- Down payment
+- Interest rate
+- Loan term
+- Estimated monthly payment output
+
+Animate number changes smoothly.
+Add a breakdown area if possible:
+- Principal and interest
+- Taxes estimate
+- Insurance estimate
+
+Do not use ugly default form styling.
+Inputs should feel polished.
+
+PROCESS TIMELINE
+
+Build a mortgage process section with 5 to 6 steps.
+
+Suggested steps:
+1. Intro Call
+2. Pre Approval
+3. Home Search
+4. Offer and Docs
+5. Underwriting
+6. Closing
+
+Design ideas:
+- Horizontal timeline on desktop
+- Vertical timeline on mobile
+- Animated progress line
+- Each step appears on scroll
+- Icons or numbered nodes
+- Brief reassuring text per step
+
+This section should reduce anxiety and increase clarity.
+
+REVIEWS SECTION
+
+Build a premium testimonial section.
+
+Include:
+- 3 to 6 testimonial cards
+- Carousel or grid
+- Featured quote styling
+- Optional star indicators handled tastefully
+- Space for client names and scenarios
+
+Animation:
+- Staggered card reveals
+- Smooth carousel transitions if carousel is used
+- Hover emphasis
+
+Do not make it feel spammy or overly salesy.
+Make it elegant and believable.
+
+ABOUT GREG PREVIEW
+
+Build a homepage preview section for Greg.
+
+Include:
+- Headshot placeholder
+- Short bio
+- 3 trust bullets or principles
+- CTA to full About page
+
+Tone:
+- Professional
+- Smart
+- Trustworthy
+- Human without becoming casual
+
+Potential bullets:
+- Strategic financing guidance
+- Clear communication throughout the process
+- Focused on smooth closings and strong outcomes
+
+RESOURCES PREVIEW
+
+Build a section previewing educational content.
+
+Include resource cards like:
+- First Time Buyer Guide
+- Pre Approval Checklist
+- How Much House Can I Afford
+- What Documents Do I Need
+- Mortgage Mistakes to Avoid
+
+These can be article cards or guide download cards.
+Use a responsive grid with consistent design.
+Add subtle hover motion.
+
+FAQ PREVIEW
+
+Build an accordion FAQ section with at least 6 questions.
+
+Questions can include:
+- How long does pre approval take
+- What credit score do I need
+- How much do I need for a down payment
+- When should I talk to a lender
+- How fast can we close
+- What documents are required
+
+Use smooth height animations and polished accordion interactions.
+
+FINAL CTA
+
+Create a strong end of page CTA section.
+
+Include:
+- Bold closing headline
+- Short reassurance paragraph
+- Primary button for Get Pre Approved
+- Secondary button for Book a Call
+- Optional simple mini form or lead capture layout
+
+This section should feel visually strong and conversion focused.
+
+FOOTER
+
+Build a premium footer with:
+- Logo
+- Contact info
+- Email
+- Phone
+- Nav links
+- Service area placeholder
+- Social links
+- Licensing placeholder
+- Legal links
+
+Keep it clean and structured.
+
+ANIMATION SYSTEM
+
+Use Framer Motion throughout with restraint and quality.
+
+Required animation types:
+- Fade and upward reveal on scroll
+- Staggered child animations
+- Hover transitions
+- Floating background elements
+- Animated counters
+- Accordion motion
+- Button micro interactions
+- Header transition on scroll
+- Timeline reveal animations
+- Calculator number change smoothing
+
+Optional:
+- Parallax section backgrounds
+- Mouse reactive hero elements
+- Animated glow blobs
+- Subtle moving grid or line backgrounds
+
+Performance matters.
+Do not overload the page with heavy effects.
+Use elegant motion, not chaos.
+
+RESPONSIVE DESIGN RULES
+
+Desktop:
+- Rich layouts
+- Multi column sections
+- Large hero composition
+- Horizontal timeline if clean
+
+Tablet:
+- Preserve hierarchy
+- Reduce complexity slightly
+- Keep CTA visibility strong
+
+Mobile:
+- Stack sections cleanly
+- Keep spacing generous
+- Sticky CTA bar is a plus
+- Calculator inputs should remain easy to use
+- Navigation should be very polished
+- Buttons must remain thumb friendly
+
+COPY PLACEHOLDERS
+
+Use premium placeholder copy that sounds like a real lender website, not lorem ipsum.
+Write concise, persuasive placeholder text for each section that can later be swapped with Greg’s real content.
+
+Examples of tone:
+- Confident home financing, built on clarity and execution
+- Lending guidance that helps you move with confidence
+- Smart loan strategy, responsive communication, smoother closings
+- Explore options, understand your numbers, and get pre approved with confidence
+
+DO NOT:
+- Use cheesy mortgage cliches
+- Use fake looking overhyped marketing lines
+- Use bland template phrasing
+- Overcrowd sections with text
+
+VISUAL ENHANCEMENTS
+
+Use tasteful premium visuals such as:
+- Abstract housing or map inspired patterns
+- Dashboard style UI cards
+- Mortgage metric mini cards
+- Gradient glows
+- Soft grid overlays
+- Elegant dividers
+- Icon driven trust highlights
+
+If using background graphics, keep them subtle and premium.
+
+CODE QUALITY
+
+- Organize files logically
+- Keep components reusable
+- Avoid giant monolithic files when possible
+- Use clean props
+- Keep styling consistent
+- Keep animations maintainable
+- Build for future editing
+
+FINAL STANDARD
+
+The finished product should feel like:
+A premium agency website for an elite lender with strong trust, real utility, modern motion, and clear conversion paths.
+
+It should be strong enough that average lender websites look dated and weak next to it.
+
+Now build the homepage and scaffold the rest of the site cleanly.

@@ -1,22 +1,32 @@
-import { FooterSection } from "./sections/FooterSection";
+import { Header } from "@/components/Header";
 import { HeroSection } from "./sections/HeroSection";
-import { LoanJourneySection } from "./sections/LoanJourneySection";
-import { LoanJourneyWrapperSection } from "./sections/LoanJourneyWrapperSection";
-import { SolutionsStageSection } from "./sections/SolutionsStageSection";
-import { SolutionsWrapperSection } from "./sections/SolutionsWrapperSection";
-import { TestimonialsSection } from "./sections/TestimonialsSection";
-import { TestimonialsWrapperSection } from "./sections/TestimonialsWrapperSection";
+import { StatsSection } from "./sections/StatsSection";
+import { WhyGregSection } from "./sections/WhyGregSection";
+import { LoanOptionsSection } from "./sections/LoanOptionsSection";
+import { CalculatorSection } from "./sections/CalculatorSection";
+import { ProcessSection } from "./sections/ProcessSection";
+import { ReviewsSection } from "./sections/ReviewsSection";
+import { AboutPreviewSection } from "./sections/AboutPreviewSection";
+import { ResourcesSection } from "./sections/ResourcesSection";
+import { FAQSection } from "./sections/FAQSection";
+import { FinalCTASection } from "./sections/FinalCTASection";
+import { FooterSection } from "./sections/FooterSection";
 
 export const HomeScreen = (): JSX.Element => {
   return (
-    <div className="h-screen overflow-y-auto snap-y snap-mandatory">
+    <div className="min-h-screen">
+      <Header />
       <HeroSection />
-      <TestimonialsSection />
-      <TestimonialsWrapperSection />
-      <SolutionsStageSection />
-      <SolutionsWrapperSection />
-      <LoanJourneySection />
-      <LoanJourneyWrapperSection />
+      <StatsSection />
+      <WhyGregSection />
+      <LoanOptionsSection />
+      <CalculatorSection />
+      <ProcessSection />
+      <ReviewsSection />
+      <AboutPreviewSection />
+      <ResourcesSection />
+      <FAQSection />
+      <FinalCTASection />
       <FooterSection />
     </div>
   );
