@@ -31,7 +31,7 @@ export const HeroSection = (): JSX.Element => {
         <img
           src={gregPhoto}
           alt="Greg Wynn — Branch Manager & Loan Officer"
-          className="w-full h-full object-cover object-[80%_top] lg:object-[75%_top]"
+          className="w-full h-full object-cover object-[95%_top] lg:object-right-top"
           data-testid="img-hero-greg"
         />
       </div>
