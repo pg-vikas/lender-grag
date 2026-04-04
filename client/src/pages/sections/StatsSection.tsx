@@ -12,14 +12,16 @@ const stats = [
 ];
 
 const streaks = [
-  { top: "18%", duration: 4, delay: 0, width: 120, opacity: 0.12 },
-  { top: "35%", duration: 3.2, delay: 1.5, width: 180, opacity: 0.08 },
-  { top: "52%", duration: 5, delay: 0.8, width: 100, opacity: 0.1 },
-  { top: "70%", duration: 3.8, delay: 2.2, width: 150, opacity: 0.06 },
-  { top: "85%", duration: 4.5, delay: 0.3, width: 130, opacity: 0.09 },
-  { top: "10%", duration: 6, delay: 3, width: 200, opacity: 0.05 },
-  { top: "42%", duration: 3.5, delay: 1, width: 90, opacity: 0.11 },
-  { top: "62%", duration: 4.2, delay: 2.8, width: 160, opacity: 0.07 },
+  { top: "15%", duration: 3.5, delay: 0, width: 200, opacity: 0.45 },
+  { top: "30%", duration: 2.8, delay: 1.2, width: 280, opacity: 0.35 },
+  { top: "50%", duration: 4, delay: 0.5, width: 160, opacity: 0.4 },
+  { top: "68%", duration: 3.2, delay: 2, width: 240, opacity: 0.3 },
+  { top: "82%", duration: 4.2, delay: 0.2, width: 220, opacity: 0.35 },
+  { top: "8%", duration: 5, delay: 2.5, width: 300, opacity: 0.25 },
+  { top: "40%", duration: 3, delay: 0.8, width: 180, opacity: 0.4 },
+  { top: "60%", duration: 3.6, delay: 1.8, width: 260, opacity: 0.3 },
+  { top: "22%", duration: 4.5, delay: 3.2, width: 150, opacity: 0.35 },
+  { top: "75%", duration: 2.5, delay: 0.6, width: 320, opacity: 0.25 },
 ];
 
 function AnimatedCounter({ value, suffix, decimals = 0, active }: { value: number; suffix: string; decimals?: number; active: boolean }) {
@@ -73,7 +75,7 @@ export const StatsSection = (): JSX.Element => {
         ))}
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#d4a94c]/[0.03] to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#d4a94c]/[0.04] via-[#d4a94c]/[0.08] to-[#d4a94c]/[0.04] pointer-events-none" />
 
       <div className="max-w-[1320px] mx-auto px-6 relative">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-5">
