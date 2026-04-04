@@ -17,134 +17,318 @@ const bullets = [
   "Focused on smooth closings and strong outcomes",
 ];
 
-function draw(delay: number, duration = 1.2) {
-  return {
-    hidden: { pathLength: 0, opacity: 0 },
-    visible: { pathLength: 1, opacity: 1, transition: { pathLength: { delay, duration, ease: "easeInOut" }, opacity: { delay, duration: 0.2 } } },
-  };
-}
+const D = (delay: number, duration = 1.4) => ({
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      pathLength: { delay, duration, ease: [0.25, 0.1, 0.25, 1] },
+      opacity: { delay, duration: 0.15 },
+    },
+  },
+});
 
-function fade(delay: number, duration = 0.6) {
-  return {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { delay, duration, ease: "easeOut" } },
-  };
-}
+const F = (delay: number, duration = 0.8) => ({
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { delay, duration, ease: "easeOut" } },
+});
 
-function rise(delay: number) {
-  return {
-    hidden: { opacity: 0, y: 20, scaleY: 0 },
-    visible: { opacity: 1, y: 0, scaleY: 1, transition: { delay, duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
-  };
+function BlueprintGrid() {
+  const lines = [];
+  for (let x = 60; x <= 940; x += 40) {
+    lines.push(
+      <motion.line
+        key={`gv-${x}`}
+        x1={x} y1={50} x2={x} y2={550}
+        stroke="#d4a94c"
+        strokeWidth="0.15"
+        variants={F(0, 1.5)}
+        style={{ opacity: 0.12 }}
+      />
+    );
+  }
+  for (let y = 50; y <= 550; y += 40) {
+    lines.push(
+      <motion.line
+        key={`gh-${y}`}
+        x1={60} y1={y} x2={940} y2={y}
+        stroke="#d4a94c"
+        strokeWidth="0.15"
+        variants={F(0, 1.5)}
+        style={{ opacity: 0.12 }}
+      />
+    );
+  }
+  return <g>{lines}</g>;
 }
 
 function HouseBuildAnimation({ inView }: { inView: boolean }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
       <motion.svg
-        viewBox="0 0 800 600"
-        className="w-full h-full max-w-[900px] opacity-[0.12]"
+        viewBox="0 0 1000 600"
+        className="w-full h-full max-w-[1100px] opacity-[0.18]"
+        preserveAspectRatio="xMidYMid meet"
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <linearGradient id="house-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="gold-h" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#c4953a" />
+            <stop offset="50%" stopColor="#f0d88a" />
+            <stop offset="100%" stopColor="#c4953a" />
+          </linearGradient>
+          <linearGradient id="gold-v" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#f0d88a" />
+            <stop offset="100%" stopColor="#c4953a" />
+          </linearGradient>
+          <linearGradient id="gold-d" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#d4a94c" />
             <stop offset="100%" stopColor="#f0d88a" />
           </linearGradient>
-          <filter id="house-blur">
+          <radialGradient id="gold-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#f0d88a" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="#d4a94c" stopOpacity="0" />
+          </radialGradient>
+          <filter id="soft-glow">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+          <filter id="wide-glow">
+            <feGaussianBlur stdDeviation="8" />
+          </filter>
+          <filter id="line-glow">
             <feGaussianBlur stdDeviation="1.5" />
           </filter>
         </defs>
 
-        <motion.line x1="100" y1="450" x2="700" y2="450" stroke="url(#house-glow)" strokeWidth="2" variants={draw(0, 0.8)} />
-        <motion.line x1="80" y1="450" x2="720" y2="450" stroke="url(#house-glow)" strokeWidth="0.5" strokeDasharray="4,8" variants={draw(0.1, 0.6)} />
+        <BlueprintGrid />
 
-        <motion.rect x="160" y="440" width="480" height="10" rx="2" fill="#d4a94c" variants={fade(0.5)} style={{ originY: 1 }} />
+        <g>
+          <motion.line x1="180" y1="460" x2="820" y2="460" stroke="url(#gold-h)" strokeWidth="2.5" variants={D(0.3, 1.0)} />
+          <motion.line x1="160" y1="462" x2="840" y2="462" stroke="#d4a94c" strokeWidth="0.4" strokeDasharray="2,6" variants={D(0.4, 0.8)} />
+          <motion.line x1="160" y1="465" x2="840" y2="465" stroke="#d4a94c" strokeWidth="0.3" variants={D(0.5, 0.6)} />
 
-        <motion.line x1="200" y1="440" x2="200" y2="280" stroke="url(#house-glow)" strokeWidth="1.5" variants={draw(1.0, 0.7)} />
-        <motion.line x1="600" y1="440" x2="600" y2="280" stroke="url(#house-glow)" strokeWidth="1.5" variants={draw(1.1, 0.7)} />
-        <motion.line x1="200" y1="280" x2="600" y2="280" stroke="url(#house-glow)" strokeWidth="1.5" variants={draw(1.3, 0.6)} />
+          {[200, 280, 360, 440, 520, 600, 680, 760].map((x, i) => (
+            <motion.line key={`ft-${i}`} x1={x} y1="460" x2={x} y2="456" stroke="#d4a94c" strokeWidth="0.5" variants={F(0.6 + i * 0.03)} />
+          ))}
+        </g>
 
-        <motion.line x1="300" y1="440" x2="300" y2="280" stroke="url(#house-glow)" strokeWidth="0.8" variants={draw(1.4, 0.5)} />
-        <motion.line x1="400" y1="440" x2="400" y2="280" stroke="url(#house-glow)" strokeWidth="0.8" variants={draw(1.5, 0.5)} />
-        <motion.line x1="500" y1="440" x2="500" y2="280" stroke="url(#house-glow)" strokeWidth="0.8" variants={draw(1.6, 0.5)} />
+        <g>
+          <motion.rect x="200" y="450" width="560" height="10" rx="1" fill="none" stroke="url(#gold-h)" strokeWidth="1.2" variants={D(0.8, 0.8)} />
+          <motion.rect x="200" y="450" width="560" height="10" rx="1" fill="#d4a94c" variants={F(1.0)} style={{ opacity: 0.06 }} />
 
-        <motion.line x1="200" y1="360" x2="600" y2="360" stroke="url(#house-glow)" strokeWidth="0.8" variants={draw(1.7, 0.5)} />
+          <motion.rect x="610" y="430" width="150" height="20" rx="1" fill="none" stroke="url(#gold-h)" strokeWidth="1" variants={D(0.9, 0.8)} />
+          <motion.rect x="610" y="430" width="150" height="20" rx="1" fill="#d4a94c" variants={F(1.1)} style={{ opacity: 0.04 }} />
+        </g>
 
-        <motion.rect x="200" y="280" width="400" height="160" rx="0" fill="#d4a94c" variants={fade(2.0, 0.8)} style={{ opacity: 0.06 }} />
+        <g>
+          {[
+            { x: 210, y1: 450, y2: 290 },
+            { x: 290, y1: 450, y2: 290 },
+            { x: 370, y1: 450, y2: 290 },
+            { x: 450, y1: 450, y2: 290 },
+            { x: 530, y1: 450, y2: 290 },
+            { x: 600, y1: 430, y2: 290 },
+            { x: 680, y1: 430, y2: 290 },
+            { x: 750, y1: 430, y2: 290 },
+          ].map((s, i) => (
+            <motion.line
+              key={`stud-${i}`}
+              x1={s.x} y1={s.y1} x2={s.x} y2={s.y2}
+              stroke="url(#gold-v)"
+              strokeWidth={i === 0 || i === 4 || i === 5 || i === 7 ? "1.8" : "0.8"}
+              variants={D(1.3 + i * 0.08, 0.9)}
+            />
+          ))}
 
-        <motion.rect x="210" y="280" width="180" height="160" rx="0" fill="#d4a94c" variants={rise(2.2)} style={{ opacity: 0.04, originY: 1, transformOrigin: "center bottom" }} />
-        <motion.rect x="410" y="280" width="180" height="160" rx="0" fill="#f0d88a" variants={rise(2.4)} style={{ opacity: 0.04, originY: 1, transformOrigin: "center bottom" }} />
+          <motion.line x1="200" y1="370" x2="540" y2="370" stroke="#d4a94c" strokeWidth="0.5" strokeDasharray="4,4" variants={D(1.9, 0.6)} />
+          <motion.line x1="600" y1="370" x2="760" y2="370" stroke="#d4a94c" strokeWidth="0.5" strokeDasharray="4,4" variants={D(2.0, 0.6)} />
 
-        <motion.path d="M 170 280 L 400 160 L 630 280 Z" fill="none" stroke="url(#house-glow)" strokeWidth="2" variants={draw(2.8, 1.0)} />
+          <motion.line x1="200" y1="290" x2="540" y2="290" stroke="url(#gold-h)" strokeWidth="1.8" variants={D(2.1, 0.7)} />
+          <motion.line x1="600" y1="290" x2="760" y2="290" stroke="url(#gold-h)" strokeWidth="1.8" variants={D(2.2, 0.7)} />
+        </g>
 
-        <motion.line x1="400" y1="280" x2="400" y2="160" stroke="url(#house-glow)" strokeWidth="1" variants={draw(3.0, 0.5)} />
-        <motion.line x1="285" y1="240" x2="515" y2="240" stroke="url(#house-glow)" strokeWidth="0.6" strokeDasharray="3,6" variants={draw(3.2, 0.5)} />
+        <g>
+          <motion.rect x="200" y="290" width="340" height="160" fill="#d4a94c" variants={F(2.5, 1.2)} style={{ opacity: 0.035 }} />
+          <motion.rect x="600" y="290" width="160" height="140" fill="#c4953a" variants={F(2.6, 1.2)} style={{ opacity: 0.03 }} />
 
-        <motion.path d="M 170 280 L 400 160 L 630 280 Z" fill="#d4a94c" variants={fade(3.5, 0.8)} style={{ opacity: 0.05 }} />
+          <motion.rect x="200" y="290" width="340" height="160" rx="0" fill="none" stroke="url(#gold-h)" strokeWidth="1.4" variants={D(2.4, 1.0)} />
+          <motion.rect x="600" y="290" width="160" height="140" rx="0" fill="none" stroke="url(#gold-h)" strokeWidth="1.2" variants={D(2.5, 1.0)} />
 
-        <motion.rect x="250" y="310" width="50" height="50" rx="3" fill="none" stroke="url(#house-glow)" strokeWidth="1.5" variants={draw(3.8, 0.5)} />
-        <motion.line x1="275" y1="310" x2="275" y2="360" stroke="url(#house-glow)" strokeWidth="0.8" variants={draw(4.0, 0.3)} />
-        <motion.line x1="250" y1="335" x2="300" y2="335" stroke="url(#house-glow)" strokeWidth="0.8" variants={draw(4.1, 0.3)} />
+          <motion.path d="M540 290 L540 450" stroke="url(#gold-v)" strokeWidth="2" variants={D(2.6, 0.6)} />
+          <motion.path d="M540 290 L600 290" stroke="url(#gold-h)" strokeWidth="1.2" variants={D(2.7, 0.4)} />
+          <motion.path d="M540 430 L600 430" stroke="url(#gold-h)" strokeWidth="1" variants={D(2.8, 0.4)} />
+        </g>
 
-        <motion.rect x="500" y="310" width="50" height="50" rx="3" fill="none" stroke="url(#house-glow)" strokeWidth="1.5" variants={draw(3.9, 0.5)} />
-        <motion.line x1="525" y1="310" x2="525" y2="360" stroke="url(#house-glow)" strokeWidth="0.8" variants={draw(4.1, 0.3)} />
-        <motion.line x1="500" y1="335" x2="550" y2="335" stroke="url(#house-glow)" strokeWidth="0.8" variants={draw(4.2, 0.3)} />
+        <g>
+          <motion.path
+            d="M 170 290 L 370 175 L 540 290"
+            fill="none"
+            stroke="url(#gold-h)"
+            strokeWidth="2.2"
+            strokeLinejoin="miter"
+            variants={D(3.0, 1.2)}
+          />
 
-        <motion.rect x="370" y="380" width="60" height="60" rx="4" fill="none" stroke="url(#house-glow)" strokeWidth="1.8" variants={draw(4.3, 0.5)} />
-        <motion.circle cx="420" cy="410" r="3" fill="#d4a94c" variants={fade(4.6)} />
+          <motion.path
+            d="M 170 290 L 370 175 L 540 290 Z"
+            fill="#d4a94c"
+            variants={F(3.8, 1.0)}
+            style={{ opacity: 0.04 }}
+          />
 
-        <motion.rect x="250" y="310" width="50" height="50" rx="3" fill="#f0d88a" variants={fade(4.5, 0.6)} style={{ opacity: 0.08 }} />
-        <motion.rect x="500" y="310" width="50" height="50" rx="3" fill="#f0d88a" variants={fade(4.6, 0.6)} style={{ opacity: 0.08 }} />
-        <motion.rect x="370" y="380" width="60" height="60" rx="4" fill="#d4a94c" variants={fade(4.7, 0.6)} style={{ opacity: 0.05 }} />
+          <motion.line x1="370" y1="290" x2="370" y2="175" stroke="#d4a94c" strokeWidth="0.6" strokeDasharray="3,5" variants={D(3.3, 0.5)} />
+          <motion.line x1="270" y1="245" x2="470" y2="245" stroke="#d4a94c" strokeWidth="0.4" strokeDasharray="2,6" variants={D(3.5, 0.4)} />
+          <motion.line x1="220" y1="268" x2="520" y2="268" stroke="#d4a94c" strokeWidth="0.3" strokeDasharray="2,6" variants={D(3.6, 0.4)} />
 
-        <motion.rect x="380" y="175" width="40" height="55" rx="3" fill="none" stroke="url(#house-glow)" strokeWidth="1" variants={draw(4.8, 0.4)} />
-        <motion.rect x="385" y="180" width="30" height="6" rx="1" fill="#d4a94c" variants={fade(5.0)} style={{ opacity: 0.3 }} />
-        <motion.rect x="385" y="190" width="30" height="6" rx="1" fill="#d4a94c" variants={fade(5.1)} style={{ opacity: 0.2 }} />
-        <motion.rect x="385" y="200" width="30" height="6" rx="1" fill="#d4a94c" variants={fade(5.2)} style={{ opacity: 0.15 }} />
+          <motion.line x1="160" y1="290" x2="550" y2="290" stroke="url(#gold-h)" strokeWidth="0.8" filter="url(#line-glow)" variants={D(3.7, 0.5)} />
 
-        <motion.line x1="160" y1="282" x2="640" y2="282" stroke="#d4a94c" strokeWidth="0.3" variants={fade(5.0)} style={{ opacity: 0.3 }} />
-        <motion.line x1="195" y1="442" x2="605" y2="442" stroke="#d4a94c" strokeWidth="0.3" variants={fade(5.1)} style={{ opacity: 0.3 }} />
+          <motion.path
+            d="M 580 290 L 680 240 L 770 290"
+            fill="none"
+            stroke="url(#gold-h)"
+            strokeWidth="1.8"
+            strokeLinejoin="miter"
+            variants={D(3.2, 1.0)}
+          />
+          <motion.path
+            d="M 580 290 L 680 240 L 770 290 Z"
+            fill="#c4953a"
+            variants={F(3.9, 1.0)}
+            style={{ opacity: 0.035 }}
+          />
+        </g>
 
-        <motion.circle cx="150" cy="445" r="15" fill="#d4a94c" variants={fade(5.2)} style={{ opacity: 0.03 }} />
-        <motion.circle cx="650" cy="445" r="12" fill="#d4a94c" variants={fade(5.3)} style={{ opacity: 0.03 }} />
-        <motion.circle cx="130" cy="442" r="8" fill="#d4a94c" variants={fade(5.4)} style={{ opacity: 0.04 }} />
+        <g>
+          <motion.rect x="240" y="320" width="55" height="55" rx="2" fill="none" stroke="url(#gold-d)" strokeWidth="1.5" variants={D(4.0, 0.6)} />
+          <motion.line x1="267" y1="320" x2="267" y2="375" stroke="#d4a94c" strokeWidth="0.6" variants={D(4.2, 0.3)} />
+          <motion.line x1="240" y1="347" x2="295" y2="347" stroke="#d4a94c" strokeWidth="0.6" variants={D(4.3, 0.3)} />
+          <motion.rect x="240" y="320" width="55" height="55" rx="2" fill="#f0d88a" variants={F(4.5)} style={{ opacity: 0.06 }} />
+
+          <motion.rect x="360" y="320" width="55" height="55" rx="2" fill="none" stroke="url(#gold-d)" strokeWidth="1.5" variants={D(4.1, 0.6)} />
+          <motion.line x1="387" y1="320" x2="387" y2="375" stroke="#d4a94c" strokeWidth="0.6" variants={D(4.3, 0.3)} />
+          <motion.line x1="360" y1="347" x2="415" y2="347" stroke="#d4a94c" strokeWidth="0.6" variants={D(4.4, 0.3)} />
+          <motion.rect x="360" y="320" width="55" height="55" rx="2" fill="#f0d88a" variants={F(4.6)} style={{ opacity: 0.06 }} />
+
+          <motion.rect x="470" y="320" width="40" height="40" rx="2" fill="none" stroke="url(#gold-d)" strokeWidth="1.2" variants={D(4.2, 0.5)} />
+          <motion.line x1="490" y1="320" x2="490" y2="360" stroke="#d4a94c" strokeWidth="0.5" variants={D(4.5, 0.3)} />
+          <motion.line x1="470" y1="340" x2="510" y2="340" stroke="#d4a94c" strokeWidth="0.5" variants={D(4.5, 0.3)} />
+          <motion.rect x="470" y="320" width="40" height="40" rx="2" fill="#f0d88a" variants={F(4.7)} style={{ opacity: 0.05 }} />
+
+          <motion.rect x="630" y="320" width="45" height="45" rx="2" fill="none" stroke="url(#gold-d)" strokeWidth="1.3" variants={D(4.3, 0.5)} />
+          <motion.line x1="652" y1="320" x2="652" y2="365" stroke="#d4a94c" strokeWidth="0.5" variants={D(4.5, 0.3)} />
+          <motion.line x1="630" y1="342" x2="675" y2="342" stroke="#d4a94c" strokeWidth="0.5" variants={D(4.6, 0.3)} />
+          <motion.rect x="630" y="320" width="45" height="45" rx="2" fill="#f0d88a" variants={F(4.8)} style={{ opacity: 0.05 }} />
+        </g>
+
+        <g>
+          <motion.rect x="315" y="390" width="65" height="60" rx="3" fill="none" stroke="url(#gold-d)" strokeWidth="2" variants={D(4.6, 0.7)} />
+          <motion.path d="M315 390 Q347 383 380 390" fill="none" stroke="#d4a94c" strokeWidth="0.8" variants={D(4.8, 0.4)} />
+          <motion.circle cx="370" cy="422" r="3" fill="#f0d88a" variants={F(5.0)} style={{ opacity: 0.6 }} />
+          <motion.rect x="315" y="390" width="65" height="60" rx="3" fill="#d4a94c" variants={F(5.0)} style={{ opacity: 0.04 }} />
+        </g>
+
+        <g>
+          <motion.line x1="350" y1="185" x2="340" y2="155" stroke="url(#gold-v)" strokeWidth="1.5" variants={D(5.0, 0.5)} />
+          <motion.rect x="334" y="155" width="12" height="30" rx="1" fill="none" stroke="#d4a94c" strokeWidth="0.8" variants={D(5.1, 0.4)} />
+          <motion.rect x="336" y="160" width="8" height="5" rx="0.5" fill="#d4a94c" variants={F(5.2)} style={{ opacity: 0.25 }} />
+          <motion.rect x="336" y="168" width="8" height="5" rx="0.5" fill="#d4a94c" variants={F(5.3)} style={{ opacity: 0.2 }} />
+          <motion.rect x="336" y="176" width="8" height="5" rx="0.5" fill="#d4a94c" variants={F(5.4)} style={{ opacity: 0.15 }} />
+        </g>
+
+        <g>
+          <motion.path d="M195 455 L180 462 L200 465 L190 468" stroke="#d4a94c" strokeWidth="0.4" fill="none" variants={D(5.2, 0.4)} />
+          <motion.path d="M770 455 L785 460 L765 465 L780 468" stroke="#d4a94c" strokeWidth="0.4" fill="none" variants={D(5.3, 0.4)} />
+          <motion.line x1="150" y1="462" x2="180" y2="462" stroke="#d4a94c" strokeWidth="0.3" strokeDasharray="1,4" variants={F(5.4)} style={{ opacity: 0.3 }} />
+          <motion.line x1="800" y1="462" x2="850" y2="462" stroke="#d4a94c" strokeWidth="0.3" strokeDasharray="1,4" variants={F(5.4)} style={{ opacity: 0.3 }} />
+        </g>
+
+        <g>
+          <motion.line x1="120" y1="290" x2="160" y2="290" stroke="#d4a94c" strokeWidth="0.4" variants={F(5.5)} style={{ opacity: 0.4 }} />
+          <motion.line x1="120" y1="460" x2="160" y2="460" stroke="#d4a94c" strokeWidth="0.4" variants={F(5.5)} style={{ opacity: 0.4 }} />
+          <motion.line x1="130" y1="290" x2="130" y2="460" stroke="#d4a94c" strokeWidth="0.3" variants={D(5.6, 0.5)} />
+          <motion.path d="M125 290 L130 285 L135 290" fill="none" stroke="#d4a94c" strokeWidth="0.4" variants={F(5.7)} style={{ opacity: 0.5 }} />
+          <motion.path d="M125 460 L130 465 L135 460" fill="none" stroke="#d4a94c" strokeWidth="0.4" variants={F(5.7)} style={{ opacity: 0.5 }} />
+
+          <motion.line x1="200" y1="480" x2="200" y2="490" stroke="#d4a94c" strokeWidth="0.4" variants={F(5.6)} style={{ opacity: 0.4 }} />
+          <motion.line x1="540" y1="480" x2="540" y2="490" stroke="#d4a94c" strokeWidth="0.4" variants={F(5.6)} style={{ opacity: 0.4 }} />
+          <motion.line x1="200" y1="485" x2="540" y2="485" stroke="#d4a94c" strokeWidth="0.3" variants={D(5.7, 0.5)} />
+        </g>
+
+        <g filter="url(#wide-glow)">
+          <motion.rect
+            x="190"
+            y="280"
+            width="360"
+            height="180"
+            rx="6"
+            fill="#d4a94c"
+            variants={F(5.8, 1.5)}
+            style={{ opacity: 0.04 }}
+          />
+          <motion.path
+            d="M 170 290 L 370 175 L 540 290"
+            fill="none"
+            stroke="#f0d88a"
+            strokeWidth="1"
+            variants={F(5.9, 1.5)}
+            style={{ opacity: 0.15 }}
+          />
+        </g>
 
         <motion.rect
-          x="195"
-          y="275"
-          width="410"
-          height="170"
-          rx="4"
-          fill="none"
-          stroke="url(#house-glow)"
-          strokeWidth="0.4"
-          filter="url(#house-blur)"
-          variants={fade(5.5, 1.0)}
-          style={{ opacity: 0.15 }}
+          x="185"
+          y="170"
+          width="590"
+          height="300"
+          fill="url(#gold-glow)"
+          variants={F(6.0, 2.0)}
         />
 
         {[
-          { cx: 180, cy: 300, r: 1.5, d: 5.6 },
-          { cx: 620, cy: 350, r: 1, d: 5.8 },
-          { cx: 350, cy: 200, r: 1.5, d: 6.0 },
-          { cx: 450, cy: 170, r: 1, d: 6.1 },
-          { cx: 550, cy: 290, r: 1.2, d: 6.2 },
-          { cx: 250, cy: 180, r: 1, d: 6.3 },
+          { cx: 190, cy: 310, r: 1.5, d: 6.0 },
+          { cx: 550, cy: 295, r: 1, d: 6.2 },
+          { cx: 320, cy: 200, r: 1.2, d: 6.1 },
+          { cx: 420, cy: 185, r: 1, d: 6.3 },
+          { cx: 700, cy: 260, r: 1.3, d: 6.4 },
+          { cx: 230, cy: 250, r: 0.8, d: 6.5 },
+          { cx: 660, cy: 400, r: 1.1, d: 6.3 },
+          { cx: 480, cy: 230, r: 0.9, d: 6.6 },
+          { cx: 150, cy: 380, r: 1.0, d: 6.2 },
+          { cx: 780, cy: 330, r: 1.2, d: 6.5 },
         ].map((p, i) => (
           <motion.circle
-            key={i}
+            key={`p-${i}`}
             cx={p.cx}
             cy={p.cy}
             r={p.r}
             fill="#f0d88a"
-            variants={fade(p.d, 0.4)}
-            animate={inView ? { opacity: [0.2, 0.6, 0.2], y: [0, -3, 0] } : {}}
-            transition={{ duration: 3 + i * 0.5, repeat: Infinity, delay: p.d }}
+            variants={F(p.d, 0.5)}
+            animate={inView ? {
+              opacity: [0.15, 0.5, 0.15],
+              y: [0, -4 - (i % 3), 0],
+              scale: [1, 1.3, 1],
+            } : {}}
+            transition={{ duration: 3 + i * 0.4, repeat: Infinity, delay: p.d + 1, ease: "easeInOut" }}
           />
         ))}
+
+        {inView && (
+          <motion.rect
+            x="150"
+            y="280"
+            width="0"
+            height="3"
+            rx="1.5"
+            fill="url(#gold-h)"
+            style={{ opacity: 0.1 }}
+            animate={{ x: [150, 800], width: [120, 120], opacity: [0, 0.12, 0] }}
+            transition={{ duration: 4, delay: 7, repeat: Infinity, repeatDelay: 6, ease: "easeInOut" }}
+          />
+        )}
       </motion.svg>
     </div>
   );
