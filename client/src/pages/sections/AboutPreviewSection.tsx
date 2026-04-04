@@ -17,317 +17,342 @@ const bullets = [
   "Focused on smooth closings and strong outcomes",
 ];
 
-const D = (delay: number, duration = 1.4) => ({
+const BP = "#3a6a5c";
+const G1 = "#d4a94c";
+const G2 = "#f0d88a";
+const G3 = "#c4953a";
+
+const drawFaint = (delay: number, dur = 1.6) => ({
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 0.25,
+    transition: { pathLength: { delay, duration: dur, ease: [0.4, 0, 0.2, 1] }, opacity: { delay, duration: 0.3 } },
+  },
+});
+
+const drawSolid = (delay: number, dur = 1.2) => ({
   hidden: { pathLength: 0, opacity: 0 },
   visible: {
     pathLength: 1,
     opacity: 1,
-    transition: {
-      pathLength: { delay, duration, ease: [0.25, 0.1, 0.25, 1] },
-      opacity: { delay, duration: 0.15 },
-    },
+    transition: { pathLength: { delay, duration: dur, ease: [0.25, 0.1, 0.25, 1] }, opacity: { delay, duration: 0.2 } },
   },
 });
 
-const F = (delay: number, duration = 0.8) => ({
+const fadeIn = (delay: number, dur = 0.8, finalOpacity = 1) => ({
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { delay, duration, ease: "easeOut" } },
+  visible: { opacity: finalOpacity, transition: { delay, duration: dur, ease: "easeOut" } },
 });
 
-function BlueprintGrid() {
-  const lines = [];
-  for (let x = 60; x <= 940; x += 40) {
-    lines.push(
-      <motion.line
-        key={`gv-${x}`}
-        x1={x} y1={50} x2={x} y2={550}
-        stroke="#d4a94c"
-        strokeWidth="0.15"
-        variants={F(0, 1.5)}
-        style={{ opacity: 0.12 }}
-      />
-    );
-  }
-  for (let y = 50; y <= 550; y += 40) {
-    lines.push(
-      <motion.line
-        key={`gh-${y}`}
-        x1={60} y1={y} x2={940} y2={y}
-        stroke="#d4a94c"
-        strokeWidth="0.15"
-        variants={F(0, 1.5)}
-        style={{ opacity: 0.12 }}
-      />
-    );
-  }
-  return <g>{lines}</g>;
-}
+const solidify = (delay: number, dur = 1.0) => ({
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { delay, duration: dur, ease: [0.16, 1, 0.3, 1] } },
+});
+
+const mainRoof = "M 170 285 L 380 155 L 560 285";
+const garageRoof = "M 560 285 L 680 225 L 790 285";
+const mainWallL = 200;
+const mainWallR = 555;
+const mainTop = 285;
+const mainBot = 460;
+const garL = 565;
+const garR = 780;
+const garTop = 285;
+const garBot = 440;
 
 function HouseBuildAnimation({ inView }: { inView: boolean }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
       <motion.svg
         viewBox="0 0 1000 600"
-        className="w-full h-full max-w-[1100px] opacity-[0.18]"
+        className="w-full h-full max-w-[1200px]"
         preserveAspectRatio="xMidYMid meet"
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
         xmlns="http://www.w3.org/2000/svg"
+        style={{ opacity: 0.22 }}
       >
         <defs>
-          <linearGradient id="gold-h" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#c4953a" />
-            <stop offset="50%" stopColor="#f0d88a" />
-            <stop offset="100%" stopColor="#c4953a" />
+          <linearGradient id="gh" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={G3} />
+            <stop offset="50%" stopColor={G2} />
+            <stop offset="100%" stopColor={G3} />
           </linearGradient>
-          <linearGradient id="gold-v" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#f0d88a" />
-            <stop offset="100%" stopColor="#c4953a" />
+          <linearGradient id="gv" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={G2} />
+            <stop offset="100%" stopColor={G3} />
           </linearGradient>
-          <linearGradient id="gold-d" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#d4a94c" />
-            <stop offset="100%" stopColor="#f0d88a" />
+          <linearGradient id="gd" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={G1} />
+            <stop offset="100%" stopColor={G2} />
           </linearGradient>
-          <radialGradient id="gold-glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#f0d88a" stopOpacity="0.15" />
-            <stop offset="100%" stopColor="#d4a94c" stopOpacity="0" />
+          <linearGradient id="wallFillMain" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={G2} stopOpacity="0.08" />
+            <stop offset="100%" stopColor={G1} stopOpacity="0.02" />
+          </linearGradient>
+          <linearGradient id="wallFillGar" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={G3} stopOpacity="0.06" />
+            <stop offset="100%" stopColor={G1} stopOpacity="0.015" />
+          </linearGradient>
+          <linearGradient id="roofFillMain" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stopColor={G2} stopOpacity="0.07" />
+            <stop offset="100%" stopColor={G1} stopOpacity="0.02" />
+          </linearGradient>
+          <linearGradient id="roofFillGar" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stopColor={G3} stopOpacity="0.05" />
+            <stop offset="100%" stopColor={G1} stopOpacity="0.015" />
+          </linearGradient>
+          <linearGradient id="sweep" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={G2} stopOpacity="0" />
+            <stop offset="40%" stopColor={G2} stopOpacity="0.3" />
+            <stop offset="50%" stopColor={G2} stopOpacity="0.5" />
+            <stop offset="60%" stopColor={G2} stopOpacity="0.3" />
+            <stop offset="100%" stopColor={G2} stopOpacity="0" />
+          </linearGradient>
+          <radialGradient id="halo" cx="50%" cy="60%" r="55%">
+            <stop offset="0%" stopColor={G2} stopOpacity="0.08" />
+            <stop offset="60%" stopColor={G1} stopOpacity="0.03" />
+            <stop offset="100%" stopColor={G1} stopOpacity="0" />
           </radialGradient>
-          <filter id="soft-glow">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          <filter id="edgeGlow">
+            <feGaussianBlur stdDeviation="2.5" result="b" />
+            <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
-          <filter id="wide-glow">
-            <feGaussianBlur stdDeviation="8" />
+          <filter id="wideGlow">
+            <feGaussianBlur stdDeviation="6" />
           </filter>
-          <filter id="line-glow">
-            <feGaussianBlur stdDeviation="1.5" />
+          <filter id="softGlow">
+            <feGaussianBlur stdDeviation="1.2" result="b" />
+            <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
+          <clipPath id="sweepClip">
+            <rect x="140" y="140" width="680" height="350" />
+          </clipPath>
         </defs>
 
-        <BlueprintGrid />
+        {/* ══════ PHASE 1: FAINT BLUEPRINT LINES ══════ */}
 
-        <g>
-          <motion.line x1="180" y1="460" x2="820" y2="460" stroke="url(#gold-h)" strokeWidth="2.5" variants={D(0.3, 1.0)} />
-          <motion.line x1="160" y1="462" x2="840" y2="462" stroke="#d4a94c" strokeWidth="0.4" strokeDasharray="2,6" variants={D(0.4, 0.8)} />
-          <motion.line x1="160" y1="465" x2="840" y2="465" stroke="#d4a94c" strokeWidth="0.3" variants={D(0.5, 0.6)} />
+        <motion.line x1={140} y1={mainBot+5} x2={860} y2={mainBot+5} stroke={BP} strokeWidth="0.5" strokeDasharray="6,10" variants={drawFaint(0, 1.2)} />
+        <motion.line x1={140} y1={mainBot+8} x2={860} y2={mainBot+8} stroke={BP} strokeWidth="0.3" strokeDasharray="2,12" variants={drawFaint(0.1, 1.0)} />
 
-          {[200, 280, 360, 440, 520, 600, 680, 760].map((x, i) => (
-            <motion.line key={`ft-${i}`} x1={x} y1="460" x2={x} y2="456" stroke="#d4a94c" strokeWidth="0.5" variants={F(0.6 + i * 0.03)} />
-          ))}
-        </g>
+        <motion.rect x={mainWallL} y={mainTop} width={mainWallR - mainWallL} height={mainBot - mainTop} fill="none" stroke={BP} strokeWidth="0.5" strokeDasharray="8,6" variants={drawFaint(0.3, 1.4)} />
+        <motion.rect x={garL} y={garTop} width={garR - garL} height={garBot - garTop} fill="none" stroke={BP} strokeWidth="0.4" strokeDasharray="6,8" variants={drawFaint(0.5, 1.2)} />
 
-        <g>
-          <motion.rect x="200" y="450" width="560" height="10" rx="1" fill="none" stroke="url(#gold-h)" strokeWidth="1.2" variants={D(0.8, 0.8)} />
-          <motion.rect x="200" y="450" width="560" height="10" rx="1" fill="#d4a94c" variants={F(1.0)} style={{ opacity: 0.06 }} />
+        <motion.path d={mainRoof} fill="none" stroke={BP} strokeWidth="0.5" strokeDasharray="8,6" variants={drawFaint(0.7, 1.4)} />
+        <motion.path d={garageRoof} fill="none" stroke={BP} strokeWidth="0.4" strokeDasharray="6,8" variants={drawFaint(0.9, 1.2)} />
 
-          <motion.rect x="610" y="430" width="150" height="20" rx="1" fill="none" stroke="url(#gold-h)" strokeWidth="1" variants={D(0.9, 0.8)} />
-          <motion.rect x="610" y="430" width="150" height="20" rx="1" fill="#d4a94c" variants={F(1.1)} style={{ opacity: 0.04 }} />
-        </g>
+        {[mainWallL+60, mainWallL+140, mainWallL+220, mainWallL+300].map((x, i) => (
+          <motion.line key={`bps-${i}`} x1={x} y1={mainTop} x2={x} y2={mainBot} stroke={BP} strokeWidth="0.3" strokeDasharray="4,10" variants={drawFaint(1.0 + i * 0.08, 1.0)} />
+        ))}
 
-        <g>
-          {[
-            { x: 210, y1: 450, y2: 290 },
-            { x: 290, y1: 450, y2: 290 },
-            { x: 370, y1: 450, y2: 290 },
-            { x: 450, y1: 450, y2: 290 },
-            { x: 530, y1: 450, y2: 290 },
-            { x: 600, y1: 430, y2: 290 },
-            { x: 680, y1: 430, y2: 290 },
-            { x: 750, y1: 430, y2: 290 },
-          ].map((s, i) => (
-            <motion.line
-              key={`stud-${i}`}
-              x1={s.x} y1={s.y1} x2={s.x} y2={s.y2}
-              stroke="url(#gold-v)"
-              strokeWidth={i === 0 || i === 4 || i === 5 || i === 7 ? "1.8" : "0.8"}
-              variants={D(1.3 + i * 0.08, 0.9)}
-            />
-          ))}
+        <motion.line x1={mainWallL} y1={(mainTop + mainBot) / 2} x2={mainWallR} y2={(mainTop + mainBot) / 2} stroke={BP} strokeWidth="0.3" strokeDasharray="4,10" variants={drawFaint(1.3, 0.8)} />
 
-          <motion.line x1="200" y1="370" x2="540" y2="370" stroke="#d4a94c" strokeWidth="0.5" strokeDasharray="4,4" variants={D(1.9, 0.6)} />
-          <motion.line x1="600" y1="370" x2="760" y2="370" stroke="#d4a94c" strokeWidth="0.5" strokeDasharray="4,4" variants={D(2.0, 0.6)} />
+        {[garL + 50, garL + 120].map((x, i) => (
+          <motion.line key={`bpg-${i}`} x1={x} y1={garTop} x2={x} y2={garBot} stroke={BP} strokeWidth="0.3" strokeDasharray="4,10" variants={drawFaint(1.1 + i * 0.08, 0.9)} />
+        ))}
 
-          <motion.line x1="200" y1="290" x2="540" y2="290" stroke="url(#gold-h)" strokeWidth="1.8" variants={D(2.1, 0.7)} />
-          <motion.line x1="600" y1="290" x2="760" y2="290" stroke="url(#gold-h)" strokeWidth="1.8" variants={D(2.2, 0.7)} />
-        </g>
+        <motion.rect x={mainWallL + 40} y={mainTop + 30} width={55} height={55} fill="none" stroke={BP} strokeWidth="0.4" strokeDasharray="4,6" variants={drawFaint(1.4, 0.8)} />
+        <motion.rect x={mainWallL + 160} y={mainTop + 30} width={55} height={55} fill="none" stroke={BP} strokeWidth="0.4" strokeDasharray="4,6" variants={drawFaint(1.5, 0.8)} />
+        <motion.rect x={mainWallL + 280} y={mainTop + 30} width={45} height={45} fill="none" stroke={BP} strokeWidth="0.4" strokeDasharray="4,6" variants={drawFaint(1.6, 0.8)} />
+        <motion.rect x={mainWallL + 120} y={mainBot - 80} width={60} height={75} fill="none" stroke={BP} strokeWidth="0.4" strokeDasharray="4,6" variants={drawFaint(1.7, 0.8)} />
 
-        <g>
-          <motion.rect x="200" y="290" width="340" height="160" fill="#d4a94c" variants={F(2.5, 1.2)} style={{ opacity: 0.035 }} />
-          <motion.rect x="600" y="290" width="160" height="140" fill="#c4953a" variants={F(2.6, 1.2)} style={{ opacity: 0.03 }} />
+        <motion.rect x={garL + 30} y={garTop + 50} width={50} height={80} fill="none" stroke={BP} strokeWidth="0.3" strokeDasharray="4,8" variants={drawFaint(1.8, 0.8)} />
+        <motion.rect x={garL + 110} y={garTop + 50} width={50} height={80} fill="none" stroke={BP} strokeWidth="0.3" strokeDasharray="4,8" variants={drawFaint(1.9, 0.8)} />
 
-          <motion.rect x="200" y="290" width="340" height="160" rx="0" fill="none" stroke="url(#gold-h)" strokeWidth="1.4" variants={D(2.4, 1.0)} />
-          <motion.rect x="600" y="290" width="160" height="140" rx="0" fill="none" stroke="url(#gold-h)" strokeWidth="1.2" variants={D(2.5, 1.0)} />
+        {/* ══════ PHASE 2: STRUCTURE SOLIDIFIES ══════ */}
 
-          <motion.path d="M540 290 L540 450" stroke="url(#gold-v)" strokeWidth="2" variants={D(2.6, 0.6)} />
-          <motion.path d="M540 290 L600 290" stroke="url(#gold-h)" strokeWidth="1.2" variants={D(2.7, 0.4)} />
-          <motion.path d="M540 430 L600 430" stroke="url(#gold-h)" strokeWidth="1" variants={D(2.8, 0.4)} />
-        </g>
-
-        <g>
-          <motion.path
-            d="M 170 290 L 370 175 L 540 290"
-            fill="none"
-            stroke="url(#gold-h)"
-            strokeWidth="2.2"
-            strokeLinejoin="miter"
-            variants={D(3.0, 1.2)}
-          />
-
-          <motion.path
-            d="M 170 290 L 370 175 L 540 290 Z"
-            fill="#d4a94c"
-            variants={F(3.8, 1.0)}
-            style={{ opacity: 0.04 }}
-          />
-
-          <motion.line x1="370" y1="290" x2="370" y2="175" stroke="#d4a94c" strokeWidth="0.6" strokeDasharray="3,5" variants={D(3.3, 0.5)} />
-          <motion.line x1="270" y1="245" x2="470" y2="245" stroke="#d4a94c" strokeWidth="0.4" strokeDasharray="2,6" variants={D(3.5, 0.4)} />
-          <motion.line x1="220" y1="268" x2="520" y2="268" stroke="#d4a94c" strokeWidth="0.3" strokeDasharray="2,6" variants={D(3.6, 0.4)} />
-
-          <motion.line x1="160" y1="290" x2="550" y2="290" stroke="url(#gold-h)" strokeWidth="0.8" filter="url(#line-glow)" variants={D(3.7, 0.5)} />
-
-          <motion.path
-            d="M 580 290 L 680 240 L 770 290"
-            fill="none"
-            stroke="url(#gold-h)"
-            strokeWidth="1.8"
-            strokeLinejoin="miter"
-            variants={D(3.2, 1.0)}
-          />
-          <motion.path
-            d="M 580 290 L 680 240 L 770 290 Z"
-            fill="#c4953a"
-            variants={F(3.9, 1.0)}
-            style={{ opacity: 0.035 }}
-          />
-        </g>
-
-        <g>
-          <motion.rect x="240" y="320" width="55" height="55" rx="2" fill="none" stroke="url(#gold-d)" strokeWidth="1.5" variants={D(4.0, 0.6)} />
-          <motion.line x1="267" y1="320" x2="267" y2="375" stroke="#d4a94c" strokeWidth="0.6" variants={D(4.2, 0.3)} />
-          <motion.line x1="240" y1="347" x2="295" y2="347" stroke="#d4a94c" strokeWidth="0.6" variants={D(4.3, 0.3)} />
-          <motion.rect x="240" y="320" width="55" height="55" rx="2" fill="#f0d88a" variants={F(4.5)} style={{ opacity: 0.06 }} />
-
-          <motion.rect x="360" y="320" width="55" height="55" rx="2" fill="none" stroke="url(#gold-d)" strokeWidth="1.5" variants={D(4.1, 0.6)} />
-          <motion.line x1="387" y1="320" x2="387" y2="375" stroke="#d4a94c" strokeWidth="0.6" variants={D(4.3, 0.3)} />
-          <motion.line x1="360" y1="347" x2="415" y2="347" stroke="#d4a94c" strokeWidth="0.6" variants={D(4.4, 0.3)} />
-          <motion.rect x="360" y="320" width="55" height="55" rx="2" fill="#f0d88a" variants={F(4.6)} style={{ opacity: 0.06 }} />
-
-          <motion.rect x="470" y="320" width="40" height="40" rx="2" fill="none" stroke="url(#gold-d)" strokeWidth="1.2" variants={D(4.2, 0.5)} />
-          <motion.line x1="490" y1="320" x2="490" y2="360" stroke="#d4a94c" strokeWidth="0.5" variants={D(4.5, 0.3)} />
-          <motion.line x1="470" y1="340" x2="510" y2="340" stroke="#d4a94c" strokeWidth="0.5" variants={D(4.5, 0.3)} />
-          <motion.rect x="470" y="320" width="40" height="40" rx="2" fill="#f0d88a" variants={F(4.7)} style={{ opacity: 0.05 }} />
-
-          <motion.rect x="630" y="320" width="45" height="45" rx="2" fill="none" stroke="url(#gold-d)" strokeWidth="1.3" variants={D(4.3, 0.5)} />
-          <motion.line x1="652" y1="320" x2="652" y2="365" stroke="#d4a94c" strokeWidth="0.5" variants={D(4.5, 0.3)} />
-          <motion.line x1="630" y1="342" x2="675" y2="342" stroke="#d4a94c" strokeWidth="0.5" variants={D(4.6, 0.3)} />
-          <motion.rect x="630" y="320" width="45" height="45" rx="2" fill="#f0d88a" variants={F(4.8)} style={{ opacity: 0.05 }} />
-        </g>
-
-        <g>
-          <motion.rect x="315" y="390" width="65" height="60" rx="3" fill="none" stroke="url(#gold-d)" strokeWidth="2" variants={D(4.6, 0.7)} />
-          <motion.path d="M315 390 Q347 383 380 390" fill="none" stroke="#d4a94c" strokeWidth="0.8" variants={D(4.8, 0.4)} />
-          <motion.circle cx="370" cy="422" r="3" fill="#f0d88a" variants={F(5.0)} style={{ opacity: 0.6 }} />
-          <motion.rect x="315" y="390" width="65" height="60" rx="3" fill="#d4a94c" variants={F(5.0)} style={{ opacity: 0.04 }} />
-        </g>
-
-        <g>
-          <motion.line x1="350" y1="185" x2="340" y2="155" stroke="url(#gold-v)" strokeWidth="1.5" variants={D(5.0, 0.5)} />
-          <motion.rect x="334" y="155" width="12" height="30" rx="1" fill="none" stroke="#d4a94c" strokeWidth="0.8" variants={D(5.1, 0.4)} />
-          <motion.rect x="336" y="160" width="8" height="5" rx="0.5" fill="#d4a94c" variants={F(5.2)} style={{ opacity: 0.25 }} />
-          <motion.rect x="336" y="168" width="8" height="5" rx="0.5" fill="#d4a94c" variants={F(5.3)} style={{ opacity: 0.2 }} />
-          <motion.rect x="336" y="176" width="8" height="5" rx="0.5" fill="#d4a94c" variants={F(5.4)} style={{ opacity: 0.15 }} />
-        </g>
-
-        <g>
-          <motion.path d="M195 455 L180 462 L200 465 L190 468" stroke="#d4a94c" strokeWidth="0.4" fill="none" variants={D(5.2, 0.4)} />
-          <motion.path d="M770 455 L785 460 L765 465 L780 468" stroke="#d4a94c" strokeWidth="0.4" fill="none" variants={D(5.3, 0.4)} />
-          <motion.line x1="150" y1="462" x2="180" y2="462" stroke="#d4a94c" strokeWidth="0.3" strokeDasharray="1,4" variants={F(5.4)} style={{ opacity: 0.3 }} />
-          <motion.line x1="800" y1="462" x2="850" y2="462" stroke="#d4a94c" strokeWidth="0.3" strokeDasharray="1,4" variants={F(5.4)} style={{ opacity: 0.3 }} />
-        </g>
-
-        <g>
-          <motion.line x1="120" y1="290" x2="160" y2="290" stroke="#d4a94c" strokeWidth="0.4" variants={F(5.5)} style={{ opacity: 0.4 }} />
-          <motion.line x1="120" y1="460" x2="160" y2="460" stroke="#d4a94c" strokeWidth="0.4" variants={F(5.5)} style={{ opacity: 0.4 }} />
-          <motion.line x1="130" y1="290" x2="130" y2="460" stroke="#d4a94c" strokeWidth="0.3" variants={D(5.6, 0.5)} />
-          <motion.path d="M125 290 L130 285 L135 290" fill="none" stroke="#d4a94c" strokeWidth="0.4" variants={F(5.7)} style={{ opacity: 0.5 }} />
-          <motion.path d="M125 460 L130 465 L135 460" fill="none" stroke="#d4a94c" strokeWidth="0.4" variants={F(5.7)} style={{ opacity: 0.5 }} />
-
-          <motion.line x1="200" y1="480" x2="200" y2="490" stroke="#d4a94c" strokeWidth="0.4" variants={F(5.6)} style={{ opacity: 0.4 }} />
-          <motion.line x1="540" y1="480" x2="540" y2="490" stroke="#d4a94c" strokeWidth="0.4" variants={F(5.6)} style={{ opacity: 0.4 }} />
-          <motion.line x1="200" y1="485" x2="540" y2="485" stroke="#d4a94c" strokeWidth="0.3" variants={D(5.7, 0.5)} />
-        </g>
-
-        <g filter="url(#wide-glow)">
-          <motion.rect
-            x="190"
-            y="280"
-            width="360"
-            height="180"
-            rx="6"
-            fill="#d4a94c"
-            variants={F(5.8, 1.5)}
-            style={{ opacity: 0.04 }}
-          />
-          <motion.path
-            d="M 170 290 L 370 175 L 540 290"
-            fill="none"
-            stroke="#f0d88a"
-            strokeWidth="1"
-            variants={F(5.9, 1.5)}
-            style={{ opacity: 0.15 }}
-          />
-        </g>
-
-        <motion.rect
-          x="185"
-          y="170"
-          width="590"
-          height="300"
-          fill="url(#gold-glow)"
-          variants={F(6.0, 2.0)}
-        />
+        <motion.line x1={mainWallL - 20} y1={mainBot} x2={garR + 20} y2={mainBot} stroke="url(#gh)" strokeWidth="2.5" variants={drawSolid(2.2, 1.0)} />
+        <motion.rect x={mainWallL} y={mainBot - 8} width={mainWallR - mainWallL} height={8} fill="none" stroke="url(#gh)" strokeWidth="1.2" variants={drawSolid(2.4, 0.8)} />
+        <motion.rect x={garL} y={garBot - 6} width={garR - garL} height={6} fill="none" stroke="url(#gh)" strokeWidth="1" variants={drawSolid(2.5, 0.8)} />
 
         {[
-          { cx: 190, cy: 310, r: 1.5, d: 6.0 },
-          { cx: 550, cy: 295, r: 1, d: 6.2 },
-          { cx: 320, cy: 200, r: 1.2, d: 6.1 },
-          { cx: 420, cy: 185, r: 1, d: 6.3 },
-          { cx: 700, cy: 260, r: 1.3, d: 6.4 },
-          { cx: 230, cy: 250, r: 0.8, d: 6.5 },
-          { cx: 660, cy: 400, r: 1.1, d: 6.3 },
-          { cx: 480, cy: 230, r: 0.9, d: 6.6 },
-          { cx: 150, cy: 380, r: 1.0, d: 6.2 },
-          { cx: 780, cy: 330, r: 1.2, d: 6.5 },
+          { x: mainWallL, t: mainBot, b: mainTop, w: 2 },
+          { x: mainWallR, t: mainBot, b: mainTop, w: 2 },
+          { x: mainWallL + 90, t: mainBot, b: mainTop, w: 0.8 },
+          { x: mainWallL + 180, t: mainBot, b: mainTop, w: 0.8 },
+          { x: mainWallL + 270, t: mainBot, b: mainTop, w: 0.8 },
+          { x: garL, t: garBot, b: garTop, w: 1.8 },
+          { x: garR, t: garBot, b: garTop, w: 1.8 },
+          { x: garL + 70, t: garBot, b: garTop, w: 0.7 },
+          { x: garL + 140, t: garBot, b: garTop, w: 0.7 },
+        ].map((s, i) => (
+          <motion.line key={`sf-${i}`} x1={s.x} y1={s.t} x2={s.x} y2={s.b} stroke="url(#gv)" strokeWidth={s.w} variants={drawSolid(2.7 + i * 0.06, 0.9)} />
+        ))}
+
+        <motion.line x1={mainWallL} y1={mainTop} x2={mainWallR} y2={mainTop} stroke="url(#gh)" strokeWidth="2" variants={drawSolid(3.3, 0.7)} />
+        <motion.line x1={garL} y1={garTop} x2={garR} y2={garTop} stroke="url(#gh)" strokeWidth="1.6" variants={drawSolid(3.4, 0.7)} />
+        <motion.line x1={mainWallL} y1={(mainTop + mainBot) / 2} x2={mainWallR} y2={(mainTop + mainBot) / 2} stroke={G1} strokeWidth="0.5" strokeDasharray="6,4" variants={drawSolid(3.5, 0.5)} />
+
+        {/* ══════ PHASE 3: TRANSLUCENT WALL PLANES MATERIALIZE ══════ */}
+
+        <motion.rect x={mainWallL} y={mainTop} width={mainWallR - mainWallL} height={mainBot - mainTop} fill="url(#wallFillMain)" variants={fadeIn(3.8, 1.5, 1)} />
+        <motion.rect x={garL} y={garTop} width={garR - garL} height={garBot - garTop} fill="url(#wallFillGar)" variants={fadeIn(4.0, 1.5, 1)} />
+
+        <motion.rect x={mainWallL} y={mainTop} width={(mainWallR - mainWallL) / 2} height={mainBot - mainTop} fill={G2} variants={fadeIn(4.2, 1.2, 0.02)} />
+        <motion.rect x={mainWallL + (mainWallR - mainWallL) / 2} y={mainTop} width={(mainWallR - mainWallL) / 2} height={mainBot - mainTop} fill={G3} variants={fadeIn(4.3, 1.2, 0.015)} />
+
+        <motion.rect x={mainWallL} y={mainTop} width={mainWallR - mainWallL} height={mainBot - mainTop} fill="none" stroke="url(#gh)" strokeWidth="1.8" filter="url(#softGlow)" variants={solidify(4.5, 1.0)} />
+        <motion.rect x={garL} y={garTop} width={garR - garL} height={garBot - garTop} fill="none" stroke="url(#gh)" strokeWidth="1.4" filter="url(#softGlow)" variants={solidify(4.6, 1.0)} />
+
+        <motion.line x1={mainWallR} y1={mainTop} x2={garL} y2={garTop} stroke="url(#gh)" strokeWidth="1" variants={drawSolid(4.4, 0.5)} />
+        <motion.line x1={mainWallR} y1={mainBot} x2={garL} y2={garBot} stroke="url(#gh)" strokeWidth="0.8" variants={drawSolid(4.5, 0.5)} />
+
+        {/* ══════ PHASE 4: ROOF WITH DEPTH ══════ */}
+
+        <motion.path d={mainRoof} fill="none" stroke="url(#gh)" strokeWidth="2.5" strokeLinejoin="round" variants={drawSolid(5.0, 1.2)} />
+        <motion.path d={`${mainRoof} Z`} fill="url(#roofFillMain)" variants={fadeIn(5.5, 1.2, 1)} />
+
+        <motion.path d={garageRoof} fill="none" stroke="url(#gh)" strokeWidth="2" strokeLinejoin="round" variants={drawSolid(5.2, 1.0)} />
+        <motion.path d={`${garageRoof} Z`} fill="url(#roofFillGar)" variants={fadeIn(5.6, 1.2, 1)} />
+
+        <motion.line x1={380} y1={155} x2={380} y2={mainTop} stroke={G1} strokeWidth="0.6" strokeDasharray="3,5" variants={drawSolid(5.4, 0.5)} />
+        <motion.line x1={275} y1={220} x2={485} y2={220} stroke={G1} strokeWidth="0.3" strokeDasharray="2,6" variants={drawSolid(5.5, 0.4)} />
+        <motion.line x1={225} y1={252} x2={535} y2={252} stroke={G1} strokeWidth="0.3" strokeDasharray="2,6" variants={drawSolid(5.6, 0.4)} />
+
+        <motion.line x1={680} y1={225} x2={680} y2={garTop} stroke={G1} strokeWidth="0.5" strokeDasharray="3,5" variants={drawSolid(5.5, 0.4)} />
+
+        <g filter="url(#edgeGlow)">
+          <motion.path d={mainRoof} fill="none" stroke={G2} strokeWidth="1" variants={fadeIn(6.0, 1.0, 0.4)} />
+          <motion.path d={garageRoof} fill="none" stroke={G2} strokeWidth="0.8" variants={fadeIn(6.1, 1.0, 0.35)} />
+        </g>
+
+        {/* ══════ PHASE 5: WINDOWS RESOLVE FROM BLUEPRINT TO SOLID ══════ */}
+
+        {[
+          { x: mainWallL + 35, y: mainTop + 25, w: 60, h: 60 },
+          { x: mainWallL + 155, y: mainTop + 25, w: 60, h: 60 },
+          { x: mainWallL + 275, y: mainTop + 25, w: 50, h: 50 },
+        ].map((win, i) => (
+          <g key={`win-${i}`}>
+            <motion.rect x={win.x} y={win.y} width={win.w} height={win.h} rx="2" fill="none" stroke="url(#gd)" strokeWidth="1.6" variants={drawSolid(6.2 + i * 0.12, 0.6)} />
+            <motion.line x1={win.x + win.w / 2} y1={win.y} x2={win.x + win.w / 2} y2={win.y + win.h} stroke={G1} strokeWidth="0.7" variants={drawSolid(6.5 + i * 0.08, 0.3)} />
+            <motion.line x1={win.x} y1={win.y + win.h / 2} x2={win.x + win.w} y2={win.y + win.h / 2} stroke={G1} strokeWidth="0.7" variants={drawSolid(6.6 + i * 0.08, 0.3)} />
+            <motion.rect x={win.x} y={win.y} width={win.w} height={win.h} rx="2" fill={G2} variants={fadeIn(6.8 + i * 0.1, 0.8, 0.07)} />
+            <motion.rect x={win.x} y={win.y} width={win.w} height={win.h} rx="2" fill="none" stroke={G2} strokeWidth="0.5" filter="url(#softGlow)" variants={fadeIn(7.0 + i * 0.1, 0.6, 0.3)} />
+          </g>
+        ))}
+
+        <g>
+          <motion.rect x={mainWallL + 115} y={mainBot - 82} width={65} height={82} rx="3" fill="none" stroke="url(#gd)" strokeWidth="2" variants={drawSolid(6.5, 0.7)} />
+          <motion.path d={`M${mainWallL + 115} ${mainBot - 82} Q${mainWallL + 147} ${mainBot - 92} ${mainWallL + 180} ${mainBot - 82}`} fill="none" stroke={G1} strokeWidth="1" variants={drawSolid(6.7, 0.4)} />
+          <motion.circle cx={mainWallL + 170} cy={mainBot - 42} r="3.5" fill={G2} variants={fadeIn(7.0, 0.5, 0.5)} />
+          <motion.rect x={mainWallL + 115} y={mainBot - 82} width={65} height={82} rx="3" fill={G1} variants={fadeIn(7.1, 0.8, 0.04)} />
+          <motion.rect x={mainWallL + 115} y={mainBot - 82} width={65} height={82} rx="3" fill="none" stroke={G2} strokeWidth="0.5" filter="url(#softGlow)" variants={fadeIn(7.2, 0.6, 0.25)} />
+        </g>
+
+        {[
+          { x: garL + 25, y: garTop + 40, w: 55, h: 85 },
+          { x: garL + 110, y: garTop + 40, w: 55, h: 85 },
+        ].map((gd, i) => (
+          <g key={`gar-${i}`}>
+            <motion.rect x={gd.x} y={gd.y} width={gd.w} height={gd.h} rx="2" fill="none" stroke="url(#gd)" strokeWidth="1.2" variants={drawSolid(6.8 + i * 0.1, 0.5)} />
+            {[0, 1, 2, 3].map((r) => (
+              <motion.line key={r} x1={gd.x} y1={gd.y + 17 + r * 18} x2={gd.x + gd.w} y2={gd.y + 17 + r * 18} stroke={G1} strokeWidth="0.5" variants={drawSolid(7.0 + i * 0.1 + r * 0.05, 0.25)} />
+            ))}
+            <motion.rect x={gd.x} y={gd.y} width={gd.w} height={gd.h} rx="2" fill={G3} variants={fadeIn(7.3 + i * 0.1, 0.8, 0.04)} />
+          </g>
+        ))}
+
+        {/* ══════ PHASE 6: GLOWING EDGES (dimensional reveal) ══════ */}
+
+        <g filter="url(#edgeGlow)">
+          <motion.line x1={mainWallL} y1={mainBot} x2={mainWallL} y2={mainTop} stroke={G2} strokeWidth="1.2" variants={fadeIn(7.5, 1.0, 0.35)} />
+          <motion.line x1={mainWallR} y1={mainBot} x2={mainWallR} y2={mainTop} stroke={G2} strokeWidth="1.2" variants={fadeIn(7.6, 1.0, 0.35)} />
+          <motion.line x1={mainWallL} y1={mainBot} x2={mainWallR} y2={mainBot} stroke={G2} strokeWidth="1" variants={fadeIn(7.6, 1.0, 0.3)} />
+          <motion.line x1={mainWallL} y1={mainTop} x2={mainWallR} y2={mainTop} stroke={G2} strokeWidth="0.8" variants={fadeIn(7.7, 1.0, 0.3)} />
+
+          <motion.line x1={garL} y1={garBot} x2={garL} y2={garTop} stroke={G2} strokeWidth="1" variants={fadeIn(7.7, 1.0, 0.3)} />
+          <motion.line x1={garR} y1={garBot} x2={garR} y2={garTop} stroke={G2} strokeWidth="1" variants={fadeIn(7.8, 1.0, 0.3)} />
+          <motion.line x1={garL} y1={garBot} x2={garR} y2={garBot} stroke={G2} strokeWidth="0.8" variants={fadeIn(7.8, 1.0, 0.25)} />
+        </g>
+
+        {/* ══════ PHASE 7: CHIMNEY + FINISHING ══════ */}
+
+        <motion.line x1={350} y1={175} x2={340} y2={135} stroke="url(#gv)" strokeWidth="1.5" variants={drawSolid(7.5, 0.5)} />
+        <motion.rect x={332} y={130} width={16} height={45} rx="1" fill="none" stroke="url(#gd)" strokeWidth="1" variants={drawSolid(7.6, 0.5)} />
+        <motion.rect x={332} y={130} width={16} height={45} rx="1" fill={G1} variants={fadeIn(7.8, 0.6, 0.04)} />
+        {[0, 1, 2].map((i) => (
+          <motion.rect key={`cv-${i}`} x={335} y={135 + i * 12} width={10} height={6} rx="1" fill={G1} variants={fadeIn(7.9 + i * 0.1, 0.4, 0.2 - i * 0.05)} />
+        ))}
+
+        <motion.path d={`M${mainWallL - 15} ${mainBot + 2} Q${mainWallL - 5} ${mainBot + 6} ${mainWallL + 5} ${mainBot + 3}`} fill="none" stroke={G1} strokeWidth="0.5" variants={drawSolid(8.0, 0.4)} />
+        <motion.path d={`M${garR + 5} ${mainBot + 2} Q${garR + 15} ${mainBot + 5} ${garR + 25} ${mainBot + 1}`} fill="none" stroke={G1} strokeWidth="0.5" variants={drawSolid(8.1, 0.4)} />
+
+        {/* ══════ PHASE 8: AMBIENT HALO + PARTICLES + LIGHT SWEEP ══════ */}
+
+        <motion.ellipse cx={480} cy={350} rx={380} ry={200} fill="url(#halo)" variants={fadeIn(8.0, 2.0, 1)} />
+
+        <g filter="url(#wideGlow)">
+          <motion.rect x={mainWallL - 10} y={mainTop - 10} width={mainWallR - mainWallL + 20} height={mainBot - mainTop + 20} rx="4" fill={G1} variants={fadeIn(8.2, 2.0, 0.025)} />
+          <motion.path d={`${mainRoof} Z`} fill={G2} variants={fadeIn(8.3, 2.0, 0.02)} />
+        </g>
+
+        {[
+          { cx: 185, cy: 320, r: 1.5 },
+          { cx: 570, cy: 280, r: 1.2 },
+          { cx: 310, cy: 180, r: 1.3 },
+          { cx: 440, cy: 165, r: 1 },
+          { cx: 720, cy: 250, r: 1.4 },
+          { cx: 230, cy: 240, r: 0.9 },
+          { cx: 660, cy: 390, r: 1.1 },
+          { cx: 490, cy: 210, r: 1 },
+          { cx: 150, cy: 400, r: 1.2 },
+          { cx: 800, cy: 340, r: 1 },
+          { cx: 400, cy: 300, r: 0.8 },
+          { cx: 750, cy: 420, r: 1.1 },
         ].map((p, i) => (
           <motion.circle
-            key={`p-${i}`}
+            key={`pt-${i}`}
             cx={p.cx}
             cy={p.cy}
             r={p.r}
-            fill="#f0d88a"
-            variants={F(p.d, 0.5)}
+            fill={G2}
+            variants={fadeIn(8.5 + i * 0.08, 0.5, 0.3)}
             animate={inView ? {
-              opacity: [0.15, 0.5, 0.15],
-              y: [0, -4 - (i % 3), 0],
-              scale: [1, 1.3, 1],
+              opacity: [0.1, 0.45, 0.1],
+              y: [0, -5 - (i % 4), 0],
+              scale: [1, 1.4, 1],
             } : {}}
-            transition={{ duration: 3 + i * 0.4, repeat: Infinity, delay: p.d + 1, ease: "easeInOut" }}
+            transition={{ duration: 3.5 + i * 0.3, repeat: Infinity, delay: 9 + i * 0.3, ease: "easeInOut" }}
           />
         ))}
 
         {inView && (
-          <motion.rect
-            x="150"
-            y="280"
-            width="0"
-            height="3"
-            rx="1.5"
-            fill="url(#gold-h)"
-            style={{ opacity: 0.1 }}
-            animate={{ x: [150, 800], width: [120, 120], opacity: [0, 0.12, 0] }}
-            transition={{ duration: 4, delay: 7, repeat: Infinity, repeatDelay: 6, ease: "easeInOut" }}
-          />
+          <g clipPath="url(#sweepClip)">
+            <motion.rect
+              x={100}
+              y={140}
+              width={180}
+              height={350}
+              fill="url(#sweep)"
+              initial={{ x: 100 }}
+              animate={{ x: [100, 850] }}
+              transition={{ duration: 3, delay: 9.5, repeat: Infinity, repeatDelay: 8, ease: [0.4, 0, 0.2, 1] }}
+            />
+          </g>
+        )}
+
+        {inView && (
+          <g filter="url(#edgeGlow)">
+            <motion.path
+              d={mainRoof}
+              fill="none"
+              stroke={G2}
+              strokeWidth="1.5"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.5, 0] }}
+              transition={{ duration: 3, delay: 9.5, repeat: Infinity, repeatDelay: 8, ease: "easeInOut" }}
+            />
+            <motion.line
+              x1={mainWallL} y1={mainBot} x2={mainWallR} y2={mainBot}
+              stroke={G2}
+              strokeWidth="1.5"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.3, 0] }}
+              transition={{ duration: 3, delay: 10, repeat: Infinity, repeatDelay: 8, ease: "easeInOut" }}
+            />
+          </g>
         )}
       </motion.svg>
     </div>
