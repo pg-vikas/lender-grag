@@ -1,0 +1,370 @@
+Build a premium, visually stunning, high end mortgage calculator experience for Lender Greg’s website.
+
+This should not feel like a basic embedded calculator or a dull financial widget. It should feel like a luxury fintech tool built by a top creative agency. The calculator must be highly polished, responsive, interactive, conversion aware, and visually impressive while still being clear and easy for consumers to use.
+
+The goal is to make users feel:
+1. This lender is modern and sophisticated
+2. This tool is useful and trustworthy
+3. I understand my numbers better now
+4. I should take the next step with Greg
+
+CORE EXPERIENCE
+
+Create a calculator section or standalone page with a premium visual design and smooth interactive behavior. It should include two major calculator modes:
+
+1. Mortgage Calculator
+2. Affordability Calculator
+
+Both calculators should feel custom built, beautiful, dynamic, and easy to use on desktop and mobile.
+
+DESIGN DIRECTION
+
+Use a bold, premium fintech and agency style aesthetic:
+- High end modern design
+- Dark or deep neutral background with elegant accent color
+- Strong typography
+- Large pricing and result displays
+- Elegant cards and panels
+- Smooth gradients
+- Subtle glow and layered depth
+- Refined hover states
+- Glass or translucent effects only if tasteful
+- Animated numeric transitions
+- Smooth tab switching
+- No ugly generic mortgage widget styling
+- No bland white bank portal feel
+
+The entire experience should look expensive, smart, and memorable.
+
+TECH STACK
+
+Use:
+- React
+- Tailwind CSS
+- Framer Motion
+- Clean reusable component structure
+- Smooth real time state updates
+
+MAIN UI STRUCTURE
+
+Create a calculator interface with two top tabs or segmented controls:
+- Mortgage Calculator
+- Affordability Calculator
+
+Switching between them should feel smooth and premium with animated transitions.
+
+LAYOUT
+
+Use a clean split layout on desktop:
+- Left side: user inputs
+- Right side: live results breakdown
+
+On mobile:
+- Stack inputs above results
+- Keep CTA visible
+- Maintain generous spacing and thumb friendly controls
+
+MORTGAGE CALCULATOR REQUIREMENTS
+
+Build a premium mortgage calculator with the following fields:
+
+Displayed monthly payment result at the top:
+Example:
+$2,082/mo
+30 Year Fixed, 6.399% APR
+
+Breakdown below:
+- Principal and Interest
+- Home Insurance
+- Property Tax
+- HOA Fees
+
+Input fields:
+- Home Price
+- Down Payment in dollars
+- Down Payment percentage
+- Interest Rate
+- Loan Term dropdown
+- Property Tax
+- Home Insurance
+- HOA Fees
+- Optional Advanced toggle
+
+Advanced settings section should expand smoothly and include:
+- PMI or Mortgage Insurance
+- Loan type
+- ZIP code
+- Estimated closing costs placeholder
+- Adjustable assumptions if useful
+
+Behavior:
+- Monthly payment updates live as user changes inputs
+- Results animate smoothly
+- Dollar values count up or transition elegantly
+- Breakdown sections update in real time
+- Down payment can be adjusted using both dollar input and percentage input
+- Home price and down payment sliders are a plus if they look polished
+- Advanced section should collapse and expand elegantly
+
+Use example structure like this:
+Mortgage Calculator
+$2,082/mo
+30 Year Fixed, 6.399% APR
+
+Principal and Interest: $1,747
+Home Insurance: $131
+Property Tax: $204
+HOA Fees: $0
+
+Home Price: $350,000
+Down Payment: $70,000
+20%
+
+Advanced
+Get a custom quote
+
+AFFORDABILITY CALCULATOR REQUIREMENTS
+
+Build a premium affordability calculator mode with these fields:
+
+Mode selector:
+- Conservative
+- Aggressive
+
+Display a large monthly budget number:
+Example:
+$2,733/month
+
+Fields:
+- ZIP code
+- Interest Rate
+- Loan Term
+- Annual Income
+- Monthly Debt
+- Down Payment
+
+Large main result:
+$369,873
+Home price you can afford
+
+Supporting message:
+This calculation is based on your income. A home at this price should fit comfortably within your budget.
+
+Breakdown:
+- Monthly payment and debts
+- Principal and Interest
+- Home Insurance
+- Property Tax
+- Mortgage Insurance if applicable
+
+Behavior:
+- Home price affordability updates live
+- Conservative and Aggressive modes adjust assumed debt to income ratio and monthly comfort threshold
+- ZIP code can be a styled input with placeholder city text
+- Results should feel immediate and satisfying
+- Breakdown should update as assumptions change
+- Annual income, debt, and down payment fields should be easy to edit
+- Use animated result transitions
+
+Example structure:
+Affordability Calculator
+Conservative | Aggressive
+
+$2,733/month
+
+ZIP code
+92879
+Corona, CA suggestion style placeholder
+
+Interest Rate
+30 Year Fixed
+6.28%
+
+Annual Income
+$100,000
+
+Monthly Debt
+$0
+
+Down Payment
+$10,000
+
+$369,873
+Home price you can afford
+
+This calculation is based on your income, a house at this price should fit comfortably within your budget.
+
+$2,733
+Monthly Payment and Debts
+Principal and Interest: $2,223
+Home Insurance: $139
+Property Tax: $264
+Mortgage Insurance: $108
+
+CALCULATION LOGIC
+
+Implement realistic mortgage style calculations.
+
+Mortgage Calculator logic should include:
+- Loan amount = home price minus down payment
+- Monthly principal and interest based on amortization formula
+- Monthly property tax estimate
+- Monthly home insurance estimate
+- HOA monthly fee
+- PMI or mortgage insurance when down payment is below threshold if enabled
+
+Affordability Calculator logic should include:
+- Determine monthly income from annual income
+- Use debt to income assumptions
+- Conservative mode should use more cautious monthly budget assumptions
+- Aggressive mode should use higher budget tolerance
+- Subtract monthly debts
+- Estimate affordable monthly housing payment
+- Reverse calculate approximate affordable home price based on rate, term, taxes, insurance, and PMI assumptions
+
+Include sensible default values and make assumptions editable where useful.
+
+RESULTS PANEL
+
+The results panel should be visually powerful.
+
+Requirements:
+- Large monthly payment or affordable price display
+- Supporting subtitle
+- Clean breakdown list
+- Elegant separators
+- Animated numbers
+- Strong hierarchy
+- “Get a Custom Quote” CTA prominently placed
+- Optional “Talk to Greg” secondary CTA
+- Optional trust line such as:
+  Fast answers. Real guidance. Personalized loan strategy.
+
+The result card should feel like a premium dashboard, not a spreadsheet.
+
+ANIMATIONS
+
+Use Framer Motion for polished animations:
+- Tab switching transitions
+- Result number transitions
+- Card reveal animations
+- Advanced panel expansion
+- Button hover interactions
+- Input focus states
+- Breakdown list staggered appearance
+- Subtle background motion
+- Premium loading feel if needed
+
+Motion should feel refined and expensive, not flashy.
+
+VISUAL COMPONENTS
+
+Create reusable components such as:
+- CalculatorShell
+- CalculatorTabs
+- CalculatorInput
+- CurrencyInput
+- PercentInput
+- SliderInput
+- ResultCard
+- BreakdownRow
+- AdvancedPanel
+- ModeToggle
+- CTAButtons
+- DisclaimerBlock
+
+FORM UX
+
+Make inputs feel high end:
+- Clean labels
+- Inline formatting
+- Currency formatting with commas
+- Percentage formatting
+- Smooth validation
+- Good focus states
+- Stepper controls or sliders where useful
+- No ugly default browser styles
+
+For example:
+- Home Price input should auto format currency
+- Down Payment should update both dollar and percent views
+- Interest Rate should accept decimal input
+- Loan term should be a premium select or segmented control
+
+DISCLAIMER
+
+At the bottom include a professional styled disclaimer block:
+
+This calculator is intended for planning and educational purposes only. It relies on assumptions and information provided by you regarding your goals, expectations, and financial situation, and should not be used as your sole source of information. The output of this tool is not a loan offer or solicitation, and is not financial or legal advice.
+
+Style the disclaimer elegantly. Small but readable. Not ugly fine print.
+
+CONVERSION FEATURES
+
+This is not just a calculator. It should help convert.
+
+Include:
+- Get a Custom Quote button
+- Book a Call button
+- Optional mini trust copy
+- Optional quick lead capture panel
+- Optional note that Greg can tailor exact numbers
+- Optional CTA after results change significantly
+
+For example:
+Want exact numbers based on your real scenario? Get a personalized quote from Greg.
+
+RESPONSIVE EXPERIENCE
+
+Desktop:
+- Beautiful two column layout
+- Inputs left, results right
+- Rich spacing and visual balance
+
+Tablet:
+- Slightly compressed but still premium
+- Maintain strong hierarchy
+
+Mobile:
+- Stack vertically
+- Large results visible early
+- Inputs easy to use with thumbs
+- Sticky CTA bar is a plus
+- Breakdown remains readable
+- Tab switching remains smooth
+
+COPY STYLE
+
+Use real, persuasive placeholder copy that sounds polished and credible.
+Avoid lorem ipsum.
+Avoid generic bank jargon.
+Avoid cheesy sales language.
+
+The tone should feel:
+- Smart
+- Reassuring
+- Modern
+- Helpful
+- High trust
+
+OPTIONAL PREMIUM ENHANCEMENTS
+
+If possible, add:
+- Animated donut or ring chart showing payment composition
+- Visual affordability meter
+- Smooth slider based interaction for home price and down payment
+- Contextual tips beneath fields
+- Comparison cards for 15 year vs 30 year
+- “How changing your down payment affects your monthly cost” visual
+- “Conservative vs Aggressive” animated comparison
+- ZIP code based placeholder tax estimate structure
+- Light financial graph inspired background motion
+
+FINAL STANDARD
+
+This mortgage calculator should feel elite.
+It should be something users remember.
+It should make ordinary lender calculators look weak and outdated.
+It should feel like a blend of premium fintech UI, strong lending utility, and bold agency design.
+
+Now build the full mortgage and affordability calculator experience with refined styling, real calculations, premium interactions, and responsive design.
