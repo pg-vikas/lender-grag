@@ -383,7 +383,7 @@ export const AboutPreviewSection = (): JSX.Element => {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <div className="mb-8">
+            <div className="mb-8 md:mb-10">
               <motion.img
                 src={badgeLogo}
                 alt="Lender Greg"
@@ -403,7 +403,7 @@ export const AboutPreviewSection = (): JSX.Element => {
                 Why Lender Greg
               </motion.p>
               <motion.h2
-                className="text-3xl md:text-[40px] font-extrabold text-white tracking-[-0.02em] leading-[1.1]"
+                className="text-4xl md:text-[52px] lg:text-[64px] font-black text-white tracking-[-0.04em] leading-[0.95] max-w-[12ch]"
                 initial={{ opacity: 0, y: 8 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -411,7 +411,7 @@ export const AboutPreviewSection = (): JSX.Element => {
               >
                 Lending That
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a94c] to-[#f0d88a]">Feels Different</span>
+                <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#d4a94c] via-[#f0d88a] to-[#c4953a]">Feels Different</span>
               </motion.h2>
             </div>
 
@@ -474,10 +474,22 @@ export const AboutPreviewSection = (): JSX.Element => {
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a94c] to-[#f0d88a]">Just a Loan Officer</span>
             </h2>
-            <p className="text-white/40 text-[16px] leading-[1.75]">
+            <motion.p
+              className="text-white/40 text-[16px] md:text-[18px] leading-[1.8] max-w-[620px]"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.22 }}
+            >
               With over 15 years in the mortgage industry, Greg Wynn has helped hundreds of families navigate the path to homeownership. His approach combines deep market knowledge with genuine care — delivering results that speak for themselves.
-            </p>
-            <ul className="space-y-3 py-2">
+            </motion.p>
+            <motion.ul
+              className="space-y-3 py-2"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
               {bullets.map((b, i) => (
                 <motion.li
                   key={i}
@@ -491,7 +503,7 @@ export const AboutPreviewSection = (): JSX.Element => {
                   <span className="text-white/50 text-[15px] font-medium">{b}</span>
                 </motion.li>
               ))}
-            </ul>
+            </motion.ul>
             <Link href="/about">
               <motion.div className="inline-block mt-1" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
                 <Button className="rounded-xl bg-white text-[#0c0c0c] font-bold gap-2.5 h-12 px-7 text-[15px] hover:bg-white/90 group shadow-lg shadow-white/10" data-testid="button-about-more">
