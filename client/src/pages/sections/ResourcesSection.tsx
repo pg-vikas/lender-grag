@@ -1,6 +1,7 @@
 import { BookOpen, CheckSquare, Home, FileText, AlertTriangle, MessageCircle, X, Send, GripVertical, Pencil, Check } from "lucide-react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
+import deskImg from "@assets/shutterstock_2137168113_1775459050359.jpg";
 
 interface StickyNote {
   id: number;
@@ -119,43 +120,27 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
             filter: `url(#${PAPER_NOISE_ID})`,
           }}
         >
-          <div
-            className="absolute inset-0 pointer-events-none opacity-[0.025]"
-            style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 21px, rgba(0,0,0,0.2) 21px, rgba(0,0,0,0.2) 22px)" }}
-          />
+          <div className="absolute inset-0 pointer-events-none opacity-[0.025]" style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 21px, rgba(0,0,0,0.2) 21px, rgba(0,0,0,0.2) 22px)" }} />
 
           <div className="absolute top-0 left-0 right-0 h-[5px]" style={{ background: `linear-gradient(90deg, ${note.color}aa, ${note.color}66)` }} />
 
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ background: `linear-gradient(${LIGHT_ANGLE}deg, rgba(255,255,255,0.15) 0%, transparent 35%, rgba(0,0,0,0.03) 90%)` }}
-          />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(${LIGHT_ANGLE}deg, rgba(255,255,255,0.15) 0%, transparent 35%, rgba(0,0,0,0.03) 90%)` }} />
 
           <div style={curlStyle as any} />
 
-          <div
-            className="absolute bottom-0 left-0 right-0 h-10 pointer-events-none"
-            style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.025) 0%, transparent 100%)" }}
-          />
+          <div className="absolute bottom-0 left-0 right-0 h-10 pointer-events-none" style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.025) 0%, transparent 100%)" }} />
 
           <div className="p-[14px] pb-3 relative">
             <div className="absolute top-1 right-1 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               {!isEditing && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
-                  className="w-5 h-5 rounded flex items-center justify-center hover:bg-black/8 transition-colors"
-                  data-testid={`edit-note-${note.id}`}
-                >
+                <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} className="w-5 h-5 rounded flex items-center justify-center hover:bg-black/10 transition-colors" data-testid={`edit-note-${note.id}`}>
                   <Pencil className="w-2.5 h-2.5" style={{ color: note.color }} />
                 </button>
               )}
             </div>
 
             <div className="flex items-start gap-2.5 relative">
-              <div
-                className="w-[30px] h-[30px] rounded-md flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: `${note.color}12`, border: `1px solid ${note.color}18` }}
-              >
+              <div className="w-[30px] h-[30px] rounded-md flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${note.color}12`, border: `1px solid ${note.color}18` }}>
                 <Icon className="w-[14px] h-[14px]" style={{ color: note.color }} />
               </div>
               <div className="flex-1 min-w-0 pt-0.5">
@@ -201,92 +186,6 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
   );
 }
 
-function DeskAccessories() {
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      <svg className="absolute top-[4%] right-[4.5%] w-[75px] h-[75px]" viewBox="0 0 75 75" style={{ transform: "rotate(12deg)", opacity: 0.28 }}>
-        <ellipse cx="33" cy="42" rx="22" ry="3" fill="rgba(20,10,5,0.25)" />
-        <circle cx="33" cy="36" r="26" fill="#18120c" stroke="#503a22" strokeWidth="3" />
-        <circle cx="33" cy="36" r="22" fill="#201510" />
-        <ellipse cx="33" cy="36" rx="17" ry="17" fill="#140c06" />
-        <ellipse cx="31" cy="33" rx="8" ry="5.5" fill="#30200e" opacity="0.3" />
-        <ellipse cx="36" cy="38" rx="3" ry="2" fill="#3a2a15" opacity="0.15" />
-        <path d="M59 28 Q70 28, 70 36 Q70 44, 59 44" fill="none" stroke="#503a22" strokeWidth="3.5" strokeLinecap="round" />
-      </svg>
-
-      <div className="absolute top-[3%] right-[3.5%] w-[90px] h-[90px] rounded-full" style={{ opacity: 0.035, background: "radial-gradient(circle, transparent 28px, rgba(90,50,15,0.5) 30px, rgba(90,50,15,0.2) 38px, transparent 40px)", transform: "rotate(12deg) translate(4px, 8px)" }} />
-
-      <svg className="absolute bottom-[9%] right-[2.5%] w-[210px] h-[14px]" viewBox="0 0 210 14" style={{ transform: "rotate(-16deg)", opacity: 0.25 }}>
-        <defs>
-          <linearGradient id="penBody" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#2a2a2a" />
-            <stop offset="40%" stopColor="#1a1a1a" />
-            <stop offset="100%" stopColor="#111" />
-          </linearGradient>
-        </defs>
-        <rect x="0" y="2.5" width="175" height="9" rx="4.5" fill="url(#penBody)" />
-        <rect x="0" y="3.5" width="175" height="2.5" rx="1.2" fill="rgba(255,255,255,0.07)" />
-        <rect x="5" y="1.5" width="32" height="11" rx="2.5" fill="#333" />
-        <rect x="5" y="2.5" width="32" height="4" rx="1.5" fill="rgba(255,255,255,0.04)" />
-        <polygon points="175,3 195,7 175,11" fill="#c4953a" />
-        <polygon points="195,6.5 201,7 195,7.5" fill="#8a7a60" />
-        <rect x="162" y="2" width="15" height="10" rx="1.5" fill="#b8860b" opacity="0.4" />
-      </svg>
-
-      <svg className="absolute top-[22%] left-[1%] w-[130px] h-[10px]" viewBox="0 0 130 10" style={{ transform: "rotate(26deg)", opacity: 0.18 }}>
-        <defs>
-          <linearGradient id="penRed" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#7a2020" />
-            <stop offset="50%" stopColor="#5a1515" />
-            <stop offset="100%" stopColor="#4a1010" />
-          </linearGradient>
-        </defs>
-        <rect x="0" y="1" width="115" height="8" rx="4" fill="url(#penRed)" />
-        <rect x="0" y="2" width="115" height="2.5" rx="1" fill="rgba(255,255,255,0.06)" />
-        <polygon points="115,1 128,5 115,9" fill="#2a2a2a" />
-        <rect x="100" y="0.5" width="10" height="9" rx="1.5" fill="#aaa" opacity="0.25" />
-      </svg>
-
-      <svg className="absolute top-[3%] left-[24%] w-[105px] h-[48px]" viewBox="0 0 105 48" style={{ transform: "rotate(-3deg)", opacity: 0.16 }}>
-        <ellipse cx="26" cy="24" rx="19" ry="17" fill="none" stroke="#555" strokeWidth="2" />
-        <ellipse cx="79" cy="24" rx="19" ry="17" fill="none" stroke="#555" strokeWidth="2" />
-        <path d="M45 21 Q52.5 15, 60 21" fill="none" stroke="#555" strokeWidth="2" />
-        <line x1="7" y1="17" x2="-2" y2="6" stroke="#555" strokeWidth="1.8" strokeLinecap="round" />
-        <line x1="98" y1="17" x2="107" y2="6" stroke="#555" strokeWidth="1.8" strokeLinecap="round" />
-        <ellipse cx="26" cy="24" rx="14" ry="12" fill="rgba(255,255,255,0.015)" />
-        <ellipse cx="79" cy="24" rx="14" ry="12" fill="rgba(255,255,255,0.015)" />
-      </svg>
-
-      <div className="absolute top-[60%] left-[44%] w-[110px] h-[145px] rounded-[1px]" style={{ opacity: 0.03, background: "linear-gradient(178deg, #f0ead8 0%, #e0d8c2 100%)", transform: "rotate(13deg)", boxShadow: "2px 3px 6px rgba(0,0,0,0.08)" }} />
-      <div className="absolute top-[5%] right-[20%] w-[95px] h-[125px] rounded-[1px]" style={{ opacity: 0.025, background: "linear-gradient(182deg, #ece5d5 0%, #ddd5c0 100%)", transform: "rotate(-6deg)", boxShadow: "1px 2px 4px rgba(0,0,0,0.06)" }} />
-
-      {[
-        { top: "16%", left: "92%", rot: 55, op: 0.09 },
-        { top: "78%", left: "94%", rot: -20, op: 0.07 },
-      ].map((clip, i) => (
-        <svg key={`clip-${i}`} className="absolute w-[15px] h-[28px]" style={{ top: clip.top, left: clip.left, transform: `rotate(${clip.rot}deg)`, opacity: clip.op }} viewBox="0 0 18 32">
-          <path d="M5 2 L5 24 Q5 30, 9 30 Q13 30, 13 24 L13 8 Q13 4, 9 4 Q5 4, 5 8" fill="none" stroke="#888" strokeWidth="1.3" strokeLinecap="round" />
-        </svg>
-      ))}
-
-      <svg className="absolute bottom-[7%] left-[3%] w-[95px] h-[38px]" viewBox="0 0 95 38" style={{ transform: "rotate(6deg)", opacity: 0.2 }}>
-        <defs>
-          <linearGradient id="staplerBody" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#222" />
-            <stop offset="100%" stopColor="#0e0e0e" />
-          </linearGradient>
-        </defs>
-        <rect x="5" y="5" width="85" height="28" rx="6" fill="url(#staplerBody)" stroke="#333" strokeWidth="1.2" />
-        <rect x="8" y="7" width="79" height="24" rx="5" fill="#161616" />
-        <rect x="12" y="15" width="71" height="7" rx="2" fill="#1e1e1e" />
-        <rect x="10" y="9" width="75" height="5" rx="2" fill="#252525" />
-        <rect x="10" y="9" width="75" height="2" rx="1" fill="rgba(255,255,255,0.03)" />
-        <circle cx="78" cy="19" r="3.5" fill="#2a2a2a" stroke="#3a3a3a" strokeWidth="0.6" />
-      </svg>
-    </div>
-  );
-}
-
 function AskGregModal({ topic, onClose }: { topic: string; onClose: () => void }) {
   const [question, setQuestion] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -319,11 +218,11 @@ function AskGregModal({ topic, onClose }: { topic: string; onClose: () => void }
 }
 
 const notePositions = [
-  { left: "3%", top: "7%" },
-  { left: "28%", top: "3%" },
-  { left: "60%", top: "5%" },
-  { left: "8%", top: "50%" },
-  { left: "46%", top: "48%" },
+  { left: "2%", top: "22%" },
+  { left: "22%", top: "18%" },
+  { left: "44%", top: "24%" },
+  { left: "12%", top: "56%" },
+  { left: "38%", top: "58%" },
 ];
 
 export const ResourcesSection = (): JSX.Element => {
@@ -358,7 +257,7 @@ export const ResourcesSection = (): JSX.Element => {
     <section className="py-24 lg:py-32 bg-[#0c0c0c] relative overflow-hidden">
       <PaperTextureDefs />
 
-      <div className="max-w-[1200px] mx-auto px-6 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10">
         <motion.div className="text-center mb-6" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
           <span className="text-[#d4a94c] font-bold text-[13px] uppercase tracking-[0.2em]">Resources</span>
           <h2 className="text-4xl md:text-5xl font-extrabold text-white mt-3 tracking-[-0.02em]" data-testid="text-resources-heading">
@@ -380,58 +279,47 @@ export const ResourcesSection = (): JSX.Element => {
             </div>
           ))}
         </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="rounded-2xl overflow-hidden relative"
-          style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.03) inset, 0 25px 70px rgba(0,0,0,0.65), 0 6px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,0,0,0.3)" }}
-        >
-          <div
-            ref={boardRef}
-            onMouseMove={handleMouseMove}
-            className="relative w-full min-h-[640px] md:min-h-[620px] lg:min-h-[680px] rounded-2xl overflow-hidden"
-            style={{
-              touchAction: "none",
-              background: `linear-gradient(178deg, #40301e 0%, #362718 12%, #3c2a18 28%, #30210f 48%, #382614 65%, #2e200e 82%, #2b1d0d 100%)`,
-            }}
-          >
-            <div className="absolute inset-0 pointer-events-none opacity-[0.04]" style={{ backgroundImage: "repeating-linear-gradient(176deg, transparent, transparent 1.5px, rgba(120,75,35,0.5) 1.5px, rgba(120,75,35,0.5) 2.5px, transparent 2.5px, transparent 6px)" }} />
-
-            <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{ backgroundImage: "repeating-linear-gradient(176deg, transparent, transparent 40px, rgba(255,255,255,0.08) 40px, rgba(255,255,255,0.08) 41px, transparent 41px, transparent 120px)" }} />
-
-            <div className="absolute inset-0 pointer-events-none opacity-[0.025]" style={{ backgroundImage: "repeating-linear-gradient(86deg, transparent, transparent 200px, rgba(0,0,0,0.15) 200px, rgba(0,0,0,0.15) 201px, transparent 201px, transparent 500px)" }} />
-
-            <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 65% 55% at 30% 20%, rgba(255,215,140,0.09) 0%, transparent 100%), radial-gradient(ellipse 50% 45% at 80% 80%, rgba(0,0,0,0.22) 0%, transparent 100%), radial-gradient(ellipse 120% 120% at 50% 50%, transparent 45%, rgba(0,0,0,0.2) 100%)` }} />
-
-            <motion.div
-              className="absolute inset-0 pointer-events-none"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 2, delay: 0.5 }}
-              style={{ background: `linear-gradient(${LIGHT_ANGLE}deg, rgba(255,230,170,0.04) 0%, transparent 25%), linear-gradient(${LIGHT_ANGLE + 180}deg, rgba(0,0,0,0.08) 0%, transparent 20%)` }}
-            />
-
-            <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(255,240,200,0.025) 0%, transparent 15%), linear-gradient(0deg, rgba(0,0,0,0.1) 0%, transparent 10%)" }} />
-
-            <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: "linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.05) 70%, transparent 95%)" }} />
-            <div className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, transparent, rgba(0,0,0,0.4), transparent)" }} />
-            <div className="absolute top-0 bottom-0 left-0 w-[2px]" style={{ background: "linear-gradient(180deg, transparent, rgba(0,0,0,0.2), transparent)" }} />
-            <div className="absolute top-0 bottom-0 right-0 w-[2px]" style={{ background: "linear-gradient(180deg, transparent, rgba(0,0,0,0.2), transparent)" }} />
-
-            <DeskAccessories />
-
-            {notes.map((note, i) => (
-              <div key={note.id} className="absolute" style={{ left: notePositions[i]?.left ?? "20%", top: notePositions[i]?.top ?? "20%" }}>
-                <StickyNoteCard note={note} onEdit={handleEdit} onAskGreg={(topic) => setAskTopic(topic)} constraintsRef={boardRef} mouseX={mouseX} mouseY={mouseY} boardBounds={boardBounds} />
-              </div>
-            ))}
-          </div>
-        </motion.div>
       </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full"
+      >
+        <div
+          ref={boardRef}
+          onMouseMove={handleMouseMove}
+          className="relative w-full overflow-hidden"
+          style={{
+            touchAction: "none",
+            minHeight: "620px",
+            aspectRatio: "16 / 9",
+            maxHeight: "85vh",
+          }}
+        >
+          <img
+            src={deskImg}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ objectPosition: "center top" }}
+            draggable={false}
+          />
+
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 70% at 50% 50%, transparent 40%, rgba(0,0,0,0.35) 100%)" }} />
+
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 15%, transparent 85%, rgba(0,0,0,0.25) 100%)" }} />
+
+          <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 2px 20px rgba(0,0,0,0.3), inset 0 -2px 20px rgba(0,0,0,0.2)" }} />
+
+          {notes.map((note, i) => (
+            <div key={note.id} className="absolute" style={{ left: notePositions[i]?.left ?? "20%", top: notePositions[i]?.top ?? "20%" }}>
+              <StickyNoteCard note={note} onEdit={handleEdit} onAskGreg={(topic) => setAskTopic(topic)} constraintsRef={boardRef} mouseX={mouseX} mouseY={mouseY} boardBounds={boardBounds} />
+            </div>
+          ))}
+        </div>
+      </motion.div>
 
       <AnimatePresence>
         {askTopic && <AskGregModal topic={askTopic} onClose={() => setAskTopic(null)} />}
