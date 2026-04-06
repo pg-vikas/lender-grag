@@ -47,7 +47,7 @@ function PaperTextureDefs() {
   );
 }
 
-function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouseY, boardBounds }: {
+function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouseY, boardBounds, isExpanded, onExpand, onCollapse }: {
   note: StickyNote;
   onEdit: (id: number, title: string, desc: string) => void;
   onAskGreg: (topic: string) => void;
@@ -55,22 +55,28 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
   mouseX: ReturnType<typeof useMotionValue>;
   mouseY: ReturnType<typeof useMotionValue>;
   boardBounds: { width: number; height: number };
+  isExpanded: boolean;
+  onExpand: () => void;
+  onCollapse: () => void;
 }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editTitle, setEditTitle] = useState(note.title);
-  const [editDesc, setEditDesc] = useState(note.desc);
   const [isDragging, setIsDragging] = useState(false);
   const [isLifted, setIsLifted] = useState(false);
-  const Icon = note.icon;
+  const [question, setQuestion] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (isExpanded && inputRef.current) {
+      setTimeout(() => inputRef.current?.focus(), 350);
+    }
+    if (!isExpanded) { setQuestion(""); setSubmitted(false); }
+  }, [isExpanded]);
 
   const pFactor = 1.2 + note.id * 0.4;
   const parallaxX = useTransform(mouseX, [0, boardBounds.width || 1], [-pFactor, pFactor]);
   const parallaxY = useTransform(mouseY, [0, boardBounds.height || 1], [-pFactor * 0.6, pFactor * 0.6]);
   const smoothX = useSpring(parallaxX, { stiffness: 40, damping: 18 });
   const smoothY = useSpring(parallaxY, { stiffness: 40, damping: 18 });
-
-  const handleSave = () => { onEdit(note.id, editTitle, editDesc); setIsEditing(false); };
-  const handleCancel = () => { setEditTitle(note.title); setEditDesc(note.desc); setIsEditing(false); };
 
   const curlStyle = useMemo(() => {
     const i = note.curlIntensity;
@@ -85,33 +91,56 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
   }, [note.curlCorner, note.curlIntensity]);
 
   const shadowStyle = useMemo(() => {
+    if (isExpanded) return `${SHADOW_DX * 8}px ${SHADOW_DY * 8}px 60px rgba(0,0,0,0.6), ${SHADOW_DX * 3}px ${SHADOW_DY * 3}px 20px rgba(0,0,0,0.4), 0 0 100px rgba(0,0,0,0.15)`;
     if (isDragging) return `${SHADOW_DX * 6}px ${SHADOW_DY * 6}px 50px rgba(0,0,0,0.55), ${SHADOW_DX * 2}px ${SHADOW_DY * 2}px 15px rgba(0,0,0,0.35), 0 0 80px rgba(0,0,0,0.12)`;
     if (isLifted) return `${SHADOW_DX * 4}px ${SHADOW_DY * 4}px 35px rgba(0,0,0,0.5), ${SHADOW_DX * 1.5}px ${SHADOW_DY * 1.5}px 10px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2)`;
     return `${SHADOW_DX * 1.5}px ${SHADOW_DY * 1.5}px 16px rgba(0,0,0,0.4), ${SHADOW_DX * 0.5}px ${SHADOW_DY * 0.5}px 5px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.2)`;
-  }, [isDragging, isLifted]);
+  }, [isDragging, isLifted, isExpanded]);
+
+  const handleClick = useCallback(() => {
+    if (isDragging) return;
+    if (!isExpanded) onExpand();
+  }, [isDragging, isExpanded, onExpand]);
+
+  const handleSubmit = () => {
+    if (question.trim()) setSubmitted(true);
+  };
 
   return (
     <motion.div
       className="absolute touch-none select-none"
-      drag
+      drag={!isExpanded}
       dragConstraints={constraintsRef}
       dragElastic={0.02}
       dragMomentum={false}
       onDragStart={() => setIsDragging(true)}
       onDragEnd={() => setTimeout(() => setIsDragging(false), 50)}
       initial={{ opacity: 0, scale: 0.4, rotate: note.rotate * 5, y: 80 }}
-      animate={{ opacity: 1, scale: 1, rotate: note.rotate, y: 0 }}
-      transition={{ type: "spring", stiffness: 90, damping: 13, delay: 0.6 + note.id * 0.18 }}
-      whileHover={{ scale: 1.035, rotate: note.rotate * 0.2, zIndex: 50, y: -8, transition: { type: "spring", stiffness: 200, damping: 18 } }}
-      whileDrag={{ scale: 1.06, rotate: 0, zIndex: 100, transition: { type: "spring", stiffness: 250, damping: 18 } }}
-      style={{ zIndex: isDragging ? 100 : isLifted ? 60 : 10 + note.id, x: smoothX, y: smoothY }}
-      onHoverStart={() => setIsLifted(true)}
+      animate={{
+        opacity: 1,
+        scale: isExpanded ? 1.35 : 1,
+        rotate: isExpanded ? 0 : note.rotate,
+        y: isExpanded ? -20 : 0,
+      }}
+      transition={isExpanded
+        ? { type: "spring", stiffness: 180, damping: 22 }
+        : { type: "spring", stiffness: 90, damping: 13, delay: 0.6 + note.id * 0.18 }
+      }
+      whileHover={!isExpanded ? { scale: 1.035, rotate: note.rotate * 0.2, zIndex: 50, y: -8, transition: { type: "spring", stiffness: 200, damping: 18 } } : undefined}
+      whileDrag={!isExpanded ? { scale: 1.06, rotate: 0, zIndex: 100, transition: { type: "spring", stiffness: 250, damping: 18 } } : undefined}
+      style={{ zIndex: isExpanded ? 150 : isDragging ? 100 : isLifted ? 60 : 10 + note.id, x: isExpanded ? 0 : smoothX, y: isExpanded ? undefined : smoothY }}
+      onHoverStart={() => !isExpanded && setIsLifted(true)}
       onHoverEnd={() => setIsLifted(false)}
+      onClick={handleClick}
       data-testid={`sticky-note-${note.id}`}
     >
       <div
-        className="w-[240px] md:w-[260px] aspect-square relative group cursor-grab active:cursor-grabbing"
-        style={{ boxShadow: shadowStyle, transition: "box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1)" }}
+        className={`w-[240px] md:w-[260px] relative group ${isExpanded ? "cursor-default" : "cursor-grab active:cursor-grabbing"}`}
+        style={{
+          boxShadow: shadowStyle,
+          transition: "box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+          aspectRatio: isExpanded ? "auto" : "1",
+        }}
       >
         <div
           className="relative overflow-hidden h-full"
@@ -129,44 +158,98 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
           <div className="absolute bottom-0 left-0 right-0 h-12 pointer-events-none" style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.06) 0%, transparent 100%)" }} />
 
           <div className="p-5 pt-7 relative flex flex-col h-full">
-            <div className="absolute top-1.5 right-1.5 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {!isEditing && (
-                <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} className="w-6 h-6 rounded flex items-center justify-center hover:bg-black/10 transition-colors" data-testid={`edit-note-${note.id}`}>
-                  <Pencil className="w-3 h-3" style={{ color: note.color }} />
-                </button>
-              )}
-            </div>
+            {isExpanded && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onCollapse(); }}
+                className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center hover:bg-black/10 transition-colors z-10"
+                data-testid={`close-note-${note.id}`}
+              >
+                <X className="w-3.5 h-3.5" style={{ color: note.color }} />
+              </button>
+            )}
 
             <div className="relative">
-              {isEditing ? (
-                <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full text-[16px] font-bold bg-white/40 rounded px-2 py-1 border-none outline-none focus:bg-white/60" style={{ color: note.color, fontFamily: "'Caveat', cursive" }} onClick={(e) => e.stopPropagation()} data-testid={`input-title-${note.id}`} />
-              ) : (
-                <h3 className="text-[26px] font-bold leading-tight" style={{ color: note.color, fontFamily: "'Caveat', cursive" }}>{note.title}</h3>
-              )}
+              <h3 className="text-[26px] font-bold leading-tight" style={{ color: note.color, fontFamily: "'Caveat', cursive" }}>{note.title}</h3>
             </div>
 
             <div className="mt-3 relative flex-1">
-              {isEditing ? (
-                <textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} rows={3} className="w-full text-[13px] bg-white/40 rounded px-2 py-1.5 border-none outline-none resize-none focus:bg-white/60 leading-relaxed" style={{ color: "#333", fontFamily: "'Caveat', cursive" }} onClick={(e) => e.stopPropagation()} data-testid={`input-desc-${note.id}`} />
-              ) : (
-                <p className="text-[21px] leading-[1.4]" style={{ color: "rgba(0,0,0,0.65)", fontFamily: "'Caveat', cursive" }}>{note.desc}</p>
-              )}
+              <p className="text-[21px] leading-[1.4]" style={{ color: "rgba(0,0,0,0.65)", fontFamily: "'Caveat', cursive" }}>{note.desc}</p>
             </div>
 
-            {isEditing ? (
-              <div className="flex gap-2 mt-3 relative">
-                <button onClick={(e) => { e.stopPropagation(); handleSave(); }} className="flex items-center gap-1 text-[13px] font-bold px-3 py-1 rounded bg-white/50 hover:bg-white/70 transition-colors" style={{ color: note.color, fontFamily: "'Caveat', cursive" }} data-testid={`save-note-${note.id}`}>
-                  <Check className="w-3 h-3" /> Save
-                </button>
-                <button onClick={(e) => { e.stopPropagation(); handleCancel(); }} className="flex items-center gap-1 text-[13px] font-medium px-3 py-1 rounded bg-black/5 hover:bg-black/10 transition-colors" style={{ color: "rgba(0,0,0,0.5)", fontFamily: "'Caveat', cursive" }}>
-                  <X className="w-3 h-3" /> Cancel
-                </button>
-              </div>
-            ) : (
+            <AnimatePresence>
+              {isExpanded && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                  className="overflow-hidden"
+                >
+                  {!submitted ? (
+                    <div className="mt-4 pt-3" style={{ borderTop: `2px dashed ${note.color}30` }}>
+                      <p className="text-[16px] font-semibold mb-2" style={{ color: note.color, fontFamily: "'Caveat', cursive" }}>
+                        Ask Greg about this:
+                      </p>
+                      <textarea
+                        ref={inputRef}
+                        value={question}
+                        onChange={(e) => setQuestion(e.target.value)}
+                        onClick={(e) => e.stopPropagation()}
+                        placeholder="Type your question..."
+                        rows={3}
+                        className="w-full rounded-lg px-3 py-2 text-[15px] border-none outline-none resize-none leading-relaxed"
+                        style={{
+                          background: "rgba(255,255,255,0.5)",
+                          color: "#333",
+                          fontFamily: "'Caveat', cursive",
+                        }}
+                        data-testid={`input-question-${note.id}`}
+                      />
+                      <motion.button
+                        onClick={(e) => { e.stopPropagation(); handleSubmit(); }}
+                        className="w-full mt-2 py-2 rounded-lg font-bold text-[16px] flex items-center justify-center gap-2 transition-all"
+                        style={{
+                          background: note.color,
+                          color: note.bg,
+                          fontFamily: "'Caveat', cursive",
+                        }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.97 }}
+                        data-testid={`button-send-${note.id}`}
+                      >
+                        <Send className="w-4 h-4" /> Send to Greg
+                      </motion.button>
+                    </div>
+                  ) : (
+                    <motion.div
+                      className="mt-4 pt-3 text-center"
+                      style={{ borderTop: `2px dashed ${note.color}30` }}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                    >
+                      <div className="w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center" style={{ background: `${note.color}20` }}>
+                        <Check className="w-6 h-6" style={{ color: note.color }} />
+                      </div>
+                      <p className="text-[18px] font-bold" style={{ color: note.color, fontFamily: "'Caveat', cursive" }}>Question Sent!</p>
+                      <p className="text-[14px] mt-1" style={{ color: "rgba(0,0,0,0.45)", fontFamily: "'Caveat', cursive" }}>Greg will get back to you shortly.</p>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onCollapse(); }}
+                        className="mt-3 text-[14px] font-semibold hover:underline"
+                        style={{ color: note.color, fontFamily: "'Caveat', cursive" }}
+                      >
+                        Close
+                      </button>
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {!isExpanded && (
               <div className="flex items-center justify-between mt-auto pt-2 relative">
-                <button onClick={(e) => { e.stopPropagation(); onAskGreg(note.title); }} className="flex items-center gap-1.5 text-[16px] font-bold px-2 py-1 rounded hover:bg-white/30 transition-colors" style={{ color: note.color, fontFamily: "'Caveat', cursive" }} data-testid={`ask-greg-${note.id}`}>
-                  <MessageCircle className="w-4 h-4" /> Ask Greg
-                </button>
+                <div className="flex items-center gap-1.5 text-[16px] font-bold px-2 py-1" style={{ color: note.color, fontFamily: "'Caveat', cursive" }}>
+                  <MessageCircle className="w-4 h-4" /> Click to ask Greg
+                </div>
                 <div className="flex items-center gap-0.5 text-[10px] font-medium opacity-15" style={{ fontFamily: "'Caveat', cursive" }}>
                   <GripVertical className="w-3 h-3" /> drag
                 </div>
@@ -221,6 +304,7 @@ const notePositions = [
 export const ResourcesSection = (): JSX.Element => {
   const [notes, setNotes] = useState(initialNotes);
   const [askTopic, setAskTopic] = useState<string | null>(null);
+  const [expandedNoteId, setExpandedNoteId] = useState<number | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -264,8 +348,7 @@ export const ResourcesSection = (): JSX.Element => {
         <motion.div className="flex items-center justify-center gap-3 mb-8 flex-wrap" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>
           {[
             { label: "Drag to rearrange", icon: GripVertical },
-            { label: "Click pencil to edit", icon: Pencil },
-            { label: "Ask Greg anything", icon: MessageCircle },
+            { label: "Click a note to ask Greg", icon: MessageCircle },
           ].map((tip, i) => (
             <div key={i} className="flex items-center gap-1.5 text-white/20 text-[11px] font-medium px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.05]">
               <tip.icon className="w-3 h-3" />{tip.label}
@@ -308,7 +391,18 @@ export const ResourcesSection = (): JSX.Element => {
 
           {notes.map((note, i) => (
             <div key={note.id} className="absolute" style={{ left: notePositions[i]?.left ?? "20%", top: notePositions[i]?.top ?? "20%" }}>
-              <StickyNoteCard note={note} onEdit={handleEdit} onAskGreg={(topic) => setAskTopic(topic)} constraintsRef={boardRef} mouseX={mouseX} mouseY={mouseY} boardBounds={boardBounds} />
+              <StickyNoteCard
+                note={note}
+                onEdit={handleEdit}
+                onAskGreg={(topic) => setAskTopic(topic)}
+                constraintsRef={boardRef}
+                mouseX={mouseX}
+                mouseY={mouseY}
+                boardBounds={boardBounds}
+                isExpanded={expandedNoteId === note.id}
+                onExpand={() => setExpandedNoteId(note.id)}
+                onCollapse={() => setExpandedNoteId(null)}
+              />
             </div>
           ))}
         </div>
