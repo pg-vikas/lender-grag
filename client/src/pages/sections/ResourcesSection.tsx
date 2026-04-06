@@ -17,11 +17,11 @@ interface StickyNote {
 }
 
 const initialNotes: StickyNote[] = [
-  { id: 0, icon: BookOpen, title: "First-Time Buyer Guide", desc: "Everything you need to know before buying your first home — from credit to closing.", color: "#b8860b", bg: "#fef9e7", bgDark: "#f5edcd", rotate: -2.8, curlCorner: "br", curlIntensity: 0.7 },
-  { id: 1, icon: CheckSquare, title: "Pre-Approval Checklist", desc: "The documents and steps needed to get pre-approved fast and stress-free.", color: "#1a8a5e", bg: "#edf9f0", bgDark: "#d6f0dc", rotate: 2.2, curlCorner: "bl", curlIntensity: 0.5 },
-  { id: 2, icon: Home, title: "How Much House Can I Afford?", desc: "Understand your real budget based on what lenders actually look for.", color: "#3366aa", bg: "#eef4fb", bgDark: "#d8e8f8", rotate: -1.4, curlCorner: "br", curlIntensity: 0.6 },
-  { id: 3, icon: FileText, title: "Documents You'll Need", desc: "A complete list of what to prepare before starting your mortgage application.", color: "#b8447a", bg: "#fcf0f5", bgDark: "#f5dce8", rotate: 3.0, curlCorner: "tr", curlIntensity: 0.55 },
-  { id: 4, icon: AlertTriangle, title: "Mortgage Mistakes to Avoid", desc: "Five common pitfalls that cost borrowers time, money, and deals.", color: "#c76a20", bg: "#fef5ec", bgDark: "#f8e6d0", rotate: -1.8, curlCorner: "bl", curlIntensity: 0.65 },
+  { id: 0, icon: BookOpen, title: "First-Time Buyer Guide", desc: "Everything you need to know before buying your first home — from credit to closing.", color: "#5a4800", bg: "#FFD966", bgDark: "#F5C842", rotate: -2.8, curlCorner: "br", curlIntensity: 0.7 },
+  { id: 1, icon: CheckSquare, title: "Pre-Approval Checklist", desc: "The documents and steps needed to get pre-approved fast and stress-free.", color: "#1a5c3a", bg: "#77DD77", bgDark: "#5EC85E", rotate: 2.2, curlCorner: "bl", curlIntensity: 0.5 },
+  { id: 2, icon: Home, title: "How Much House Can I Afford?", desc: "Understand your real budget based on what lenders actually look for.", color: "#2a4a7a", bg: "#7EC8E3", bgDark: "#5BB5D5", rotate: -1.4, curlCorner: "br", curlIntensity: 0.6 },
+  { id: 3, icon: FileText, title: "Documents You'll Need", desc: "A complete list of what to prepare before starting your mortgage application.", color: "#7a2a55", bg: "#FF9FCE", bgDark: "#F08ABC", rotate: 3.0, curlCorner: "tr", curlIntensity: 0.55 },
+  { id: 4, icon: AlertTriangle, title: "Mortgage Mistakes to Avoid", desc: "Five common pitfalls that cost borrowers time, money, and deals.", color: "#8a4400", bg: "#FFB347", bgDark: "#F09A30", rotate: -1.8, curlCorner: "bl", curlIntensity: 0.65 },
 ];
 
 const PAPER_NOISE_ID = "paperNoise";
@@ -110,72 +110,65 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
       data-testid={`sticky-note-${note.id}`}
     >
       <div
-        className="w-[320px] md:w-[360px] relative group cursor-grab active:cursor-grabbing"
+        className="w-[280px] md:w-[310px] aspect-square relative group cursor-grab active:cursor-grabbing"
         style={{ boxShadow: shadowStyle, transition: "box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1)" }}
       >
         <div
-          className="rounded-[2px] relative overflow-hidden h-full"
+          className="relative overflow-hidden h-full"
           style={{
             background: `linear-gradient(168deg, ${note.bg} 0%, ${note.bgDark} 100%)`,
             filter: `url(#${PAPER_NOISE_ID})`,
           }}
         >
-          <div className="absolute inset-0 pointer-events-none opacity-[0.025]" style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 21px, rgba(0,0,0,0.2) 21px, rgba(0,0,0,0.2) 22px)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(${LIGHT_ANGLE}deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 30%, transparent 60%, rgba(0,0,0,0.06) 100%)` }} />
 
-          <div className="absolute top-0 left-0 right-0 h-[6px]" style={{ background: `linear-gradient(90deg, ${note.color}aa, ${note.color}66)` }} />
-
-          <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(${LIGHT_ANGLE}deg, rgba(255,255,255,0.15) 0%, transparent 35%, rgba(0,0,0,0.03) 90%)` }} />
+          <div className="absolute top-0 left-[15%] right-[15%] h-[22px] pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 60%, transparent 100%)", borderRadius: "0 0 2px 2px" }} />
 
           <div style={curlStyle as any} />
 
-          <div className="absolute bottom-0 left-0 right-0 h-10 pointer-events-none" style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.025) 0%, transparent 100%)" }} />
+          <div className="absolute bottom-0 left-0 right-0 h-12 pointer-events-none" style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.06) 0%, transparent 100%)" }} />
 
-          <div className="p-5 pb-4 relative flex flex-col h-full">
-            <div className="absolute top-1 right-1 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="p-5 pt-7 relative flex flex-col h-full">
+            <div className="absolute top-1.5 right-1.5 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               {!isEditing && (
-                <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} className="w-5 h-5 rounded flex items-center justify-center hover:bg-black/10 transition-colors" data-testid={`edit-note-${note.id}`}>
-                  <Pencil className="w-2.5 h-2.5" style={{ color: note.color }} />
+                <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} className="w-6 h-6 rounded flex items-center justify-center hover:bg-black/10 transition-colors" data-testid={`edit-note-${note.id}`}>
+                  <Pencil className="w-3 h-3" style={{ color: note.color }} />
                 </button>
               )}
             </div>
 
-            <div className="flex items-start gap-2.5 relative">
-              <div className="w-[36px] h-[36px] rounded-md flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${note.color}12`, border: `1px solid ${note.color}18` }}>
-                <Icon className="w-[18px] h-[18px]" style={{ color: note.color }} />
-              </div>
-              <div className="flex-1 min-w-0 pt-0.5">
-                {isEditing ? (
-                  <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full text-[12px] font-bold bg-white/60 rounded px-1.5 py-0.5 border-none outline-none focus:bg-white/80" style={{ color: "#1a1a1a" }} onClick={(e) => e.stopPropagation()} data-testid={`input-title-${note.id}`} />
-                ) : (
-                  <h3 className="text-[22px] font-bold leading-snug" style={{ color: "#222", fontFamily: "'Caveat', cursive" }}>{note.title}</h3>
-                )}
-              </div>
+            <div className="relative">
+              {isEditing ? (
+                <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full text-[16px] font-bold bg-white/40 rounded px-2 py-1 border-none outline-none focus:bg-white/60" style={{ color: note.color, fontFamily: "'Caveat', cursive" }} onClick={(e) => e.stopPropagation()} data-testid={`input-title-${note.id}`} />
+              ) : (
+                <h3 className="text-[24px] font-bold leading-tight" style={{ color: note.color, fontFamily: "'Caveat', cursive" }}>{note.title}</h3>
+              )}
             </div>
 
-            <div className="mt-2 relative flex-1">
+            <div className="mt-3 relative flex-1">
               {isEditing ? (
-                <textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} rows={3} className="w-full text-[11px] bg-white/60 rounded px-1.5 py-1 border-none outline-none resize-none focus:bg-white/80 leading-relaxed" style={{ color: "#444" }} onClick={(e) => e.stopPropagation()} data-testid={`input-desc-${note.id}`} />
+                <textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} rows={3} className="w-full text-[13px] bg-white/40 rounded px-2 py-1.5 border-none outline-none resize-none focus:bg-white/60 leading-relaxed" style={{ color: "#333", fontFamily: "'Caveat', cursive" }} onClick={(e) => e.stopPropagation()} data-testid={`input-desc-${note.id}`} />
               ) : (
-                <p className="text-[18px] leading-[1.5]" style={{ color: "#555", fontFamily: "'Caveat', cursive" }}>{note.desc}</p>
+                <p className="text-[19px] leading-[1.45]" style={{ color: "rgba(0,0,0,0.65)", fontFamily: "'Caveat', cursive" }}>{note.desc}</p>
               )}
             </div>
 
             {isEditing ? (
-              <div className="flex gap-1.5 mt-2 relative">
-                <button onClick={(e) => { e.stopPropagation(); handleSave(); }} className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-white/60 hover:bg-white/80 transition-colors" style={{ color: note.color }} data-testid={`save-note-${note.id}`}>
-                  <Check className="w-2.5 h-2.5" /> Save
+              <div className="flex gap-2 mt-3 relative">
+                <button onClick={(e) => { e.stopPropagation(); handleSave(); }} className="flex items-center gap-1 text-[13px] font-bold px-3 py-1 rounded bg-white/50 hover:bg-white/70 transition-colors" style={{ color: note.color, fontFamily: "'Caveat', cursive" }} data-testid={`save-note-${note.id}`}>
+                  <Check className="w-3 h-3" /> Save
                 </button>
-                <button onClick={(e) => { e.stopPropagation(); handleCancel(); }} className="flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded bg-black/5 hover:bg-black/10 text-gray-500 transition-colors">
-                  <X className="w-2.5 h-2.5" /> Cancel
+                <button onClick={(e) => { e.stopPropagation(); handleCancel(); }} className="flex items-center gap-1 text-[13px] font-medium px-3 py-1 rounded bg-black/5 hover:bg-black/10 transition-colors" style={{ color: "rgba(0,0,0,0.5)", fontFamily: "'Caveat', cursive" }}>
+                  <X className="w-3 h-3" /> Cancel
                 </button>
               </div>
             ) : (
-              <div className="flex items-center justify-between mt-2 pt-[6px] border-t relative" style={{ borderColor: `${note.color}10` }}>
-                <button onClick={(e) => { e.stopPropagation(); onAskGreg(note.title); }} className="flex items-center gap-1.5 text-[15px] font-bold px-2 py-1 rounded hover:bg-white/35 transition-colors" style={{ color: note.color }} data-testid={`ask-greg-${note.id}`}>
-                  <MessageCircle className="w-4 h-4" /> <span style={{ fontFamily: "'Caveat', cursive" }}>Ask Greg</span>
+              <div className="flex items-center justify-between mt-auto pt-2 relative">
+                <button onClick={(e) => { e.stopPropagation(); onAskGreg(note.title); }} className="flex items-center gap-1.5 text-[16px] font-bold px-2 py-1 rounded hover:bg-white/30 transition-colors" style={{ color: note.color, fontFamily: "'Caveat', cursive" }} data-testid={`ask-greg-${note.id}`}>
+                  <MessageCircle className="w-4 h-4" /> Ask Greg
                 </button>
-                <div className="flex items-center gap-1 text-[10px] font-medium opacity-20">
-                  <GripVertical className="w-3 h-3" /> <span style={{ fontFamily: "'Caveat', cursive" }}>drag</span>
+                <div className="flex items-center gap-0.5 text-[10px] font-medium opacity-15" style={{ fontFamily: "'Caveat', cursive" }}>
+                  <GripVertical className="w-3 h-3" /> drag
                 </div>
               </div>
             )}
