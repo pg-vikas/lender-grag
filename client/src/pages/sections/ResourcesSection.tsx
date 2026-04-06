@@ -110,7 +110,7 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
       data-testid={`sticky-note-${note.id}`}
     >
       <div
-        className="w-[520px] md:w-[580px] relative group cursor-grab active:cursor-grabbing"
+        className="w-[200px] md:w-[220px] relative group cursor-grab active:cursor-grabbing"
         style={{ boxShadow: shadowStyle, transition: "box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1)" }}
       >
         <div
@@ -122,7 +122,7 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
         >
           <div className="absolute inset-0 pointer-events-none opacity-[0.025]" style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 21px, rgba(0,0,0,0.2) 21px, rgba(0,0,0,0.2) 22px)" }} />
 
-          <div className="absolute top-0 left-0 right-0 h-[7px]" style={{ background: `linear-gradient(90deg, ${note.color}aa, ${note.color}66)` }} />
+          <div className="absolute top-0 left-0 right-0 h-[4px]" style={{ background: `linear-gradient(90deg, ${note.color}aa, ${note.color}66)` }} />
 
           <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(${LIGHT_ANGLE}deg, rgba(255,255,255,0.15) 0%, transparent 35%, rgba(0,0,0,0.03) 90%)` }} />
 
@@ -130,52 +130,52 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
 
           <div className="absolute bottom-0 left-0 right-0 h-10 pointer-events-none" style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.025) 0%, transparent 100%)" }} />
 
-          <div className="p-7 pb-5 relative flex flex-col h-full">
-            <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="p-3.5 pb-3 relative flex flex-col h-full">
+            <div className="absolute top-1 right-1 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               {!isEditing && (
-                <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} className="w-7 h-7 rounded flex items-center justify-center hover:bg-black/10 transition-colors" data-testid={`edit-note-${note.id}`}>
-                  <Pencil className="w-3.5 h-3.5" style={{ color: note.color }} />
+                <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} className="w-5 h-5 rounded flex items-center justify-center hover:bg-black/10 transition-colors" data-testid={`edit-note-${note.id}`}>
+                  <Pencil className="w-2.5 h-2.5" style={{ color: note.color }} />
                 </button>
               )}
             </div>
 
             <div className="flex items-start gap-2.5 relative">
-              <div className="w-[56px] h-[56px] rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${note.color}12`, border: `1px solid ${note.color}18` }}>
-                <Icon className="w-7 h-7" style={{ color: note.color }} />
+              <div className="w-[28px] h-[28px] rounded-md flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${note.color}12`, border: `1px solid ${note.color}18` }}>
+                <Icon className="w-3.5 h-3.5" style={{ color: note.color }} />
               </div>
               <div className="flex-1 min-w-0 pt-0.5">
                 {isEditing ? (
-                  <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full text-[16px] font-bold bg-white/60 rounded px-2 py-1 border-none outline-none focus:bg-white/80" style={{ color: "#1a1a1a" }} onClick={(e) => e.stopPropagation()} data-testid={`input-title-${note.id}`} />
+                  <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full text-[12px] font-bold bg-white/60 rounded px-1.5 py-0.5 border-none outline-none focus:bg-white/80" style={{ color: "#1a1a1a" }} onClick={(e) => e.stopPropagation()} data-testid={`input-title-${note.id}`} />
                 ) : (
-                  <h3 className="text-[40px] font-bold leading-tight" style={{ color: "#222", fontFamily: "'Caveat', cursive" }}>{note.title}</h3>
+                  <h3 className="text-[15px] font-bold leading-snug" style={{ color: "#222", fontFamily: "'Caveat', cursive" }}>{note.title}</h3>
                 )}
               </div>
             </div>
 
             <div className="mt-2 relative flex-1">
               {isEditing ? (
-                <textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} rows={3} className="w-full text-[14px] bg-white/60 rounded px-2 py-1.5 border-none outline-none resize-none focus:bg-white/80 leading-relaxed" style={{ color: "#444" }} onClick={(e) => e.stopPropagation()} data-testid={`input-desc-${note.id}`} />
+                <textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} rows={3} className="w-full text-[11px] bg-white/60 rounded px-1.5 py-1 border-none outline-none resize-none focus:bg-white/80 leading-relaxed" style={{ color: "#444" }} onClick={(e) => e.stopPropagation()} data-testid={`input-desc-${note.id}`} />
               ) : (
-                <p className="text-[60px] leading-[1.3]" style={{ color: "#555", fontFamily: "'Caveat', cursive" }}>{note.desc}</p>
+                <p className="text-[13px] leading-[1.5]" style={{ color: "#555", fontFamily: "'Caveat', cursive" }}>{note.desc}</p>
               )}
             </div>
 
             {isEditing ? (
               <div className="flex gap-1.5 mt-2 relative">
-                <button onClick={(e) => { e.stopPropagation(); handleSave(); }} className="flex items-center gap-1.5 text-[13px] font-bold px-3 py-1.5 rounded bg-white/60 hover:bg-white/80 transition-colors" style={{ color: note.color }} data-testid={`save-note-${note.id}`}>
-                  <Check className="w-3.5 h-3.5" /> Save
+                <button onClick={(e) => { e.stopPropagation(); handleSave(); }} className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-white/60 hover:bg-white/80 transition-colors" style={{ color: note.color }} data-testid={`save-note-${note.id}`}>
+                  <Check className="w-2.5 h-2.5" /> Save
                 </button>
-                <button onClick={(e) => { e.stopPropagation(); handleCancel(); }} className="flex items-center gap-1.5 text-[13px] font-medium px-3 py-1.5 rounded bg-black/5 hover:bg-black/10 text-gray-500 transition-colors">
-                  <X className="w-3.5 h-3.5" /> Cancel
+                <button onClick={(e) => { e.stopPropagation(); handleCancel(); }} className="flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded bg-black/5 hover:bg-black/10 text-gray-500 transition-colors">
+                  <X className="w-2.5 h-2.5" /> Cancel
                 </button>
               </div>
             ) : (
               <div className="flex items-center justify-between mt-2 pt-[6px] border-t relative" style={{ borderColor: `${note.color}10` }}>
-                <button onClick={(e) => { e.stopPropagation(); onAskGreg(note.title); }} className="flex items-center gap-2 text-[20px] font-bold px-3 py-1.5 rounded hover:bg-white/35 transition-colors" style={{ color: note.color }} data-testid={`ask-greg-${note.id}`}>
-                  <MessageCircle className="w-5 h-5" /> <span style={{ fontFamily: "'Caveat', cursive" }}>Ask Greg</span>
+                <button onClick={(e) => { e.stopPropagation(); onAskGreg(note.title); }} className="flex items-center gap-1 text-[11px] font-bold px-1.5 py-0.5 rounded hover:bg-white/35 transition-colors" style={{ color: note.color }} data-testid={`ask-greg-${note.id}`}>
+                  <MessageCircle className="w-3 h-3" /> <span style={{ fontFamily: "'Caveat', cursive" }}>Ask Greg</span>
                 </button>
-                <div className="flex items-center gap-1 text-[11px] font-medium opacity-20">
-                  <GripVertical className="w-3.5 h-3.5" /> <span style={{ fontFamily: "'Caveat', cursive" }}>drag</span>
+                <div className="flex items-center gap-0.5 text-[8px] font-medium opacity-20">
+                  <GripVertical className="w-2.5 h-2.5" /> <span style={{ fontFamily: "'Caveat', cursive" }}>drag</span>
                 </div>
               </div>
             )}
