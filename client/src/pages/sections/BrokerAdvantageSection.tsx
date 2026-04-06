@@ -237,18 +237,18 @@ export const BrokerAdvantageSection = (): JSX.Element => {
                     <span className="text-[11px] uppercase tracking-[0.18em] text-white/25 font-bold">Source</span>
                     <span className="text-[#d4a94c] text-[11px] font-bold">Access</span>
                   </div>
-                  <div className="mt-4 flex-1 rounded-2xl border border-white/[0.07] bg-gradient-to-br from-white/[0.08] to-white/[0.02] flex flex-col items-center justify-center text-center px-3 py-3 gap-1">
-                    <div className="h-[110px] w-full flex items-center justify-center">
+                  <div className="mt-4 flex-1 rounded-2xl border border-white/[0.07] bg-[#0b0b0b] flex flex-col items-center justify-center text-center px-4 py-4 gap-3">
+                    <div className="h-[76px] w-full flex items-center justify-center">
                       <img
                         src={lender.logo}
                         alt={`${lender.name} logo`}
-                        className={`max-h-full max-w-full object-contain ${lender.name === "UWM" ? "scale-[2.8]" : "scale-[2.15]"}`}
+                        className={`max-h-full max-w-full object-contain ${lender.name === "UWM" ? "scale-[1.35]" : "scale-[1.15]"}`}
                         data-testid={`img-lender-logo-${index}`}
                       />
                     </div>
-                    <div className="mt-2">
-                      <p className="text-white/60 text-[11px] uppercase tracking-[0.22em] font-bold">Source Access</p>
-                      <p className="text-white text-[14px] font-medium tracking-tight mt-1.5">{lender.description}</p>
+                    <div className="max-w-[220px]">
+                      <p className="text-white/40 text-[11px] uppercase tracking-[0.24em] font-bold">Source Access</p>
+                      <p className="text-white/70 text-[12px] leading-snug mt-2">{lender.description}</p>
                     </div>
                   </div>
                 </motion.div>
