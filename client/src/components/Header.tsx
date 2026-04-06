@@ -3,6 +3,7 @@ import { Menu, X, Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "wouter";
+import logoImg from "@assets/0d269cea-2377-44ee-9783-ac1f3351effc_1775451470922.png";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -52,17 +53,14 @@ export function Header() {
       >
         <div className="max-w-[1320px] mx-auto px-6 flex items-center justify-between">
           <Link href="/" data-testid="link-home-logo">
-            <div className="flex items-center gap-2.5 cursor-pointer group">
-              <div className={`w-9 h-9 rounded-[10px] flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow ${
-                transparent ? "bg-white/15 backdrop-blur-sm group-hover:shadow-white/10" : "bg-[#004733] group-hover:shadow-[#004733]/20"
-              }`}>
-                <span className="text-white font-bold text-[14px] tracking-tight">LG</span>
-              </div>
-              <span className={`font-bold text-[18px] tracking-tight transition-colors duration-300 ${
-                transparent ? "text-white" : "text-[#0c1a14]"
-              }`}>
-                Lender Greg
-              </span>
+            <div className="cursor-pointer group">
+              <img
+                src={logoImg}
+                alt="Lender Greg"
+                className={`h-10 md:h-11 w-auto object-contain transition-all duration-300 ${
+                  transparent ? "brightness-[1.8] contrast-[0.9]" : "brightness-100"
+                }`}
+              />
             </div>
           </Link>
 

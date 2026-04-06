@@ -1,5 +1,6 @@
 import { Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "wouter";
+import logoImg from "@assets/0d269cea-2377-44ee-9783-ac1f3351effc_1775451470922.png";
 
 const navCols = [
   {
@@ -28,11 +29,14 @@ export const FooterSection = (): JSX.Element => {
       <div className="max-w-[1320px] mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-[#004733] flex items-center justify-center">
-                <span className="text-white font-bold text-sm">LG</span>
-              </div>
-              <span className="font-bold text-lg">Lender Greg</span>
+            <div className="mb-4">
+              <Link href="/">
+                <img
+                  src={logoImg}
+                  alt="Lender Greg"
+                  className="h-12 w-auto object-contain brightness-[1.6] cursor-pointer"
+                />
+              </Link>
             </div>
             <p className="text-white/60 leading-relaxed max-w-[340px] mb-6 text-sm">
               Smart mortgage strategy, responsive communication, and smoother closings. Serving families across San Diego and Southern California.
