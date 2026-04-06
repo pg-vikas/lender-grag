@@ -40,9 +40,9 @@ export const HeroSection = (): JSX.Element => {
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
 
       <div className="relative w-full">
-        <div className="max-w-[1320px] mx-auto px-6 pb-16 md:pb-20 lg:pb-24 pt-[40vh]">
+        <div className="max-w-[1320px] mx-auto px-6 pb-16 md:pb-20 lg:pb-24 pt-[40vh] flex">
           <motion.div
-            className="flex flex-col gap-6 max-w-[580px]"
+            className="flex flex-col gap-6 max-w-[580px] mr-auto"
             initial="hidden"
             animate="visible"
             variants={stagger}
