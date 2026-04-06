@@ -177,12 +177,13 @@ export const BrokerAdvantageSection = (): JSX.Element => {
                 <motion.img
                   src={gregLogo}
                   alt="Lender Greg"
-                  className="w-full max-w-[520px] h-auto object-contain drop-shadow-2xl ml-auto"
+                  className="w-full max-w-[640px] h-auto object-contain drop-shadow-2xl ml-auto"
                   initial={{ opacity: 0, y: 12 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.6, delay: 0.12 }}
                   data-testid="img-broker-greg-logo"
                 />
+              </div>
             </motion.div>
 
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
