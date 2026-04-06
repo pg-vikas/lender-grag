@@ -5,6 +5,7 @@ import { Link } from "wouter";
 import { useRef } from "react";
 import gregPhoto from "@assets/bccb6149-2450-49bb-bcc6-1719871865b3_1775248779071.png";
 import badgeLogo from "@assets/lender-greg-badge-transparent.png";
+import wideBadge from "@assets/Sleek_Lender_Greg_logo_design_1775462720491.png";
 
 const highlights = [
   { icon: Award, stat: "15+", label: "Years in Lending" },
@@ -413,6 +414,21 @@ export const AboutPreviewSection = (): JSX.Element => {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a94c] to-[#f0d88a]">Feels Different</span>
               </motion.h2>
             </div>
+
+            <motion.div
+              className="mb-8 flex justify-start"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <img
+                src={wideBadge}
+                alt="Lender Greg Badge"
+                className="h-[80px] md:h-[100px] w-auto object-contain"
+                data-testid="img-wide-badge"
+              />
+            </motion.div>
 
             <div className="aspect-[4/5] max-w-[420px] rounded-[28px] overflow-hidden relative shadow-2xl shadow-black/40">
               <img
