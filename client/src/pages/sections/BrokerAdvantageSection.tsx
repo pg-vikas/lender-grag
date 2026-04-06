@@ -3,14 +3,44 @@ import { ArrowRight, CheckCircle2, Network, ShieldCheck, Sparkles } from "lucide
 import { useRef } from "react";
 import { Link } from "wouter";
 import gregLogo from "@assets/Sleek_Lender_Greg_logo_design_1775465481480.png";
+import uwmLogo from "@assets/New_UWM_Logo_1_1775504276200.png";
+import chaseLogo from "@assets/6787fb6fedafc63876131fb8_chase-logo-1_1775504276201.png";
+import rocketLogo from "@assets/Logos_RocketMortgage-web-padded_1775504276201.png";
+import bofaLogo from "@assets/banbk_of_america_1775504276201.webp";
+import pennymacLogo from "@assets/PennyMac_Financial_Services_Logo.svg_1775504276202.png";
+import citibankLogo from "@assets/images_1775504276202.jpg";
 
 const lenders = [
-  "UWM",
-  "Rocket",
-  "PennyMac",
-  "Flagstar",
-  "Newrez",
-  "Wholesale Access",
+  {
+    name: "UWM",
+    description: "Wholesale-first pricing and broad loan programs.",
+    logo: uwmLogo,
+  },
+  {
+    name: "Chase",
+    description: "Retail bank lending with national reach.",
+    logo: chaseLogo,
+  },
+  {
+    name: "Rocket Mortgage",
+    description: "Digital-forward home financing and fast workflows.",
+    logo: rocketLogo,
+  },
+  {
+    name: "Bank of America",
+    description: "Large-bank mortgage options with branch support.",
+    logo: bofaLogo,
+  },
+  {
+    name: "PennyMac",
+    description: "Servicing strength and competitive loan execution.",
+    logo: pennymacLogo,
+  },
+  {
+    name: "Citibank",
+    description: "Established banking relationships and mortgage options.",
+    logo: citibankLogo,
+  },
 ];
 
 const benefits = [
@@ -224,8 +254,8 @@ export const BrokerAdvantageSection = (): JSX.Element => {
                   </div>
                   <div className="mt-4 flex-1 rounded-2xl border border-white/[0.07] bg-gradient-to-br from-white/[0.08] to-white/[0.02] flex items-center justify-center text-center px-3">
                     <div>
-                      <p className="text-white text-[20px] font-extrabold tracking-tight">{lender}</p>
-                      <p className="text-white/25 text-[11px] mt-1">Logo placeholder</p>
+                      <p className="text-white text-[18px] font-extrabold tracking-tight">{lender.name}</p>
+                      <p className="text-white/55 text-[11px] mt-1 leading-snug">{lender.description}</p>
                     </div>
                   </div>
                 </motion.div>
