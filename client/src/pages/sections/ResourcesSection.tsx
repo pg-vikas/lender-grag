@@ -418,7 +418,7 @@ const notePositions = [
   { left: "35%", top: "30%" },
   { left: "60%", top: "34%" },
   { left: "18%", top: "62%" },
-  { left: "48%", top: "64%" },
+  { left: "48%", top: "54%" },
 ];
 
 export const ResourcesSection = (): JSX.Element => {
