@@ -4,6 +4,7 @@ import { motion, useInView } from "framer-motion";
 import { Link } from "wouter";
 import { useRef } from "react";
 import gregPhoto from "@assets/bccb6149-2450-49bb-bcc6-1719871865b3_1775248779071.png";
+import badgeLogo from "@assets/lender-greg-badge-transparent.png";
 
 const highlights = [
   { icon: Award, stat: "15+", label: "Years in Lending" },
@@ -381,6 +382,38 @@ export const AboutPreviewSection = (): JSX.Element => {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
+            <div className="mb-8">
+              <motion.img
+                src={badgeLogo}
+                alt="Lender Greg"
+                className="h-16 md:h-20 w-auto object-contain mb-5"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+              />
+              <motion.p
+                className="text-[#d4a94c] font-bold text-[13px] uppercase tracking-[0.2em] mb-3"
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                Why Lender Greg
+              </motion.p>
+              <motion.h2
+                className="text-3xl md:text-[40px] font-extrabold text-white tracking-[-0.02em] leading-[1.1]"
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.15 }}
+              >
+                Lending That
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a94c] to-[#f0d88a]">Feels Different</span>
+              </motion.h2>
+            </div>
+
             <div className="aspect-[4/5] max-w-[420px] rounded-[28px] overflow-hidden relative shadow-2xl shadow-black/40">
               <img
                 src={gregPhoto}
