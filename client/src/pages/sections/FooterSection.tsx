@@ -1,6 +1,6 @@
 import { Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "wouter";
-import logoImg from "@assets/lender-greg-logo-transparent.png";
+import logoImg from "@assets/lender-greg-logo-new-transparent.png";
 
 const navCols = [
   {
@@ -34,7 +34,7 @@ export const FooterSection = (): JSX.Element => {
                 <img
                   src={logoImg}
                   alt="Lender Greg"
-                  className="h-14 w-auto object-contain brightness-[1.8] cursor-pointer"
+                  className="h-14 w-auto object-contain brightness-[1.6] cursor-pointer"
                 />
               </Link>
             </div>
