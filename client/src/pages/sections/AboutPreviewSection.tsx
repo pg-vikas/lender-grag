@@ -430,15 +430,15 @@ export const AboutPreviewSection = (): JSX.Element => {
               />
             </motion.div>
 
-            <div className="aspect-[4/5] max-w-[420px] rounded-[24px] overflow-hidden relative shadow-2xl shadow-black/40">
+            <div className="aspect-[4/5] max-w-[390px] md:max-w-[360px] rounded-[20px] overflow-hidden relative shadow-2xl shadow-black/40">
               <img
                 src={gregPhoto}
                 alt="Greg Wynn — Branch Manager & Loan Officer"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover scale-[1.02]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <p className="text-white text-[22px] font-extrabold tracking-tight">Greg Wynn</p>
+              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+                <p className="text-white text-[18px] md:text-[20px] font-extrabold tracking-tight">Greg Wynn</p>
                 <p className="text-white/50 text-[13px] font-medium">Branch Manager & Loan Officer · NMLS 276890</p>
               </div>
             </div>
