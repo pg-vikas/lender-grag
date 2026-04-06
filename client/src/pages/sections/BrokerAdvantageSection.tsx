@@ -206,7 +206,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
               <div className="absolute w-[300px] h-[300px] rounded-full border border-white/[0.06]" />
             </div>
 
-            <div className="relative grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
+              <div className="relative grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
               <motion.div
                 className="col-span-2 sm:col-span-3 rounded-[28px] border border-[#d4a94c]/18 bg-white/[0.04] backdrop-blur-xl p-5 md:p-6 shadow-2xl shadow-black/30"
                 animate={inView ? { y: [0, -4, 0] } : {}}
@@ -237,18 +237,18 @@ export const BrokerAdvantageSection = (): JSX.Element => {
                     <span className="text-[11px] uppercase tracking-[0.18em] text-white/25 font-bold">Source</span>
                     <span className="text-[#d4a94c] text-[11px] font-bold">Access</span>
                   </div>
-                  <div className="mt-4 flex-1 rounded-2xl border border-white/[0.07] bg-gradient-to-br from-white/[0.08] to-white/[0.02] flex flex-col items-center justify-center text-center px-3 py-4 gap-3">
-                    <div className="h-[44px] w-full flex items-center justify-center">
+                  <div className="mt-4 flex-1 rounded-2xl border border-white/[0.07] bg-gradient-to-br from-white/[0.08] to-white/[0.02] flex flex-col items-center justify-center text-center px-3 py-4 gap-4">
+                    <div className="h-[72px] w-full flex items-center justify-center">
                       <img
                         src={lender.logo}
                         alt={`${lender.name} logo`}
-                        className={`max-h-full max-w-full object-contain ${lender.name === "UWM" ? "scale-[1.55]" : "scale-100"}`}
+                        className={`max-h-full max-w-full object-contain ${lender.name === "UWM" ? "scale-[2.15]" : "scale-[1.75]"}`}
                         data-testid={`img-lender-logo-${index}`}
                       />
                     </div>
                     <div>
-                      <p className="text-white text-[18px] font-extrabold tracking-tight">{lender.name}</p>
-                      <p className="text-white/55 text-[11px] mt-1 leading-snug">{lender.description}</p>
+                      <p className="text-white/60 text-[11px] uppercase tracking-[0.22em] font-bold">Source Access</p>
+                      <p className="text-white text-[16px] font-semibold tracking-tight mt-2">{lender.description}</p>
                     </div>
                   </div>
                 </motion.div>
