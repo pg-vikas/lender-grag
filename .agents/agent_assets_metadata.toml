@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "xKYh5tBtjJsOucbVu_uWv"
+uri = "file://client/src/assets/images/citibank-logo-transparent.png"
+type = "image"
+title = "transparent version of Citibank logo with white background removed"
