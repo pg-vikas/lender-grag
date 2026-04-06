@@ -451,7 +451,7 @@ export const ResourcesSection = (): JSX.Element => {
   }, []);
 
   return (
-    <section className="py-24 lg:py-32 bg-[#0c0c0c] relative overflow-hidden">
+    <section className="pt-24 lg:pt-32 pb-0 bg-[#0c0c0c] relative overflow-hidden">
       <PaperTextureDefs />
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10">
