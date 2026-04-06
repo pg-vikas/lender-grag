@@ -35,14 +35,15 @@ export const BrokerAdvantageSection = (): JSX.Element => {
       </div>
 
       <div className="max-w-[1320px] mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-[1.02fr_0.98fr] gap-14 lg:gap-16 items-center">
+        <div className="grid lg:grid-cols-[1.02fr_0.98fr] gap-14 lg:gap-16 items-start">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7 }}
+            className="order-2 lg:order-1"
           >
             <motion.div
-              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#d4a94c]/20 bg-[#d4a94c]/10 text-[#f0d88a] text-[12px] font-bold uppercase tracking-[0.18em] mb-5"
+              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#d4a94c]/20 bg-[#d4a94c]/10 text-[#f0d88a] text-[12px] font-bold uppercase tracking-[0.18em] mb-5 lg:hidden"
               initial={{ opacity: 0, scale: 0.96 }}
               animate={inView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.5, delay: 0.05 }}
@@ -51,16 +52,6 @@ export const BrokerAdvantageSection = (): JSX.Element => {
               <ShieldCheck className="w-3.5 h-3.5" />
               Broker Advantage
             </motion.div>
-
-            <motion.img
-              src={gregLogo}
-              alt="Lender Greg"
-              className="h-18 md:h-20 lg:h-22 w-auto object-contain mb-6 drop-shadow-2xl"
-              initial={{ opacity: 0, y: 14 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.55, delay: 0.1 }}
-              data-testid="img-broker-greg-logo"
-            />
 
             <motion.h2
               className="text-4xl md:text-[54px] lg:text-[62px] font-extrabold text-white tracking-[-0.03em] leading-[0.98] max-w-[720px]"
@@ -161,11 +152,43 @@ export const BrokerAdvantageSection = (): JSX.Element => {
           </motion.div>
 
           <motion.div
-            className="relative"
+            className="relative order-1 lg:order-2"
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.75, delay: 0.1 }}
           >
+            <motion.div
+              className="hidden lg:flex justify-end mb-8"
+              initial={{ opacity: 0, y: 10 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.55, delay: 0.08 }}
+            >
+              <div className="relative w-full max-w-[380px] rounded-[30px] border border-[#d4a94c]/18 bg-white/[0.04] backdrop-blur-xl p-5 shadow-2xl shadow-black/25">
+                <div className="absolute inset-0 rounded-[30px] bg-gradient-to-br from-[#d4a94c]/10 via-transparent to-transparent" />
+                <div className="relative flex flex-col items-end">
+                  <motion.div
+                    className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#d4a94c]/20 bg-[#d4a94c]/10 text-[#f0d88a] text-[12px] font-bold uppercase tracking-[0.18em] mb-4"
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={inView ? { opacity: 1, scale: 1 } : {}}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    data-testid="badge-broker-advantage-desktop"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    Broker Advantage
+                  </motion.div>
+                  <motion.img
+                    src={gregLogo}
+                    alt="Lender Greg"
+                    className="w-full max-w-[330px] h-auto object-contain drop-shadow-2xl"
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={inView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.6, delay: 0.12 }}
+                    data-testid="img-broker-greg-logo"
+                  />
+                </div>
+              </div>
+            </motion.div>
+
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-[420px] h-[420px] rounded-full border border-[#d4a94c]/10" />
               <div className="absolute w-[300px] h-[300px] rounded-full border border-white/[0.06]" />
