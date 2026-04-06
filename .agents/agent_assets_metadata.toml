@@ -1,5 +1,10 @@
 uploads = []
-generated = []
+
+[[generated]]
+id = "DJ450wB2L_xFGqTkTuTt_"
+uri = "file://client/src/assets/images/citibank-logo-transparent.png"
+type = "image"
+title = "Transparent Citibank logo"
 
 [[outputs]]
 id = "xKYh5tBtjJsOucbVu_uWv"
