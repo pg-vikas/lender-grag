@@ -206,7 +206,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
               <div className="absolute w-[300px] h-[300px] rounded-full border border-white/[0.06]" />
             </div>
 
-            <div className="relative grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
+              <div className="relative grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
               <motion.div
                 className="col-span-2 sm:col-span-3 rounded-[28px] border border-[#d4a94c]/18 bg-white/[0.04] backdrop-blur-xl p-5 md:p-6 shadow-2xl shadow-black/30"
                 animate={inView ? { y: [0, -4, 0] } : {}}
@@ -225,7 +225,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
 
               {lenders.map((lender, index) => (
                 <motion.div
-                  key={lender.name || index}
+                  key={lender}
                   className="min-h-[118px] rounded-[24px] border border-white/[0.08] bg-[#0f0f0f]/90 backdrop-blur-md p-4 flex flex-col justify-between shadow-xl shadow-black/20"
                   initial={{ opacity: 0, y: 18 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -253,20 +253,6 @@ export const BrokerAdvantageSection = (): JSX.Element => {
                   </div>
                 </motion.div>
               ))}
-
-              <motion.div
-                className="col-span-2 sm:col-span-3 flex justify-center pt-2"
-                initial={{ opacity: 0, y: 12 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.45, delay: 0.6 }}
-              >
-                <img
-                  src={gregLogo}
-                  alt="Lender Greg"
-                  className="w-full max-w-[320px] h-auto object-contain drop-shadow-2xl"
-                  data-testid="img-broker-greg-logo-below"
-                />
-              </motion.div>
             </div>
           </motion.div>
         </div>
