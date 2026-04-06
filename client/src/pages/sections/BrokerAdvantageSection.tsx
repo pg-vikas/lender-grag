@@ -70,7 +70,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
             initial={{ opacity: 0, y: 24 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7 }}
-            className="order-2 lg:order-1"
+            className="order-2 lg:order-1 lg:pt-8 lg:pb-8"
           >
             <motion.div
               className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#d4a94c]/20 bg-[#d4a94c]/10 text-[#f0d88a] text-[12px] font-bold uppercase tracking-[0.18em] mb-5 lg:hidden"
@@ -84,7 +84,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
             </motion.div>
 
             <motion.h2
-              className="text-4xl md:text-[54px] lg:text-[62px] font-extrabold text-white tracking-[-0.03em] leading-[0.98] max-w-[720px]"
+              className="text-4xl md:text-[54px] lg:text-[62px] font-extrabold text-white tracking-[-0.03em] leading-[0.98] max-w-[720px] lg:mt-2"
               initial={{ opacity: 0, y: 14 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.55, delay: 0.15 }}
@@ -95,7 +95,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
             </motion.h2>
 
             <motion.p
-              className="mt-6 text-[17px] md:text-[18px] leading-[1.8] text-white/60 max-w-[640px]"
+              className="mt-6 text-[17px] md:text-[18px] leading-[1.8] text-white/60 max-w-[640px] lg:mb-2"
               initial={{ opacity: 0, y: 12 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.55, delay: 0.2 }}
@@ -104,7 +104,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
             </motion.p>
 
             <motion.div
-              className="mt-8 grid sm:grid-cols-2 gap-3 max-w-[680px]"
+              className="mt-8 grid sm:grid-cols-2 gap-3 max-w-[680px] lg:mb-2"
               initial={{ opacity: 0, y: 10 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.25 }}
@@ -124,7 +124,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
             </motion.div>
 
             <motion.div
-              className="mt-9 flex flex-wrap gap-3"
+              className="mt-9 flex flex-wrap gap-3 lg:mb-3"
               initial={{ opacity: 0, y: 10 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.3 }}
@@ -148,7 +148,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
             </motion.div>
 
             <motion.div
-              className="mt-10 rounded-[28px] border border-white/[0.08] bg-[#0f0f0f] p-5 md:p-6 max-w-[700px]"
+              className="mt-10 rounded-[28px] border border-white/[0.08] bg-[#0f0f0f] p-5 md:p-6 max-w-[700px] lg:mb-2"
               initial={{ opacity: 0, y: 14 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.55, delay: 0.35 }}
