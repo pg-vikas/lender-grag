@@ -308,37 +308,37 @@ function DeskPhone() {
       <div
         className="relative"
         style={{
-          width: "160px",
-          height: "310px",
-          borderRadius: "24px",
+          width: "260px",
+          height: "520px",
+          borderRadius: "32px",
           background: "linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%)",
           boxShadow: `6px 8px 30px rgba(0,0,0,0.6), 3px 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)`,
           border: "2px solid rgba(255,255,255,0.08)",
-          padding: "8px",
+          padding: "10px",
         }}
       >
-        <div className="absolute top-[10px] left-1/2 -translate-x-1/2 w-[40px] h-[5px] rounded-full bg-black/60 border border-white/[0.06]" />
+        <div className="absolute top-[14px] left-1/2 -translate-x-1/2 w-[60px] h-[7px] rounded-full bg-black/60 border border-white/[0.06]" />
 
         <div
           className="relative w-full overflow-hidden"
           style={{
             height: "calc(100% - 0px)",
-            borderRadius: "18px",
+            borderRadius: "24px",
             background: "linear-gradient(180deg, #0d1117 0%, #161b22 100%)",
           }}
         >
-          <div className="flex items-center justify-between px-3 pt-2 pb-1">
-            <span className="text-[8px] text-white/40 font-medium">9:41</span>
-            <div className="flex items-center gap-1">
-              <Signal className="w-2.5 h-2.5 text-white/40" />
-              <Wifi className="w-2.5 h-2.5 text-white/40" />
-              <BatteryFull className="w-3 h-2.5 text-white/40" />
+          <div className="flex items-center justify-between px-4 pt-3 pb-1.5">
+            <span className="text-[12px] text-white/40 font-medium">9:41</span>
+            <div className="flex items-center gap-1.5">
+              <Signal className="w-3.5 h-3.5 text-white/40" />
+              <Wifi className="w-3.5 h-3.5 text-white/40" />
+              <BatteryFull className="w-4 h-3.5 text-white/40" />
             </div>
           </div>
 
-          <div className="flex flex-col items-center pt-6 pb-4 px-4">
+          <div className="flex flex-col items-center pt-10 pb-6 px-6">
             <motion.div
-              className="w-[60px] h-[60px] rounded-full flex items-center justify-center mb-3"
+              className="w-[90px] h-[90px] rounded-full flex items-center justify-center mb-5"
               style={{
                 background: "linear-gradient(135deg, #d4a94c, #f0d88a)",
                 boxShadow: "0 4px 20px rgba(212,169,76,0.3)",
@@ -346,17 +346,17 @@ function DeskPhone() {
               animate={calling ? { scale: [1, 1.08, 1], boxShadow: ["0 4px 20px rgba(212,169,76,0.3)", "0 4px 30px rgba(212,169,76,0.6)", "0 4px 20px rgba(212,169,76,0.3)"] } : {}}
               transition={calling ? { repeat: Infinity, duration: 1.5 } : {}}
             >
-              <User className="w-7 h-7 text-[#0c0c0c]" />
+              <User className="w-10 h-10 text-[#0c0c0c]" />
             </motion.div>
 
-            <p className="text-white font-bold text-[16px] tracking-wide" style={{ fontFamily: "'DM Sans', sans-serif" }}>GREG</p>
-            <p className="text-white/30 text-[10px] mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>Lender Greg Wynn</p>
+            <p className="text-white font-bold text-[24px] tracking-wide" style={{ fontFamily: "'DM Sans', sans-serif" }}>GREG</p>
+            <p className="text-white/30 text-[14px] mt-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>Lender Greg Wynn</p>
 
             <AnimatePresence mode="wait">
               {!calling ? (
                 <motion.p
                   key="ready"
-                  className="text-[#d4a94c] text-[9px] font-medium mt-2 uppercase tracking-widest"
+                  className="text-[#d4a94c] text-[12px] font-medium mt-3 uppercase tracking-widest"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -366,7 +366,7 @@ function DeskPhone() {
               ) : (
                 <motion.p
                   key="calling"
-                  className="text-[#4ade80] text-[9px] font-medium mt-2 uppercase tracking-widest"
+                  className="text-[#4ade80] text-[12px] font-medium mt-3 uppercase tracking-widest"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: [0.4, 1, 0.4] }}
                   transition={{ repeat: Infinity, duration: 1.5 }}
@@ -377,7 +377,7 @@ function DeskPhone() {
             </AnimatePresence>
           </div>
 
-          <div className="absolute bottom-0 left-0 right-0 px-4 pb-5">
+          <div className="absolute bottom-0 left-0 right-0 px-5 pb-8">
             <motion.button
               onClick={() => {
                 if (!calling) {
@@ -386,7 +386,7 @@ function DeskPhone() {
                   setTimeout(() => setCalling(false), 3000);
                 }
               }}
-              className="w-full py-2.5 rounded-full font-bold text-[12px] flex items-center justify-center gap-1.5 transition-all"
+              className="w-full py-3.5 rounded-full font-bold text-[16px] flex items-center justify-center gap-2 transition-all"
               style={{
                 background: calling
                   ? "linear-gradient(135deg, #ef4444, #dc2626)"
@@ -401,13 +401,13 @@ function DeskPhone() {
               whileTap={{ scale: 0.95 }}
               data-testid="button-call-greg"
             >
-              <Phone className="w-3.5 h-3.5" />
+              <Phone className="w-5 h-5" />
               {calling ? "Calling..." : "CALL GREG"}
             </motion.button>
           </div>
         </div>
 
-        <div className="absolute bottom-[6px] left-1/2 -translate-x-1/2 w-[36px] h-[4px] rounded-full bg-white/10" />
+        <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[50px] h-[5px] rounded-full bg-white/10" />
       </div>
     </motion.div>
   );
