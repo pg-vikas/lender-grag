@@ -5,7 +5,7 @@ import { Link } from "wouter";
 import { useRef } from "react";
 import gregPhoto from "@assets/bccb6149-2450-49bb-bcc6-1719871865b3_1775248779071.png";
 import badgeLogo from "@assets/lender-greg-badge-transparent.png";
-import wideBadge from "@assets/Sleek_Lender_Greg_logo_design_1775462720491.png";
+import wideBadge from "@assets/Sleek_Lender_Greg_logo_design_1775464646399.png";
 
 const highlights = [
   { icon: Award, stat: "15+", label: "Years in Lending" },
