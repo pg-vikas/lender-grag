@@ -61,8 +61,6 @@ export const ResourcesSection = (): JSX.Element => {
 
   return (
     <section className="pt-24 lg:pt-32 pb-0 bg-[#0c0c0c] relative overflow-hidden">
-      <PaperTextureDefs />
-
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10">
         <motion.div className="text-center mb-6" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
           <p className="text-[#d4a94c] font-bold text-[13px] uppercase tracking-[0.24em] mb-3">Resources</p>
