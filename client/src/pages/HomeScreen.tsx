@@ -20,8 +20,8 @@ export const HomeScreen = (): JSX.Element => {
       <ResourcesSection />
       <StatsSection />
       <WhyGregSection />
-      <LoanOptionsSection />
       <CalculatorSection />
+      <LoanOptionsSection />
       <ProcessSection />
       <ReviewsSection />
       <AboutPreviewSection />
