@@ -110,7 +110,7 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
       data-testid={`sticky-note-${note.id}`}
     >
       <div
-        className="w-[280px] md:w-[310px] aspect-square relative group cursor-grab active:cursor-grabbing"
+        className="w-[240px] md:w-[260px] aspect-square relative group cursor-grab active:cursor-grabbing"
         style={{ boxShadow: shadowStyle, transition: "box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1)" }}
       >
         <div
@@ -141,7 +141,7 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
               {isEditing ? (
                 <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full text-[16px] font-bold bg-white/40 rounded px-2 py-1 border-none outline-none focus:bg-white/60" style={{ color: note.color, fontFamily: "'Caveat', cursive" }} onClick={(e) => e.stopPropagation()} data-testid={`input-title-${note.id}`} />
               ) : (
-                <h3 className="text-[24px] font-bold leading-tight" style={{ color: note.color, fontFamily: "'Caveat', cursive" }}>{note.title}</h3>
+                <h3 className="text-[26px] font-bold leading-tight" style={{ color: note.color, fontFamily: "'Caveat', cursive" }}>{note.title}</h3>
               )}
             </div>
 
@@ -149,7 +149,7 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
               {isEditing ? (
                 <textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} rows={3} className="w-full text-[13px] bg-white/40 rounded px-2 py-1.5 border-none outline-none resize-none focus:bg-white/60 leading-relaxed" style={{ color: "#333", fontFamily: "'Caveat', cursive" }} onClick={(e) => e.stopPropagation()} data-testid={`input-desc-${note.id}`} />
               ) : (
-                <p className="text-[19px] leading-[1.45]" style={{ color: "rgba(0,0,0,0.65)", fontFamily: "'Caveat', cursive" }}>{note.desc}</p>
+                <p className="text-[21px] leading-[1.4]" style={{ color: "rgba(0,0,0,0.65)", fontFamily: "'Caveat', cursive" }}>{note.desc}</p>
               )}
             </div>
 
