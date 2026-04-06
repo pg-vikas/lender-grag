@@ -384,34 +384,34 @@ export const AboutPreviewSection = (): JSX.Element => {
             transition={{ duration: 0.7 }}
           >
             <motion.div
-              className="absolute left-1/2 top-[-24px] h-[220px] w-[220px] md:h-[300px] md:w-[300px] -translate-x-1/2 rounded-full bg-[#d4a94c]/20 blur-3xl pointer-events-none"
+              className="absolute left-1/2 top-[-20px] h-[280px] w-[280px] md:h-[360px] md:w-[360px] -translate-x-1/2 rounded-full bg-[#d4a94c]/35 blur-3xl pointer-events-none"
               animate={{
-                y: [18, -8, 18],
-                opacity: [0.22, 0.5, 0.22],
-                scale: [0.92, 1, 0.92],
+                y: [42, -26, 42],
+                opacity: [0.3, 0.85, 0.3],
+                scale: [0.9, 1.08, 0.9],
               }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+              transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-              className="absolute left-1/2 top-[10px] h-[120px] w-[320px] -translate-x-1/2 bg-gradient-to-t from-transparent via-[#f0d88a]/20 to-transparent pointer-events-none"
-              animate={{ y: [18, -24, 18], opacity: [0.12, 0.45, 0.12] }}
-              transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute left-1/2 top-[0px] h-[220px] w-[420px] -translate-x-1/2 bg-gradient-to-t from-transparent via-[#f0d88a]/45 to-transparent blur-2xl pointer-events-none"
+              animate={{ y: [34, -30, 34], opacity: [0.18, 0.9, 0.18] }}
+              transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
             />
             <div className="mb-4 md:mb-5">
               <div className="relative inline-block mb-5">
                 <motion.img
                   src={badgeLogo}
                   alt="Lender Greg"
-                  className="h-16 md:h-20 w-auto object-contain relative z-10"
+                  className="h-16 md:h-20 w-auto object-contain relative z-20"
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
                 />
                 <motion.div
-                  className="absolute inset-[-12px] rounded-[24px] bg-gradient-to-t from-[#c4953a]/0 via-[#f0d88a]/25 to-[#d4a94c]/0 blur-2xl"
-                  animate={{ opacity: [0.25, 0.7, 0.25], scale: [0.98, 1.03, 0.98] }}
-                  transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute inset-[-22px] rounded-[30px] bg-[radial-gradient(circle_at_center,rgba(240,216,138,0.65),rgba(212,169,76,0.22)_42%,rgba(196,149,58,0)_72%)] blur-2xl"
+                  animate={{ opacity: [0.35, 1, 0.35], scale: [0.95, 1.08, 0.95] }}
+                  transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
                 />
               </div>
               <motion.p
