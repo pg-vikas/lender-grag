@@ -3,7 +3,7 @@ import { Menu, X, Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "wouter";
-import logoImg from "@assets/0d269cea-2377-44ee-9783-ac1f3351effc_1775451470922.png";
+import logoImg from "@assets/lender-greg-logo-transparent.png";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -57,8 +57,8 @@ export function Header() {
               <img
                 src={logoImg}
                 alt="Lender Greg"
-                className={`h-14 md:h-16 w-auto object-contain transition-all duration-300 mix-blend-lighten ${
-                  transparent ? "brightness-[2] invert-0" : "brightness-[0.15] mix-blend-multiply"
+                className={`h-14 md:h-16 w-auto object-contain transition-all duration-300 ${
+                  transparent ? "brightness-[1.8]" : "brightness-[0.15] invert"
                 }`}
               />
             </div>
