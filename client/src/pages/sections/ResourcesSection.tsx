@@ -490,9 +490,9 @@ export const ResourcesSection = (): JSX.Element => {
           className="relative w-full overflow-hidden"
           style={{
             touchAction: "none",
-            minHeight: "620px",
-            aspectRatio: "16 / 9",
-            maxHeight: "85vh",
+            minHeight: "720px",
+            aspectRatio: "16 / 10",
+            maxHeight: "90vh",
           }}
         >
           <img
