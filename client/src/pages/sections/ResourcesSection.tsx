@@ -185,47 +185,147 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef }: {
 function DeskAccessories() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
+
+      {/* Coffee mug — top-right, bird's eye circle with handle */}
+      <svg className="absolute top-[6%] right-[6%] w-[65px] h-[65px] opacity-[0.18]" viewBox="0 0 65 65" style={{ transform: "rotate(10deg)" }}>
+        <circle cx="28" cy="32" r="22" fill="#1a1410" stroke="#3d2b18" strokeWidth="2" />
+        <circle cx="28" cy="32" r="18" fill="#2a1c10" />
+        <ellipse cx="28" cy="32" rx="14" ry="14" fill="#1c1208" />
+        <ellipse cx="28" cy="30" rx="6" ry="4" fill="#3a2510" opacity="0.4" />
+        <path d="M50 24 Q60 24, 60 32 Q60 40, 50 40" fill="none" stroke="#3d2b18" strokeWidth="2.5" strokeLinecap="round" />
+      </svg>
+
+      {/* Coffee ring stain */}
       <div
-        className="absolute top-[12%] right-[8%] w-[70px] h-[70px] rounded-full opacity-[0.07]"
+        className="absolute top-[5%] right-[5%] w-[80px] h-[80px] rounded-full opacity-[0.04]"
         style={{
-          background: "radial-gradient(circle, transparent 28px, rgba(139,90,43,0.5) 29px, rgba(139,90,43,0.3) 33px, transparent 34px)",
+          background: "radial-gradient(circle, transparent 26px, rgba(100,60,20,0.6) 27px, rgba(100,60,20,0.3) 32px, transparent 33px)",
         }}
       />
 
-      <svg className="absolute bottom-[15%] right-[5%] w-[180px] h-[14px] opacity-[0.12]" viewBox="0 0 180 14" style={{ transform: "rotate(-8deg)" }}>
-        <rect x="0" y="3" width="160" height="8" rx="4" fill="#2a2a2a" />
-        <rect x="0" y="4" width="160" height="3" rx="1.5" fill="#3a3a3a" />
-        <polygon points="160,3 180,7 160,11" fill="#c4953a" />
-        <rect x="155" y="2" width="8" height="10" rx="1" fill="#b8860b" opacity="0.6" />
+      {/* Pen — long diagonal, bottom-right */}
+      <svg className="absolute bottom-[12%] right-[4%] w-[200px] h-[16px] opacity-[0.2]" viewBox="0 0 200 16" style={{ transform: "rotate(-12deg)" }}>
+        <rect x="0" y="4" width="170" height="8" rx="4" fill="#1a1a1a" />
+        <rect x="0" y="5" width="170" height="3" rx="1.5" fill="#2e2e2e" />
+        <rect x="8" y="3" width="30" height="10" rx="2" fill="#333" />
+        <polygon points="170,4 188,8 170,12" fill="#c4953a" />
+        <polygon points="188,7 194,8 188,9" fill="#8B7355" />
+        <rect x="160" y="3.5" width="12" height="9" rx="1" fill="#b8860b" opacity="0.5" />
       </svg>
 
-      <svg className="absolute top-[65%] left-[3%] w-[40px] h-[30px] opacity-[0.1]" viewBox="0 0 40 30" style={{ transform: "rotate(15deg)" }}>
-        <path d="M5 15 Q5 5, 20 5 Q35 5, 35 15 Q35 5, 20 5" fill="none" stroke="#888" strokeWidth="1.5" />
-        <path d="M5 15 L5 25 Q5 28, 8 28 L12 28" fill="none" stroke="#888" strokeWidth="1.5" />
-        <path d="M35 15 L35 25 Q35 28, 32 28 L28 28" fill="none" stroke="#888" strokeWidth="1.5" />
+      {/* Second pen — top-left area */}
+      <svg className="absolute top-[18%] left-[2%] w-[160px] h-[12px] opacity-[0.14]" viewBox="0 0 160 12" style={{ transform: "rotate(22deg)" }}>
+        <rect x="0" y="2" width="140" height="8" rx="4" fill="#8B0000" />
+        <rect x="0" y="3" width="140" height="3" rx="1.5" fill="#A52A2A" />
+        <polygon points="140,2 155,6 140,10" fill="#2a2a2a" />
+        <polygon points="155,5.5 159,6 155,6.5" fill="#666" />
+        <rect x="120" y="1.5" width="10" height="9" rx="1" fill="#C0C0C0" opacity="0.4" />
       </svg>
 
-      <svg className="absolute top-[8%] left-[45%] w-[28px] h-[28px] opacity-[0.08]" viewBox="0 0 28 28" style={{ transform: "rotate(25deg)" }}>
-        <path d="M4 14 Q4 4, 14 4 Q24 4, 24 14 Q24 24, 14 24 Q12 24, 12 22 L8 18 Q4 14, 4 14Z" fill="none" stroke="#666" strokeWidth="1.2" />
+      {/* Stapler — bottom-left, bird's eye view */}
+      <svg className="absolute bottom-[8%] left-[4%] w-[90px] h-[36px] opacity-[0.2]" viewBox="0 0 90 36" style={{ transform: "rotate(8deg)" }}>
+        <rect x="5" y="4" width="80" height="28" rx="5" fill="#111" stroke="#333" strokeWidth="1" />
+        <rect x="8" y="6" width="74" height="24" rx="4" fill="#1a1a1a" />
+        <rect x="12" y="14" width="66" height="8" rx="2" fill="#222" />
+        <rect x="10" y="8" width="70" height="5" rx="2" fill="#2a2a2a" />
+        <circle cx="72" cy="18" r="3" fill="#333" stroke="#444" strokeWidth="0.5" />
+        <rect x="15" y="10" width="20" height="2" rx="1" fill="#C0C0C0" opacity="0.15" />
       </svg>
 
-      <div className="absolute bottom-[8%] left-[25%] w-[90px] h-[55px] rounded-[6px] opacity-[0.06] border border-white/10"
-        style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)", transform: "rotate(5deg)" }}
-      >
-        <div className="absolute top-[8px] left-1/2 -translate-x-1/2 w-[30px] h-[2px] rounded-full bg-white/20" />
-      </div>
-
-      <svg className="absolute top-[38%] right-[3%] w-[22px] h-[22px] opacity-[0.06]" viewBox="0 0 22 22" style={{ transform: "rotate(-20deg)" }}>
-        <rect x="2" y="2" width="18" height="18" rx="2" fill="none" stroke="#aaa" strokeWidth="0.8" />
-        <line x1="2" y1="6" x2="20" y2="6" stroke="#aaa" strokeWidth="0.5" />
-        <line x1="6" y1="2" x2="6" y2="6" stroke="#aaa" strokeWidth="0.5" />
+      {/* Reading glasses — top-center-left */}
+      <svg className="absolute top-[4%] left-[28%] w-[100px] h-[45px] opacity-[0.12]" viewBox="0 0 100 45" style={{ transform: "rotate(-5deg)" }}>
+        <ellipse cx="25" cy="22" rx="18" ry="16" fill="none" stroke="#666" strokeWidth="1.5" />
+        <ellipse cx="75" cy="22" rx="18" ry="16" fill="none" stroke="#666" strokeWidth="1.5" />
+        <path d="M43 20 Q50 16, 57 20" fill="none" stroke="#666" strokeWidth="1.5" />
+        <line x1="7" y1="18" x2="0" y2="12" stroke="#666" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="93" y1="18" x2="100" y2="12" stroke="#666" strokeWidth="1.5" strokeLinecap="round" />
+        <ellipse cx="25" cy="22" rx="14" ry="12" fill="#ffffff" opacity="0.02" />
+        <ellipse cx="75" cy="22" rx="14" ry="12" fill="#ffffff" opacity="0.02" />
       </svg>
 
-      <div className="absolute top-[75%] right-[30%] flex gap-[2px] opacity-[0.04]" style={{ transform: "rotate(-12deg)" }}>
-        {[0,1,2].map(i => (
-          <div key={i} className="w-[3px] h-[3px] rounded-full bg-white" />
+      {/* Binder clips — scattered */}
+      <svg className="absolute top-[42%] left-[1%] w-[28px] h-[20px] opacity-[0.18]" viewBox="0 0 28 20" style={{ transform: "rotate(30deg)" }}>
+        <rect x="4" y="8" width="20" height="12" rx="2" fill="#111" stroke="#333" strokeWidth="0.8" />
+        <path d="M8 8 L8 3 Q8 1, 10 1 L18 1 Q20 1, 20 3 L20 8" fill="none" stroke="#555" strokeWidth="1.2" />
+      </svg>
+      <svg className="absolute bottom-[25%] right-[12%] w-[24px] h-[18px] opacity-[0.14]" viewBox="0 0 28 20" style={{ transform: "rotate(-15deg)" }}>
+        <rect x="4" y="8" width="20" height="12" rx="2" fill="#111" stroke="#333" strokeWidth="0.8" />
+        <path d="M8 8 L8 3 Q8 1, 10 1 L18 1 Q20 1, 20 3 L20 8" fill="none" stroke="#555" strokeWidth="1.2" />
+      </svg>
+
+      {/* Paper clips — scattered around */}
+      {[
+        { top: "15%", left: "88%", rot: 45, op: 0.12 },
+        { top: "72%", left: "92%", rot: -30, op: 0.10 },
+        { top: "80%", left: "22%", rot: 60, op: 0.08 },
+        { top: "30%", left: "95%", rot: 10, op: 0.10 },
+      ].map((clip, i) => (
+        <svg key={`clip-${i}`} className="absolute w-[18px] h-[32px]" style={{ top: clip.top, left: clip.left, transform: `rotate(${clip.rot}deg)`, opacity: clip.op }} viewBox="0 0 18 32">
+          <path d="M5 2 L5 24 Q5 30, 9 30 Q13 30, 13 24 L13 8 Q13 4, 9 4 Q5 4, 5 8" fill="none" stroke="#888" strokeWidth="1.2" strokeLinecap="round" />
+        </svg>
+      ))}
+
+      {/* Ruler — right edge */}
+      <svg className="absolute top-[30%] right-[1%] w-[16px] h-[220px] opacity-[0.1]" viewBox="0 0 16 220" style={{ transform: "rotate(2deg)" }}>
+        <rect x="0" y="0" width="16" height="220" rx="1" fill="#2a2a2a" stroke="#444" strokeWidth="0.5" />
+        {Array.from({ length: 22 }).map((_, i) => (
+          <line key={i} x1="0" y1={i * 10} x2={i % 5 === 0 ? "10" : "5"} y2={i * 10} stroke="#666" strokeWidth={i % 5 === 0 ? "0.8" : "0.4"} />
         ))}
-      </div>
+      </svg>
+
+      {/* Calculator — bottom center-right */}
+      <svg className="absolute bottom-[5%] right-[28%] w-[60px] h-[80px] opacity-[0.12]" viewBox="0 0 60 80" style={{ transform: "rotate(-4deg)" }}>
+        <rect x="0" y="0" width="60" height="80" rx="4" fill="#111" stroke="#333" strokeWidth="1" />
+        <rect x="6" y="6" width="48" height="16" rx="2" fill="#0a2a1a" />
+        <rect x="30" y="9" width="20" height="10" rx="1" fill="#0f3f2a" opacity="0.6" />
+        {[0, 1, 2, 3].map(row =>
+          [0, 1, 2, 3].map(col => (
+            <rect key={`${row}-${col}`} x={8 + col * 12} y={28 + row * 12} width="9" height="8" rx="1.5" fill={col === 3 ? "#8B4513" : "#222"} stroke="#333" strokeWidth="0.3" />
+          ))
+        )}
+      </svg>
+
+      {/* Loose paper — under notes area, angled */}
+      <div
+        className="absolute top-[55%] left-[40%] w-[130px] h-[170px] opacity-[0.04] rounded-sm"
+        style={{ background: "linear-gradient(180deg, #f5f0e6 0%, #e8e0d0 100%)", transform: "rotate(12deg)" }}
+      />
+      <div
+        className="absolute top-[8%] right-[25%] w-[110px] h-[140px] opacity-[0.035] rounded-sm"
+        style={{ background: "linear-gradient(180deg, #f0ebe0 0%, #e0d8c8 100%)", transform: "rotate(-8deg)" }}
+      />
+
+      {/* Rubber band */}
+      <svg className="absolute bottom-[18%] left-[18%] w-[35px] h-[20px] opacity-[0.08]" viewBox="0 0 35 20" style={{ transform: "rotate(25deg)" }}>
+        <ellipse cx="17" cy="10" rx="15" ry="8" fill="none" stroke="#8B6914" strokeWidth="2" />
+      </svg>
+
+      {/* Tape dispenser — top right area */}
+      <svg className="absolute top-[35%] right-[8%] w-[50px] h-[35px] opacity-[0.12]" viewBox="0 0 50 35" style={{ transform: "rotate(-6deg)" }}>
+        <path d="M5 30 L5 10 Q5 5, 10 5 L40 5 Q45 5, 45 10 L45 25 Q45 30, 40 30 Z" fill="#111" stroke="#333" strokeWidth="0.8" />
+        <circle cx="25" cy="20" r="8" fill="#1a1a1a" stroke="#333" strokeWidth="0.5" />
+        <circle cx="25" cy="20" r="3" fill="#222" />
+        <path d="M33 15 L48 10" stroke="#C0C0C0" strokeWidth="0.8" opacity="0.3" />
+      </svg>
+
+      {/* Small eraser */}
+      <div
+        className="absolute top-[70%] left-[8%] w-[30px] h-[15px] rounded-[3px] opacity-[0.1]"
+        style={{ background: "linear-gradient(135deg, #d4a94c 0%, #b8860b 100%)", transform: "rotate(-18deg)" }}
+      />
+
+      {/* Thumbtacks scattered */}
+      {[
+        { top: "25%", left: "5%", color: "#e74c3c" },
+        { top: "88%", left: "45%", color: "#3498db" },
+        { top: "12%", left: "70%", color: "#2ecc71" },
+      ].map((pin, i) => (
+        <svg key={`pin-${i}`} className="absolute w-[10px] h-[10px]" style={{ top: pin.top, left: pin.left, opacity: 0.15 }} viewBox="0 0 10 10">
+          <circle cx="5" cy="5" r="4" fill={pin.color} />
+          <circle cx="4" cy="4" r="1.5" fill="#fff" opacity="0.3" />
+        </svg>
+      ))}
+
     </div>
   );
 }
@@ -376,7 +476,7 @@ export const ResourcesSection = (): JSX.Element => {
         >
           <div
             ref={boardRef}
-            className="relative w-full min-h-[540px] md:min-h-[500px] rounded-2xl overflow-hidden"
+            className="relative w-full min-h-[600px] md:min-h-[580px] lg:min-h-[620px] rounded-2xl overflow-hidden"
             style={{
               touchAction: "none",
               background: `
