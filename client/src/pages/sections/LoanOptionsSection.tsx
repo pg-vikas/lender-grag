@@ -17,6 +17,24 @@ function CityBlock({ x, y, w, h, fill }: { x: number; y: number; w: number; h: n
   return <rect x={x} y={y} width={w} height={h} rx="2" fill={fill} />;
 }
 
+function Car({ x, y, direction = 1, delay = 0, scale = 1 }: { x: number; y: number; direction?: 1 | -1; delay?: number; scale?: number }) {
+  const start = direction === 1 ? -140 : 1320;
+  const end = direction === 1 ? 1320 : -140;
+  return (
+    <motion.g
+      initial={{ x: start, y, scale, opacity: 0.95 }}
+      animate={{ x: end, y, scale, opacity: 0.95 }}
+      transition={{ duration: 12 + delay * 0.8, repeat: Infinity, ease: "linear", delay }}
+    >
+      <rect x={0} y={0} width="34" height="16" rx="6" fill="#d4a94c" />
+      <rect x={6} y={-5} width="15" height="8" rx="3" fill="#f0d88a" opacity="0.9" />
+      <circle cx="9" cy="16" r="3.5" fill="#111" />
+      <circle cx="26" cy="16" r="3.5" fill="#111" />
+      <rect x="1" y="4" width="32" height="2" rx="1" fill="#0c0c0c" opacity="0.18" />
+    </motion.g>
+  );
+}
+
 function BirdsEyeCity() {
   const cityRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -54,6 +72,12 @@ function BirdsEyeCity() {
           <rect x="0" y="500" width="1200" height="70" fill="#151a16" />
           <rect x="0" y="1100" width="1200" height="70" fill="#151a16" />
           <rect x="0" y="1700" width="1200" height="70" fill="#151a16" />
+          <Car x={0} y={520} direction={1} delay={0} scale={1} />
+          <Car x={0} y={1120} direction={-1} delay={2} scale={0.95} />
+          <Car x={0} y={1720} direction={1} delay={4} scale={1.05} />
+          <Car x={0} y={560} direction={-1} delay={1} scale={0.9} />
+          <Car x={0} y={1160} direction={1} delay={3} scale={0.92} />
+          <Car x={0} y={1760} direction={-1} delay={5} scale={0.98} />
           {Array.from({ length: 24 }).map((_, i) => (
             <rect key={`h1-${i}`} x={i * 50} y="533" width="30" height="4" rx="2" fill="#2a352c" opacity="0.6" />
           ))}
