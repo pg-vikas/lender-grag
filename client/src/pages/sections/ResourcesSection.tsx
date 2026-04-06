@@ -110,11 +110,11 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
       data-testid={`sticky-note-${note.id}`}
     >
       <div
-        className="w-[380px] md:w-[420px] relative group cursor-grab active:cursor-grabbing"
+        className="w-[340px] md:w-[370px] relative group cursor-grab active:cursor-grabbing aspect-square"
         style={{ boxShadow: shadowStyle, transition: "box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1)" }}
       >
         <div
-          className="rounded-[2px] relative overflow-hidden"
+          className="rounded-[2px] relative overflow-hidden h-full"
           style={{
             background: `linear-gradient(168deg, ${note.bg} 0%, ${note.bgDark} 100%)`,
             filter: `url(#${PAPER_NOISE_ID})`,
@@ -130,7 +130,7 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
 
           <div className="absolute bottom-0 left-0 right-0 h-10 pointer-events-none" style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.025) 0%, transparent 100%)" }} />
 
-          <div className="p-5 pb-4 relative">
+          <div className="p-5 pb-4 relative flex flex-col h-full">
             <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               {!isEditing && (
                 <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} className="w-7 h-7 rounded flex items-center justify-center hover:bg-black/10 transition-colors" data-testid={`edit-note-${note.id}`}>
@@ -147,16 +147,16 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
                 {isEditing ? (
                   <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full text-[16px] font-bold bg-white/60 rounded px-2 py-1 border-none outline-none focus:bg-white/80" style={{ color: "#1a1a1a" }} onClick={(e) => e.stopPropagation()} data-testid={`input-title-${note.id}`} />
                 ) : (
-                  <h3 className="text-[16px] font-bold leading-snug" style={{ color: "#222" }}>{note.title}</h3>
+                  <h3 className="text-[20px] font-bold leading-snug" style={{ color: "#222", fontFamily: "'Caveat', cursive" }}>{note.title}</h3>
                 )}
               </div>
             </div>
 
-            <div className="mt-2 relative">
+            <div className="mt-2 relative flex-1">
               {isEditing ? (
                 <textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} rows={3} className="w-full text-[14px] bg-white/60 rounded px-2 py-1.5 border-none outline-none resize-none focus:bg-white/80 leading-relaxed" style={{ color: "#444" }} onClick={(e) => e.stopPropagation()} data-testid={`input-desc-${note.id}`} />
               ) : (
-                <p className="text-[14px] leading-[1.7]" style={{ color: "#555" }}>{note.desc}</p>
+                <p className="text-[17px] leading-[1.6]" style={{ color: "#555", fontFamily: "'Caveat', cursive" }}>{note.desc}</p>
               )}
             </div>
 
@@ -172,10 +172,10 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
             ) : (
               <div className="flex items-center justify-between mt-2 pt-[6px] border-t relative" style={{ borderColor: `${note.color}10` }}>
                 <button onClick={(e) => { e.stopPropagation(); onAskGreg(note.title); }} className="flex items-center gap-1.5 text-[13px] font-bold px-2 py-1 rounded hover:bg-white/35 transition-colors" style={{ color: note.color }} data-testid={`ask-greg-${note.id}`}>
-                  <MessageCircle className="w-4 h-4" /> Ask Greg
+                  <MessageCircle className="w-4 h-4" /> <span style={{ fontFamily: "'Caveat', cursive" }}>Ask Greg</span>
                 </button>
                 <div className="flex items-center gap-1 text-[11px] font-medium opacity-20">
-                  <GripVertical className="w-3.5 h-3.5" /> drag
+                  <GripVertical className="w-3.5 h-3.5" /> <span style={{ fontFamily: "'Caveat', cursive" }}>drag</span>
                 </div>
               </div>
             )}
@@ -218,11 +218,11 @@ function AskGregModal({ topic, onClose }: { topic: string; onClose: () => void }
 }
 
 const notePositions = [
-  { left: "3%", top: "28%" },
-  { left: "28%", top: "22%" },
-  { left: "55%", top: "26%" },
-  { left: "8%", top: "58%" },
-  { left: "42%", top: "60%" },
+  { left: "10%", top: "35%" },
+  { left: "35%", top: "30%" },
+  { left: "60%", top: "34%" },
+  { left: "18%", top: "62%" },
+  { left: "48%", top: "64%" },
 ];
 
 export const ResourcesSection = (): JSX.Element => {
