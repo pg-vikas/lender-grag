@@ -8,7 +8,7 @@ import chaseLogo from "@assets/6787fb6fedafc63876131fb8_chase-logo-1_17755042762
 import rocketLogo from "@assets/Logos_RocketMortgage-web-padded_1775504276201.png";
 import bofaLogo from "@assets/banbk_of_america_1775504276201.webp";
 import pennymacLogo from "@assets/PennyMac_Financial_Services_Logo.svg_1775504276202.png";
-import citibankLogo from "@assets/images_1775504276202.jpg";
+import citibankLogo from "@assets/image_1775513707195.png";
 
 const lenders = [
   {
