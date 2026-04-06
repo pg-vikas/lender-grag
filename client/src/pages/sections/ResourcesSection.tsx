@@ -52,8 +52,8 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
   onEdit: (id: number, title: string, desc: string) => void;
   onAskGreg: (topic: string) => void;
   constraintsRef: React.RefObject<HTMLDivElement | null>;
-  mouseX: ReturnType<typeof useMotionValue>;
-  mouseY: ReturnType<typeof useMotionValue>;
+  mouseX: any;
+  mouseY: any;
   boardBounds: { width: number; height: number };
   isExpanded: boolean;
   onExpand: () => void;
@@ -73,8 +73,8 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
   }, [isExpanded]);
 
   const pFactor = 1.2 + note.id * 0.4;
-  const parallaxX = useTransform(mouseX, [0, boardBounds.width || 1], [-pFactor, pFactor]);
-  const parallaxY = useTransform(mouseY, [0, boardBounds.height || 1], [-pFactor * 0.6, pFactor * 0.6]);
+  const parallaxX = useTransform(mouseX, [0, boardBounds.width || 1], [-pFactor, pFactor]) as any;
+  const parallaxY = useTransform(mouseY, [0, boardBounds.height || 1], [-pFactor * 0.6, pFactor * 0.6]) as any;
   const smoothX = useSpring(parallaxX, { stiffness: 40, damping: 18 });
   const smoothY = useSpring(parallaxY, { stiffness: 40, damping: 18 });
 
