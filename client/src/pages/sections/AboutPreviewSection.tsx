@@ -383,7 +383,7 @@ export const AboutPreviewSection = (): JSX.Element => {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <div className="mb-8 md:mb-10">
+            <div className="mb-4 md:mb-5">
               <motion.img
                 src={badgeLogo}
                 alt="Lender Greg"
@@ -416,7 +416,7 @@ export const AboutPreviewSection = (): JSX.Element => {
             </div>
 
             <motion.div
-              className="mb-8 flex justify-start"
+              className="mb-4 flex justify-start"
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -425,12 +425,12 @@ export const AboutPreviewSection = (): JSX.Element => {
               <img
                 src={wideBadge}
                 alt="Lender Greg Badge"
-                className="h-[80px] md:h-[100px] w-auto object-contain"
+                className="h-[64px] md:h-[78px] w-auto object-contain"
                 data-testid="img-wide-badge"
               />
             </motion.div>
 
-            <div className="aspect-[4/5] max-w-[420px] rounded-[28px] overflow-hidden relative shadow-2xl shadow-black/40">
+            <div className="aspect-[4/5] max-w-[420px] rounded-[24px] overflow-hidden relative shadow-2xl shadow-black/40">
               <img
                 src={gregPhoto}
                 alt="Greg Wynn — Branch Manager & Loan Officer"
