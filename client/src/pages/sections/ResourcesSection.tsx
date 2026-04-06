@@ -2,6 +2,7 @@ import { BookOpen, CheckSquare, Home, FileText, AlertTriangle, MessageCircle, X,
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import deskImg from "@assets/shutterstock_2137168113_1775459050359.jpg";
+import gregHeadshot from "@assets/2484_SD_HEADSHOTS_FORSOCIALMEDIA_(1)_1775508830894.JPG";
 
 interface StickyNote {
   id: number;
@@ -338,15 +339,14 @@ function DeskPhone() {
 
           <div className="flex flex-col items-center pt-10 pb-6 px-6">
             <motion.div
-              className="w-[90px] h-[90px] rounded-full flex items-center justify-center mb-5"
+              className="w-[90px] h-[90px] rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#d4a94c]/40"
               style={{
-                background: "linear-gradient(135deg, #d4a94c, #f0d88a)",
                 boxShadow: "0 4px 20px rgba(212,169,76,0.3)",
               }}
               animate={calling ? { scale: [1, 1.08, 1], boxShadow: ["0 4px 20px rgba(212,169,76,0.3)", "0 4px 30px rgba(212,169,76,0.6)", "0 4px 20px rgba(212,169,76,0.3)"] } : {}}
               transition={calling ? { repeat: Infinity, duration: 1.5 } : {}}
             >
-              <User className="w-10 h-10 text-[#0c0c0c]" />
+              <img src={gregHeadshot} alt="Greg headshot" className="w-full h-full object-cover" data-testid="img-greg-headshot" />
             </motion.div>
 
             <p className="text-white font-bold text-[24px] tracking-wide" style={{ fontFamily: "'DM Sans', sans-serif" }}>GREG</p>
