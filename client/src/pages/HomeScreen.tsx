@@ -17,6 +17,7 @@ export const HomeScreen = (): JSX.Element => {
     <div className="min-h-screen">
       <Header />
       <HeroSection />
+      <ResourcesSection />
       <StatsSection />
       <WhyGregSection />
       <LoanOptionsSection />
@@ -24,7 +25,6 @@ export const HomeScreen = (): JSX.Element => {
       <ProcessSection />
       <ReviewsSection />
       <AboutPreviewSection />
-      <ResourcesSection />
       <FAQSection />
       <FinalCTASection />
       <FooterSection />
