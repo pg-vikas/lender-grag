@@ -252,7 +252,15 @@ export const BrokerAdvantageSection = (): JSX.Element => {
                     <span className="text-[11px] uppercase tracking-[0.18em] text-white/25 font-bold">Source</span>
                     <span className="text-[#d4a94c] text-[11px] font-bold">Access</span>
                   </div>
-                  <div className="mt-4 flex-1 rounded-2xl border border-white/[0.07] bg-gradient-to-br from-white/[0.08] to-white/[0.02] flex items-center justify-center text-center px-3">
+                  <div className="mt-4 flex-1 rounded-2xl border border-white/[0.07] bg-gradient-to-br from-white/[0.08] to-white/[0.02] flex flex-col items-center justify-center text-center px-3 py-4 gap-3">
+                    <div className="h-[44px] w-full flex items-center justify-center">
+                      <img
+                        src={lender.logo}
+                        alt={`${lender.name} logo`}
+                        className={`max-h-full max-w-full object-contain ${lender.name === "UWM" ? "scale-[1.55]" : "scale-100"}`}
+                        data-testid={`img-lender-logo-${index}`}
+                      />
+                    </div>
                     <div>
                       <p className="text-white text-[18px] font-extrabold tracking-tight">{lender.name}</p>
                       <p className="text-white/55 text-[11px] mt-1 leading-snug">{lender.description}</p>
