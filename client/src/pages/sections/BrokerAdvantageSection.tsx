@@ -3,7 +3,7 @@ import { ArrowRight, CheckCircle2, Network, ShieldCheck, Sparkles } from "lucide
 import { useRef } from "react";
 import { Link } from "wouter";
 import gregLogo from "@assets/Sleek_Lender_Greg_logo_design_1775465481480.png";
-import uwmLogo from "@assets/New_UWM_Logo_1_1775504276200.png";
+import uwmLogo from "@assets/New_UWM_Logo_1_1775504391128.png";
 import chaseLogo from "@assets/6787fb6fedafc63876131fb8_chase-logo-1_1775504276201.png";
 import rocketLogo from "@assets/Logos_RocketMortgage-web-padded_1775504276201.png";
 import bofaLogo from "@assets/banbk_of_america_1775504276201.webp";
