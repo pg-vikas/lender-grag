@@ -1,4 +1,4 @@
-import { BookOpen, CheckSquare, Home, FileText, AlertTriangle, MessageCircle, X, Send, GripVertical, Pencil, Check } from "lucide-react";
+import { BookOpen, CheckSquare, Home, FileText, AlertTriangle, MessageCircle, X, Send, GripVertical, Pencil, Check, Phone, User, Signal, Wifi, BatteryFull } from "lucide-react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import deskImg from "@assets/shutterstock_2137168113_1775459050359.jpg";
@@ -293,6 +293,126 @@ function AskGregModal({ topic, onClose }: { topic: string; onClose: () => void }
   );
 }
 
+function DeskPhone() {
+  const [calling, setCalling] = useState(false);
+
+  return (
+    <motion.div
+      className="absolute select-none"
+      style={{ right: "8%", bottom: "8%", zIndex: 50 }}
+      initial={{ opacity: 0, y: 40, rotate: 12 }}
+      animate={{ opacity: 1, y: 0, rotate: 12 }}
+      transition={{ type: "spring", stiffness: 80, damping: 14, delay: 1.2 }}
+      data-testid="desk-phone"
+    >
+      <div
+        className="relative"
+        style={{
+          width: "160px",
+          height: "310px",
+          borderRadius: "24px",
+          background: "linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%)",
+          boxShadow: `6px 8px 30px rgba(0,0,0,0.6), 3px 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)`,
+          border: "2px solid rgba(255,255,255,0.08)",
+          padding: "8px",
+        }}
+      >
+        <div className="absolute top-[10px] left-1/2 -translate-x-1/2 w-[40px] h-[5px] rounded-full bg-black/60 border border-white/[0.06]" />
+
+        <div
+          className="relative w-full overflow-hidden"
+          style={{
+            height: "calc(100% - 0px)",
+            borderRadius: "18px",
+            background: "linear-gradient(180deg, #0d1117 0%, #161b22 100%)",
+          }}
+        >
+          <div className="flex items-center justify-between px-3 pt-2 pb-1">
+            <span className="text-[8px] text-white/40 font-medium">9:41</span>
+            <div className="flex items-center gap-1">
+              <Signal className="w-2.5 h-2.5 text-white/40" />
+              <Wifi className="w-2.5 h-2.5 text-white/40" />
+              <BatteryFull className="w-3 h-2.5 text-white/40" />
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center pt-6 pb-4 px-4">
+            <motion.div
+              className="w-[60px] h-[60px] rounded-full flex items-center justify-center mb-3"
+              style={{
+                background: "linear-gradient(135deg, #d4a94c, #f0d88a)",
+                boxShadow: "0 4px 20px rgba(212,169,76,0.3)",
+              }}
+              animate={calling ? { scale: [1, 1.08, 1], boxShadow: ["0 4px 20px rgba(212,169,76,0.3)", "0 4px 30px rgba(212,169,76,0.6)", "0 4px 20px rgba(212,169,76,0.3)"] } : {}}
+              transition={calling ? { repeat: Infinity, duration: 1.5 } : {}}
+            >
+              <User className="w-7 h-7 text-[#0c0c0c]" />
+            </motion.div>
+
+            <p className="text-white font-bold text-[16px] tracking-wide" style={{ fontFamily: "'DM Sans', sans-serif" }}>GREG</p>
+            <p className="text-white/30 text-[10px] mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>Lender Greg Wynn</p>
+
+            <AnimatePresence mode="wait">
+              {!calling ? (
+                <motion.p
+                  key="ready"
+                  className="text-[#d4a94c] text-[9px] font-medium mt-2 uppercase tracking-widest"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  Ready to call
+                </motion.p>
+              ) : (
+                <motion.p
+                  key="calling"
+                  className="text-[#4ade80] text-[9px] font-medium mt-2 uppercase tracking-widest"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0.4, 1, 0.4] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                >
+                  Calling...
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0 px-4 pb-5">
+            <motion.button
+              onClick={() => {
+                if (!calling) {
+                  setCalling(true);
+                  window.open("tel:+1234567890", "_self");
+                  setTimeout(() => setCalling(false), 3000);
+                }
+              }}
+              className="w-full py-2.5 rounded-full font-bold text-[12px] flex items-center justify-center gap-1.5 transition-all"
+              style={{
+                background: calling
+                  ? "linear-gradient(135deg, #ef4444, #dc2626)"
+                  : "linear-gradient(135deg, #22c55e, #16a34a)",
+                color: "white",
+                boxShadow: calling
+                  ? "0 4px 15px rgba(239,68,68,0.4)"
+                  : "0 4px 15px rgba(34,197,94,0.4)",
+                fontFamily: "'DM Sans', sans-serif",
+              }}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.95 }}
+              data-testid="button-call-greg"
+            >
+              <Phone className="w-3.5 h-3.5" />
+              {calling ? "Calling..." : "CALL GREG"}
+            </motion.button>
+          </div>
+        </div>
+
+        <div className="absolute bottom-[6px] left-1/2 -translate-x-1/2 w-[36px] h-[4px] rounded-full bg-white/10" />
+      </div>
+    </motion.div>
+  );
+}
+
 const notePositions = [
   { left: "10%", top: "35%" },
   { left: "35%", top: "30%" },
@@ -405,6 +525,8 @@ export const ResourcesSection = (): JSX.Element => {
               />
             </div>
           ))}
+
+          <DeskPhone />
         </div>
       </motion.div>
 
