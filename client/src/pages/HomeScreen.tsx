@@ -1,4 +1,5 @@
 import { Header } from "@/components/Header";
+import { FloatingAssistant } from "@/components/FloatingAssistant";
 import { HeroSection } from "./sections/HeroSection";
 import { StatsSection } from "./sections/StatsSection";
 import { WhyGregSection } from "./sections/WhyGregSection";
@@ -28,6 +29,7 @@ export const HomeScreen = (): JSX.Element => {
       <FAQSection />
       <FinalCTASection />
       <FooterSection />
+      <FloatingAssistant />
     </div>
   );
 };
