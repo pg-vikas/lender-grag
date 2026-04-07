@@ -55,10 +55,10 @@ export const BrokerAdvantageSection = (): JSX.Element => {
   const inView = useInView(sectionRef, { once: true, amount: 0.2 });
 
   return (
-    <section ref={sectionRef} className="py-24 lg:py-32 bg-[#141414] relative overflow-hidden">
+    <section ref={sectionRef} className="py-24 lg:py-32 bg-white relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-[#d4a94c]/[0.08] blur-[180px]" />
-        <div className="absolute bottom-0 right-0 w-[520px] h-[520px] rounded-full bg-white/[0.03] blur-[140px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-[#d4a94c]/[0.06] blur-[180px]" />
+        <div className="absolute bottom-0 right-0 w-[520px] h-[520px] rounded-full bg-black/[0.03] blur-[140px]" />
       </div>
 
       <div className="max-w-[1320px] mx-auto px-6 relative z-10">
@@ -95,18 +95,18 @@ export const BrokerAdvantageSection = (): JSX.Element => {
             </motion.div>
 
             <motion.h2
-              className="text-4xl md:text-[54px] lg:text-[62px] font-extrabold text-white tracking-[-0.03em] leading-[0.98] max-w-[720px] lg:mt-2"
+            className="text-4xl md:text-[54px] lg:text-[62px] font-extrabold text-black tracking-[-0.03em] leading-[0.98] max-w-[720px] lg:mt-2"
               initial={{ opacity: 0, y: 14 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.55, delay: 0.15 }}
               data-testid="text-broker-heading"
             >
               Not Locked to One Bank.
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#d4a94c] to-[#f0d88a]">Built Around Your Best Fit.</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#d4a94c] to-[#b8860b]">Built Around Your Best Fit.</span>
             </motion.h2>
 
             <motion.p
-              className="mt-6 text-[17px] md:text-[18px] leading-[1.8] text-white/60 max-w-[640px] lg:mb-2"
+              className="mt-6 text-[17px] md:text-[18px] leading-[1.8] text-black/70 max-w-[640px] lg:mb-2"
               initial={{ opacity: 0, y: 12 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.55, delay: 0.2 }}
@@ -123,13 +123,13 @@ export const BrokerAdvantageSection = (): JSX.Element => {
               {benefits.map((benefit, index) => (
                 <motion.div
                   key={benefit}
-                  className="flex items-center gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3"
-                  whileHover={{ y: -3, borderColor: "rgba(212,169,76,0.3)", backgroundColor: "rgba(255,255,255,0.05)" }}
+                  className="flex items-center gap-3 rounded-2xl border border-black/[0.08] bg-black/[0.03] px-4 py-3"
+                  whileHover={{ y: -3, borderColor: "rgba(212,169,76,0.3)", backgroundColor: "rgba(0,0,0,0.05)" }}
                   transition={{ duration: 0.25 }}
                   data-testid={`card-benefit-${index}`}
                 >
                   <CheckCircle2 className="w-4.5 h-4.5 text-[#d4a94c] shrink-0" />
-                  <span className="text-[14px] text-white/75 leading-snug">{benefit}</span>
+                  <span className="text-[14px] text-black/75 leading-snug">{benefit}</span>
                 </motion.div>
               ))}
             </motion.div>
@@ -150,7 +150,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
               </Link>
               <Link href="/contact">
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                  <button className="h-14 px-7 rounded-2xl border border-white/12 bg-white/[0.03] text-white/80 text-[15px] font-semibold hover:bg-white/[0.06] flex items-center gap-2.5" data-testid="button-broker-talk">
+                  <button className="h-14 px-7 rounded-2xl border border-black/12 bg-black/[0.03] text-black/80 text-[15px] font-semibold hover:bg-black/[0.06] flex items-center gap-2.5" data-testid="button-broker-talk">
                     Talk to Greg
                     <Sparkles className="w-4 h-4" />
                   </button>
@@ -168,11 +168,11 @@ export const BrokerAdvantageSection = (): JSX.Element => {
           >
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-[420px] h-[420px] rounded-full border border-[#d4a94c]/10" />
-              <div className="absolute w-[300px] h-[300px] rounded-full border border-white/[0.06]" />
+              <div className="absolute w-[300px] h-[300px] rounded-full border border-black/[0.06]" />
             </div>
             <div className="relative grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
               <motion.div
-                className="col-span-2 sm:col-span-3 rounded-[28px] border border-[#d4a94c]/18 bg-white/[0.04] backdrop-blur-xl p-5 md:p-6 shadow-2xl shadow-black/30"
+                className="col-span-2 sm:col-span-3 rounded-[28px] border border-[#d4a94c]/18 bg-black/[0.02] backdrop-blur-xl p-5 md:p-6 shadow-2xl shadow-black/10"
                 animate={inView ? { y: [0, -4, 0] } : {}}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
               >
@@ -181,8 +181,8 @@ export const BrokerAdvantageSection = (): JSX.Element => {
                     <Network className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-white text-[16px] font-bold">Broker Access Network</p>
-                    <p className="text-white/45 text-[13px]">Greg can compare across multiple lending sources, not just one bank’s products.</p>
+                    <p className="text-black text-[16px] font-bold">Broker Access Network</p>
+                    <p className="text-black/55 text-[13px]">Greg can compare across multiple lending sources, not just one bank’s products.</p>
                   </div>
                 </div>
               </motion.div>
@@ -190,7 +190,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
               {lenders.map((lender, index) => (
                 <motion.div
                   key={lender.name}
-                  className="min-h-[118px] rounded-[24px] border border-white/[0.08] bg-[#0f0f0f]/90 backdrop-blur-md p-4 flex flex-col justify-between shadow-xl shadow-black/20"
+                  className="min-h-[118px] rounded-[24px] border border-black/[0.08] bg-white backdrop-blur-md p-4 flex flex-col justify-between shadow-xl shadow-black/10"
                   initial={{ opacity: 0, y: 18 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.45, delay: 0.12 + index * 0.06 }}
@@ -198,10 +198,10 @@ export const BrokerAdvantageSection = (): JSX.Element => {
                   data-testid={`card-lender-${index}`}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <span className="text-[11px] uppercase tracking-[0.18em] text-white/25 font-bold">Source</span>
+                    <span className="text-[11px] uppercase tracking-[0.18em] text-black/30 font-bold">Source</span>
                     <span className="text-[#d4a94c] text-[11px] font-bold">Access</span>
                   </div>
-                  <div className="mt-4 flex-1 rounded-2xl border border-white/[0.07] bg-[#0b0b0b] flex flex-col items-center justify-center text-center px-4 py-4 gap-3">
+                  <div className="mt-4 flex-1 rounded-2xl border border-black/[0.07] bg-[#fafafa] flex flex-col items-center justify-center text-center px-4 py-4 gap-3">
                     <div className="h-[76px] w-full flex items-center justify-center">
                       <img
                         src={lender.logo}
@@ -211,8 +211,8 @@ export const BrokerAdvantageSection = (): JSX.Element => {
                       />
                     </div>
                     <div className="max-w-[220px]">
-                      <p className="text-white/40 text-[11px] uppercase tracking-[0.24em] font-bold">Source Access</p>
-                      <p className="text-white/70 text-[12px] leading-snug mt-2">{lender.description}</p>
+                      <p className="text-black/40 text-[11px] uppercase tracking-[0.24em] font-bold">Source Access</p>
+                      <p className="text-black/70 text-[12px] leading-snug mt-2">{lender.description}</p>
                     </div>
                   </div>
                 </motion.div>
