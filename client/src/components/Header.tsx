@@ -7,13 +7,14 @@ import logoImg from "@assets/lender-greg-logo-new-transparent.png";
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
   { label: "Loan Options", href: "/loan-options" },
   { label: "Tools", href: "/tools" },
   { label: "Reviews", href: "/reviews" },
   { label: "Resources", href: "/resources" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact" },
+  { label: "Log In", href: "/login" },
+  { label: "Sign Up", href: "/signup" },
 ];
 
 export function Header() {
@@ -105,6 +106,24 @@ export function Header() {
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </Button>
             </Link>
+              <Link href="/login">
+                <Button variant="ghost" className={`h-9 px-4 rounded-lg text-[13px] font-medium ${
+                  transparent
+                    ? "text-white/80 hover:text-white hover:bg-white/10"
+                    : "text-gray-600 hover:text-[#004733] hover:bg-[#004733]/[0.04]"
+                }`} data-testid="button-log-in">
+                  Log In
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button className={`h-9 px-5 rounded-lg text-[13px] font-semibold shadow-sm transition-all duration-200 ${
+                  transparent
+                    ? "bg-white text-[#0c0c0c] hover:bg-white/90"
+                    : "bg-[#d4a94c] hover:bg-[#c4953a] text-[#0c0c0c]"
+                }`} data-testid="button-sign-up">
+                  Sign Up
+                </Button>
+              </Link>
           </div>
 
           <button
@@ -165,6 +184,16 @@ export function Header() {
                   <Button className="w-full rounded-xl bg-[#004733] hover:bg-[#003525] text-white font-semibold h-12 gap-2">
                     Get Pre-Approved
                     <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button variant="outline" className="w-full rounded-xl border-gray-200 text-gray-700 font-semibold h-12" data-testid="button-mobile-log-in">
+                    Log In
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button className="w-full rounded-xl bg-[#d4a94c] hover:bg-[#c4953a] text-[#0c0c0c] font-semibold h-12" data-testid="button-mobile-sign-up">
+                    Sign Up
                   </Button>
                 </Link>
               </motion.div>

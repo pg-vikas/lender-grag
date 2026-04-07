@@ -7,7 +7,6 @@ const navCols = [
     title: "Quick Links",
     links: [
       { label: "Home", href: "/" },
-      { label: "About Greg", href: "/about" },
       { label: "Loan Options", href: "/loan-options" },
       { label: "Mortgage Tools", href: "/tools" },
     ],
@@ -19,6 +18,8 @@ const navCols = [
       { label: "Resources", href: "/resources" },
       { label: "FAQ", href: "/faq" },
       { label: "Contact", href: "/contact" },
+      { label: "Log In", href: "/login" },
+      { label: "Sign Up", href: "/signup" },
     ],
   },
 ];
