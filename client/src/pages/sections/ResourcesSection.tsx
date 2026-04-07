@@ -451,12 +451,12 @@ export const ResourcesSection = (): JSX.Element => {
   }, []);
 
   return (
-    <section className="pt-16 lg:pt-20 pb-16 lg:pb-20 bg-[#0c0c0c] relative overflow-hidden">
+    <section className="py-0 bg-white relative overflow-hidden">
       <PaperTextureDefs />
 
-      <div className="relative z-10">
+      <div className="relative z-10 bg-white">
         <motion.div
-          className="relative text-center mb-10 sm:mb-12 w-full rounded-none border-y border-[#d4a94c]/15 bg-white px-5 py-14 sm:px-10 sm:py-16 overflow-hidden shadow-2xl shadow-black/10"
+          className="relative text-center mb-0 w-full rounded-none border-y border-[#d4a94c]/15 bg-white px-5 py-14 sm:px-10 sm:py-16 overflow-hidden shadow-2xl shadow-black/10"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -503,17 +503,18 @@ export const ResourcesSection = (): JSX.Element => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-        className="relative w-full"
+        className="relative w-full bg-white"
       >
         <div
           ref={boardRef}
           onMouseMove={handleMouseMove}
-          className="relative w-full overflow-hidden"
+          className="relative w-full overflow-hidden bg-white"
           style={{
             touchAction: "none",
             minHeight: "720px",
             aspectRatio: "16 / 10",
             maxHeight: "90vh",
+            background: "#fff",
           }}
         >
           <img
@@ -524,11 +525,11 @@ export const ResourcesSection = (): JSX.Element => {
             draggable={false}
           />
 
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 70% at 50% 50%, transparent 40%, rgba(0,0,0,0.35) 100%)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 70% at 50% 50%, transparent 50%, rgba(255,255,255,0.18) 100%)" }} />
 
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 15%, transparent 85%, rgba(0,0,0,0.25) 100%)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, transparent 12%, transparent 88%, rgba(255,255,255,0.95) 100%)" }} />
 
-          <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 2px 20px rgba(0,0,0,0.3), inset 0 -2px 20px rgba(0,0,0,0.2)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 2px 20px rgba(0,0,0,0.08), inset 0 -2px 20px rgba(0,0,0,0.08)" }} />
 
           {notes.map((note, i) => (
             <div key={note.id} className="absolute" style={{ left: notePositions[i]?.left ?? "20%", top: notePositions[i]?.top ?? "20%" }}>
