@@ -62,6 +62,24 @@ const garL = 565;
 const garR = 780;
 const garTop = 285;
 const garBot = 440;
+const rainGlyphs = [
+  { left: "8%", top: "-2%", symbol: "⌂", size: 14, delay: 0 },
+  { left: "20%", top: "8%", symbol: "$", size: 13, delay: 0.45 },
+  { left: "35%", top: "0%", symbol: "☂", size: 12, delay: 0.9 },
+  { left: "52%", top: "6%", symbol: "⌂", size: 15, delay: 1.35 },
+  { left: "68%", top: "2%", symbol: "$", size: 13, delay: 1.8 },
+  { left: "84%", top: "10%", symbol: "☂", size: 12, delay: 2.2 },
+  { left: "14%", top: "28%", symbol: "$", size: 14, delay: 0.6 },
+  { left: "31%", top: "24%", symbol: "⌂", size: 13, delay: 1.05 },
+  { left: "49%", top: "30%", symbol: "$", size: 12, delay: 1.5 },
+  { left: "66%", top: "26%", symbol: "⌂", size: 15, delay: 1.95 },
+  { left: "79%", top: "34%", symbol: "$", size: 13, delay: 2.35 },
+  { left: "6%", top: "54%", symbol: "☂", size: 12, delay: 0.2 },
+  { left: "24%", top: "60%", symbol: "⌂", size: 14, delay: 0.7 },
+  { left: "43%", top: "56%", symbol: "$", size: 13, delay: 1.15 },
+  { left: "61%", top: "62%", symbol: "☂", size: 12, delay: 1.6 },
+  { left: "82%", top: "58%", symbol: "⌂", size: 15, delay: 2.05 },
+];
 
 function HouseBuildAnimation({ inView }: { inView: boolean }) {
   return (
@@ -397,6 +415,24 @@ export const AboutPreviewSection = (): JSX.Element => {
               animate={{ y: [34, -30, 34], opacity: [0.18, 0.9, 0.18] }}
               transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
             />
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              {rainGlyphs.map((glyph, index) => (
+                <motion.span
+                  key={`${glyph.symbol}-${index}`}
+                  className="absolute text-[#f0d88a]/40 font-bold"
+                  style={{ left: glyph.left, top: glyph.top, fontSize: glyph.size }}
+                  animate={{
+                    y: [0, 140, 300],
+                    x: [0, 8, -6],
+                    opacity: [0, 0.45, 0],
+                    rotate: [0, 10, -8],
+                  }}
+                  transition={{ duration: 6.5, repeat: Infinity, ease: "linear", delay: glyph.delay }}
+                >
+                  {glyph.symbol}
+                </motion.span>
+              ))}
+            </div>
             <div className="mb-4 md:mb-5">
               <div className="relative inline-block mb-5">
                 <motion.img
