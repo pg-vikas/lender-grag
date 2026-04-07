@@ -19,7 +19,6 @@ export const HomeScreen = (): JSX.Element => {
       <Header />
       <HeroSection />
       <ResourcesSection />
-      <SecurePortalSection />
       <CalculatorSection />
       <BrokerAdvantageSection />
       <LoanOptionsSection />
