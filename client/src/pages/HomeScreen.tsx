@@ -7,7 +7,6 @@ import { CalculatorSection } from "./sections/CalculatorSection";
 import { BrokerAdvantageSection } from "./sections/BrokerAdvantageSection";
 import { ProcessSection } from "./sections/ProcessSection";
 import { ReviewsSection } from "./sections/ReviewsSection";
-import { AboutPreviewSection } from "./sections/AboutPreviewSection";
 import { ResourcesSection } from "./sections/ResourcesSection";
 import { SecurePortalSection } from "./sections/SecurePortalSection";
 import { FAQSection } from "./sections/FAQSection";
@@ -27,7 +26,6 @@ export const HomeScreen = (): JSX.Element => {
       <LoanOptionsSection />
       <ProcessSection />
       <ReviewsSection />
-      <AboutPreviewSection />
       <FAQSection />
       <FinalCTASection />
       <FooterSection />
