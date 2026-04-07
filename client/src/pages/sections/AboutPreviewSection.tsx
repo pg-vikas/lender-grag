@@ -401,33 +401,33 @@ export const AboutPreviewSection = (): JSX.Element => {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <motion.div
-              className="absolute left-1/2 top-[-20px] h-[280px] w-[280px] md:h-[360px] md:w-[360px] -translate-x-1/2 rounded-full bg-[#d4a94c]/35 blur-3xl pointer-events-none"
-              animate={{
-                y: [42, -26, 42],
-                opacity: [0.3, 0.85, 0.3],
-                scale: [0.9, 1.08, 0.9],
-              }}
-              transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-              className="absolute left-1/2 top-[0px] h-[220px] w-[420px] -translate-x-1/2 bg-gradient-to-t from-transparent via-[#f0d88a]/45 to-transparent blur-2xl pointer-events-none"
-              animate={{ y: [34, -30, 34], opacity: [0.18, 0.9, 0.18] }}
-              transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
-            />
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              <motion.div
+                className="absolute left-1/2 top-[-10px] h-[380px] w-[380px] md:h-[460px] md:w-[460px] -translate-x-1/2 rounded-full bg-[#d4a94c]/45 blur-3xl"
+                animate={{
+                  y: [56, -18, 56],
+                  opacity: [0.32, 0.9, 0.32],
+                  scale: [0.94, 1.08, 0.94],
+                }}
+                transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div
+                className="absolute left-1/2 top-[6px] h-[300px] w-[520px] -translate-x-1/2 bg-gradient-to-t from-transparent via-[#f0d88a]/55 to-transparent blur-2xl"
+                animate={{ y: [42, -24, 42], opacity: [0.2, 1, 0.2] }}
+                transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+              />
               {rainGlyphs.map((glyph, index) => (
                 <motion.span
                   key={`${glyph.symbol}-${index}`}
-                  className="absolute text-[#f0d88a]/40 font-bold"
+                  className="absolute text-[#f0d88a]/65 font-bold"
                   style={{ left: glyph.left, top: glyph.top, fontSize: glyph.size }}
                   animate={{
-                    y: [0, 140, 300],
+                    y: [0, 170, 360],
                     x: [0, 8, -6],
-                    opacity: [0, 0.45, 0],
+                    opacity: [0, 0.8, 0],
                     rotate: [0, 10, -8],
                   }}
-                  transition={{ duration: 6.5, repeat: Infinity, ease: "linear", delay: glyph.delay }}
+                  transition={{ duration: 5.2, repeat: Infinity, ease: "linear", delay: glyph.delay }}
                 >
                   {glyph.symbol}
                 </motion.span>
