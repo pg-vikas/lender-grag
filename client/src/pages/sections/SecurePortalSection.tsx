@@ -1,7 +1,7 @@
 import { ShieldCheck, Upload, MessageCircleQuestion, Clock3, LockKeyhole, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import portalImg from "@assets/images/couple-new-home.png";
+import portalImg from "@assets/image_1775550527819.png";
 
 const features = [
   { icon: LockKeyhole, label: "Secure personal access" },
@@ -86,7 +86,7 @@ export const SecurePortalSection = (): JSX.Element => {
             >
               <motion.img
                 src={portalImg}
-                alt="Couple in front of their new home"
+                alt="Secure client portal"
                 className="w-full h-full min-h-[520px] object-cover"
                 style={{ objectPosition: "center" }}
                 animate={{ scale: [1.02, 1.06, 1.02] }}
