@@ -76,46 +76,6 @@ export const BrokerAdvantageSection = (): JSX.Element => {
           />
         </motion.div>
 
-        <motion.div
-          className="relative mx-auto mb-10 lg:mb-14 w-full max-w-[820px] h-[220px] sm:h-[260px] lg:h-[300px] overflow-hidden rounded-[36px] border border-white/[0.06] bg-[#0b0b0b]"
-          initial={{ opacity: 0, y: 18 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.08 }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-[#d4a94c]/10 via-transparent to-transparent" />
-          <div className="absolute inset-0">
-            {[
-              { left: "8%", top: "2%", symbol: "⌂", size: 14, delay: 0 },
-              { left: "18%", top: "12%", symbol: "$", size: 13, delay: 0.45 },
-              { left: "32%", top: "6%", symbol: "☂", size: 12, delay: 0.9 },
-              { left: "48%", top: "10%", symbol: "⌂", size: 15, delay: 1.35 },
-              { left: "64%", top: "4%", symbol: "$", size: 13, delay: 1.8 },
-              { left: "80%", top: "14%", symbol: "☂", size: 12, delay: 2.2 },
-              { left: "12%", top: "34%", symbol: "$", size: 14, delay: 0.6 },
-              { left: "30%", top: "30%", symbol: "⌂", size: 13, delay: 1.05 },
-              { left: "50%", top: "36%", symbol: "$", size: 12, delay: 1.5 },
-              { left: "68%", top: "32%", symbol: "⌂", size: 15, delay: 1.95 },
-              { left: "84%", top: "40%", symbol: "$", size: 13, delay: 2.35 },
-            ].map((glyph, index) => (
-              <motion.span
-                key={`${glyph.symbol}-${index}`}
-                className="absolute text-[#f0d88a]/70 font-bold"
-                style={{ left: glyph.left, top: glyph.top, fontSize: glyph.size }}
-                animate={{
-                  y: [0, 110, 240],
-                  x: [0, 8, -6],
-                  opacity: [0, 0.7, 0],
-                  rotate: [0, 10, -8],
-                }}
-                transition={{ duration: 4.6, repeat: Infinity, ease: "linear", delay: glyph.delay }}
-              >
-                {glyph.symbol}
-              </motion.span>
-            ))}
-          </div>
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0b0b0b] to-transparent" />
-        </motion.div>
-
         <div className="grid lg:grid-cols-[1.02fr_0.98fr] gap-14 lg:gap-16 items-start">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
