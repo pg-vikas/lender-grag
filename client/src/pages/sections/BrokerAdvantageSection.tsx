@@ -189,7 +189,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
 
               {lenders.map((lender, index) => (
                 <motion.div
-                  key={lender}
+                  key={lender.name}
                   className="min-h-[118px] rounded-[24px] border border-white/[0.08] bg-[#0f0f0f]/90 backdrop-blur-md p-4 flex flex-col justify-between shadow-xl shadow-black/20"
                   initial={{ opacity: 0, y: 18 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
