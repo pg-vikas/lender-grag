@@ -462,14 +462,6 @@ export const ResourcesSection = (): JSX.Element => {
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
-          <motion.div
-            className="absolute inset-0 pointer-events-none"
-            animate={{ opacity: [0.35, 0.7, 0.35], scale: [1, 1.03, 1] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[520px] h-[180px] rounded-full bg-[#d4a94c]/15 blur-3xl" />
-            <div className="absolute bottom-[-40px] right-[-20px] w-[260px] h-[260px] rounded-full bg-[#f0d88a]/10 blur-3xl" />
-          </motion.div>
           <span className="relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#d4a94c]/12 border border-[#d4a94c]/20 text-[#c4953a] font-bold text-[13px] uppercase tracking-[0.2em]">Resources</span>
           <h2 className="relative text-5xl md:text-6xl font-black text-black mt-4 tracking-[-0.04em] leading-[0.95]" data-testid="text-resources-heading">
             Learn Before You <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a94c] via-[#c4953a] to-[#8a6a1f]">Borrow</span>
@@ -525,11 +517,7 @@ export const ResourcesSection = (): JSX.Element => {
             draggable={false}
           />
 
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 70% at 50% 50%, transparent 50%, rgba(255,255,255,0.18) 100%)" }} />
-
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, transparent 12%, transparent 88%, rgba(255,255,255,0.95) 100%)" }} />
-
-          <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 2px 20px rgba(0,0,0,0.08), inset 0 -2px 20px rgba(0,0,0,0.08)" }} />
+          <div className="absolute inset-0 pointer-events-none" />
 
           {notes.map((note, i) => (
             <div key={note.id} className="absolute" style={{ left: notePositions[i]?.left ?? "20%", top: notePositions[i]?.top ?? "20%" }}>
