@@ -161,38 +161,6 @@ export const BrokerAdvantageSection = (): JSX.Element => {
               </Link>
             </motion.div>
 
-            <motion.div
-              className="mt-10 rounded-[28px] border border-white/[0.08] bg-[#0f0f0f] p-5 md:p-6 max-w-[700px] lg:mb-2"
-              initial={{ opacity: 0, y: 14 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.55, delay: 0.35 }}
-            >
-              <p className="text-[12px] uppercase tracking-[0.2em] text-white/30 font-bold mb-4">Bank vs Broker</p>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
-                  <p className="text-white text-[15px] font-bold mb-3">Single Bank</p>
-                  <div className="space-y-2.5">
-                    {bankPoints.map((point) => (
-                      <div key={point} className="flex items-center gap-2 text-white/50 text-[13px]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
-                        {point}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-[#d4a94c]/15 bg-[#d4a94c]/[0.06] p-4">
-                  <p className="text-[#f0d88a] text-[15px] font-bold mb-3">Broker</p>
-                  <div className="space-y-2.5">
-                    {brokerPoints.map((point) => (
-                      <div key={point} className="flex items-center gap-2 text-white/75 text-[13px]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#d4a94c]" />
-                        {point}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
           </motion.div>
 
           <motion.div
