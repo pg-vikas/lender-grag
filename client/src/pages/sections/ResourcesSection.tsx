@@ -472,22 +472,6 @@ export const ResourcesSection = (): JSX.Element => {
           <p className="relative text-[#c4953a] text-[13px] mt-3 uppercase tracking-[0.2em] font-semibold">Drag to rearrange</p>
         </motion.div>
 
-        <motion.div className="flex items-center justify-center gap-3 mb-8 flex-wrap" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>
-          {[
-            { label: "Drag to rearrange", icon: GripVertical },
-            { label: "Click a note to ask Greg", icon: MessageCircle },
-          ].map((tip, i) => (
-            <motion.div
-              key={i}
-              className="flex items-center gap-2 text-[#06210f] text-[12px] font-black px-4 py-2 rounded-full bg-gradient-to-r from-[#4ade80] via-[#22c55e] to-[#16a34a] border border-[#86efac] shadow-lg shadow-[#22c55e]/25"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <tip.icon className="w-3.5 h-3.5" />
-              {tip.label}
-            </motion.div>
-          ))}
-        </motion.div>
       </div>
 
       <motion.div
