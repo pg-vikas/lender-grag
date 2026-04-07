@@ -6,6 +6,12 @@ uri = "file://client/src/assets/images/citibank-logo-transparent.png"
 type = "image"
 title = "Transparent Citibank logo"
 
+[[generated]]
+id = "oqxJwjnOVUb3wpyyIblxM"
+uri = "file://client/src/assets/images/family-new-home.png"
+type = "image"
+title = "Family buying new home"
+
 [[outputs]]
 id = "xKYh5tBtjJsOucbVu_uWv"
 uri = "file://client/src/assets/images/citibank-logo-transparent.png"

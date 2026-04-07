@@ -1,6 +1,7 @@
 import { ShieldCheck, Upload, MessageCircleQuestion, Clock3, LockKeyhole, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import familyNewHome from "@assets/images/family-new-home.png";
 
 const features = [
   { icon: LockKeyhole, label: "Secure personal access" },
@@ -83,13 +84,11 @@ export const SecurePortalSection = (): JSX.Element => {
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             >
-              <motion.div
+              <motion.img
+                src={familyNewHome}
+                alt="Family buying their new home"
                 className="w-full h-full min-h-[520px] object-cover"
-                style={{
-                  objectPosition: "center",
-                  background:
-                    "linear-gradient(135deg, rgba(20,20,20,1) 0%, rgba(35,35,35,1) 45%, rgba(12,12,12,1) 100%)",
-                }}
+                style={{ objectPosition: "center" }}
                 animate={{ scale: [1.02, 1.06, 1.02] }}
                 transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
               />
