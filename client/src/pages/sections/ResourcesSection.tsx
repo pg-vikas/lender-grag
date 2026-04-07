@@ -455,14 +455,29 @@ export const ResourcesSection = (): JSX.Element => {
       <PaperTextureDefs />
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10">
-        <motion.div className="text-center mb-6" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-          <span className="text-[#d4a94c] font-bold text-[13px] uppercase tracking-[0.2em]">Resources</span>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white mt-3 tracking-[-0.02em]" data-testid="text-resources-heading">
-            Learn Before You{" "}<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a94c] to-[#f0d88a]">Borrow</span>
+        <motion.div
+          className="relative text-center mb-8 sm:mb-10 rounded-[32px] border border-[#d4a94c]/15 bg-white px-5 py-8 sm:px-10 sm:py-10 overflow-hidden shadow-2xl shadow-black/10"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            animate={{ opacity: [0.35, 0.7, 0.35], scale: [1, 1.03, 1] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[520px] h-[180px] rounded-full bg-[#d4a94c]/15 blur-3xl" />
+            <div className="absolute bottom-[-40px] right-[-20px] w-[260px] h-[260px] rounded-full bg-[#f0d88a]/10 blur-3xl" />
+          </motion.div>
+          <span className="relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#d4a94c]/12 border border-[#d4a94c]/20 text-[#c4953a] font-bold text-[13px] uppercase tracking-[0.2em]">Resources</span>
+          <h2 className="relative text-5xl md:text-6xl font-black text-black mt-4 tracking-[-0.04em] leading-[0.95]" data-testid="text-resources-heading">
+            Learn Before You <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a94c] via-[#c4953a] to-[#8a6a1f]">Borrow</span>
           </h2>
-          <p className="text-white/30 text-[15px] mt-3 max-w-[460px] mx-auto leading-relaxed">
+          <p className="relative text-black/70 text-[16px] sm:text-[17px] mt-4 max-w-[720px] mx-auto leading-relaxed">
             Drag, edit, and explore these notes — or ask Greg a question directly.
           </p>
+          <p className="relative text-[#c4953a] text-[13px] mt-3 uppercase tracking-[0.2em] font-semibold">Drag to rearrange</p>
         </motion.div>
 
         <motion.div className="flex items-center justify-center gap-3 mb-8 flex-wrap" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>
