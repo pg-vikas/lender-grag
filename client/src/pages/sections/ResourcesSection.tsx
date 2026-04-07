@@ -451,12 +451,12 @@ export const ResourcesSection = (): JSX.Element => {
   }, []);
 
   return (
-    <section className="pt-24 lg:pt-32 pb-0 bg-[#0c0c0c] relative overflow-hidden">
+    <section className="pt-16 lg:pt-20 pb-16 lg:pb-20 bg-[#0c0c0c] relative overflow-hidden">
       <PaperTextureDefs />
 
       <div className="relative z-10">
         <motion.div
-          className="relative text-center mb-8 sm:mb-10 w-full rounded-none border-y border-[#d4a94c]/15 bg-white px-5 py-8 sm:px-10 sm:py-10 overflow-hidden shadow-2xl shadow-black/10"
+          className="relative text-center mb-10 sm:mb-12 w-full rounded-none border-y border-[#d4a94c]/15 bg-white px-5 py-14 sm:px-10 sm:py-16 overflow-hidden shadow-2xl shadow-black/10"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
