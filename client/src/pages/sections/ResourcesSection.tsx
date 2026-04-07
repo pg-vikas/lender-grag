@@ -454,9 +454,9 @@ export const ResourcesSection = (): JSX.Element => {
     <section className="pt-24 lg:pt-32 pb-0 bg-[#0c0c0c] relative overflow-hidden">
       <PaperTextureDefs />
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10">
+      <div className="relative z-10">
         <motion.div
-          className="relative text-center mb-8 sm:mb-10 rounded-[32px] border border-[#d4a94c]/15 bg-white px-5 py-8 sm:px-10 sm:py-10 overflow-hidden shadow-2xl shadow-black/10"
+          className="relative text-center mb-8 sm:mb-10 w-full rounded-none border-y border-[#d4a94c]/15 bg-white px-5 py-8 sm:px-10 sm:py-10 overflow-hidden shadow-2xl shadow-black/10"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
