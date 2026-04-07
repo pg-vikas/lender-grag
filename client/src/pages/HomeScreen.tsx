@@ -2,7 +2,6 @@ import { Header } from "@/components/Header";
 import { FloatingAssistant } from "@/components/FloatingAssistant";
 import { HeroSection } from "./sections/HeroSection";
 import { StatsSection } from "./sections/StatsSection";
-import { WhyGregSection } from "./sections/WhyGregSection";
 import { LoanOptionsSection } from "./sections/LoanOptionsSection";
 import { CalculatorSection } from "./sections/CalculatorSection";
 import { BrokerAdvantageSection } from "./sections/BrokerAdvantageSection";
@@ -23,7 +22,6 @@ export const HomeScreen = (): JSX.Element => {
       <ResourcesSection />
       <SecurePortalSection />
       <StatsSection />
-      <WhyGregSection />
       <CalculatorSection />
       <BrokerAdvantageSection />
       <LoanOptionsSection />
