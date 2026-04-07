@@ -164,7 +164,7 @@ export const BrokerAdvantageSection = (): JSX.Element => {
           </motion.div>
 
           <motion.div
-            className="relative order-1 lg:order-2"
+            className="relative order-1 lg:order-2 lg:pt-10"
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.75, delay: 0.1 }}
