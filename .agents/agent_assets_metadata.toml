@@ -11,3 +11,9 @@ id = "xKYh5tBtjJsOucbVu_uWv"
 uri = "file://client/src/assets/images/citibank-logo-transparent.png"
 type = "image"
 title = "transparent version of Citibank logo with white background removed"
+
+[[outputs]]
+id = "D3fVTRHJItkSjJ_JZ281e"
+uri = "file://client/src/assets/images/family-new-home.jpg"
+type = "image"
+title = "family buying new home interior document signing"
