@@ -10,6 +10,7 @@ import { ProcessSection } from "./sections/ProcessSection";
 import { ReviewsSection } from "./sections/ReviewsSection";
 import { AboutPreviewSection } from "./sections/AboutPreviewSection";
 import { ResourcesSection } from "./sections/ResourcesSection";
+import { SecurePortalSection } from "./sections/SecurePortalSection";
 import { FAQSection } from "./sections/FAQSection";
 import { FinalCTASection } from "./sections/FinalCTASection";
 import { FooterSection } from "./sections/FooterSection";
@@ -20,6 +21,7 @@ export const HomeScreen = (): JSX.Element => {
       <Header />
       <HeroSection />
       <ResourcesSection />
+      <SecurePortalSection />
       <StatsSection />
       <WhyGregSection />
       <CalculatorSection />
