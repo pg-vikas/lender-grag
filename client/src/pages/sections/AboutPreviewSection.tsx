@@ -63,22 +63,17 @@ const garR = 780;
 const garTop = 285;
 const garBot = 440;
 const rainGlyphs = [
-  { left: "8%", top: "-2%", symbol: "⌂", size: 14, delay: 0 },
-  { left: "20%", top: "8%", symbol: "$", size: 13, delay: 0.45 },
-  { left: "35%", top: "0%", symbol: "☂", size: 12, delay: 0.9 },
-  { left: "52%", top: "6%", symbol: "⌂", size: 15, delay: 1.35 },
-  { left: "68%", top: "2%", symbol: "$", size: 13, delay: 1.8 },
-  { left: "84%", top: "10%", symbol: "☂", size: 12, delay: 2.2 },
-  { left: "14%", top: "28%", symbol: "$", size: 14, delay: 0.6 },
-  { left: "31%", top: "24%", symbol: "⌂", size: 13, delay: 1.05 },
-  { left: "49%", top: "30%", symbol: "$", size: 12, delay: 1.5 },
-  { left: "66%", top: "26%", symbol: "⌂", size: 15, delay: 1.95 },
-  { left: "79%", top: "34%", symbol: "$", size: 13, delay: 2.35 },
-  { left: "6%", top: "54%", symbol: "☂", size: 12, delay: 0.2 },
-  { left: "24%", top: "60%", symbol: "⌂", size: 14, delay: 0.7 },
-  { left: "43%", top: "56%", symbol: "$", size: 13, delay: 1.15 },
-  { left: "61%", top: "62%", symbol: "☂", size: 12, delay: 1.6 },
-  { left: "82%", top: "58%", symbol: "⌂", size: 15, delay: 2.05 },
+  { left: "8%", top: "4%", symbol: "⌂", size: 14, delay: 0 },
+  { left: "20%", top: "12%", symbol: "$", size: 13, delay: 0.45 },
+  { left: "35%", top: "6%", symbol: "☂", size: 12, delay: 0.9 },
+  { left: "52%", top: "10%", symbol: "⌂", size: 15, delay: 1.35 },
+  { left: "68%", top: "8%", symbol: "$", size: 13, delay: 1.8 },
+  { left: "84%", top: "14%", symbol: "☂", size: 12, delay: 2.2 },
+  { left: "14%", top: "32%", symbol: "$", size: 14, delay: 0.6 },
+  { left: "31%", top: "26%", symbol: "⌂", size: 13, delay: 1.05 },
+  { left: "49%", top: "34%", symbol: "$", size: 12, delay: 1.5 },
+  { left: "66%", top: "30%", symbol: "⌂", size: 15, delay: 1.95 },
+  { left: "79%", top: "38%", symbol: "$", size: 13, delay: 2.35 },
 ];
 
 function HouseBuildAnimation({ inView }: { inView: boolean }) {
@@ -403,18 +398,18 @@ export const AboutPreviewSection = (): JSX.Element => {
           >
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
               <motion.div
-                className="absolute left-1/2 top-[-10px] h-[380px] w-[380px] md:h-[460px] md:w-[460px] -translate-x-1/2 rounded-full bg-[#d4a94c]/45 blur-3xl"
+                className="absolute left-1/2 top-[22px] h-[320px] w-[320px] md:h-[420px] md:w-[420px] -translate-x-1/2 rounded-full bg-[#d4a94c]/35 blur-3xl"
                 animate={{
-                  y: [56, -18, 56],
-                  opacity: [0.32, 0.9, 0.32],
-                  scale: [0.94, 1.08, 0.94],
+                  y: [36, -14, 36],
+                  opacity: [0.28, 0.78, 0.28],
+                  scale: [0.96, 1.05, 0.96],
                 }}
-                transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
+                transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
               />
               <motion.div
-                className="absolute left-1/2 top-[6px] h-[300px] w-[520px] -translate-x-1/2 bg-gradient-to-t from-transparent via-[#f0d88a]/55 to-transparent blur-2xl"
-                animate={{ y: [42, -24, 42], opacity: [0.2, 1, 0.2] }}
-                transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute left-1/2 top-[38px] h-[220px] w-[460px] -translate-x-1/2 bg-gradient-to-t from-transparent via-[#f0d88a]/45 to-transparent blur-2xl"
+                animate={{ y: [26, -18, 26], opacity: [0.16, 0.75, 0.16] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               />
               {rainGlyphs.map((glyph, index) => (
                 <motion.span
@@ -422,12 +417,12 @@ export const AboutPreviewSection = (): JSX.Element => {
                   className="absolute text-[#f0d88a]/65 font-bold"
                   style={{ left: glyph.left, top: glyph.top, fontSize: glyph.size }}
                   animate={{
-                    y: [0, 170, 360],
+                    y: [0, 130, 290],
                     x: [0, 8, -6],
                     opacity: [0, 0.8, 0],
                     rotate: [0, 10, -8],
                   }}
-                  transition={{ duration: 5.2, repeat: Infinity, ease: "linear", delay: glyph.delay }}
+                  transition={{ duration: 4.8, repeat: Infinity, ease: "linear", delay: glyph.delay }}
                 >
                   {glyph.symbol}
                 </motion.span>
