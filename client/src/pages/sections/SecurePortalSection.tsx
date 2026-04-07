@@ -1,7 +1,7 @@
 import { ShieldCheck, Upload, MessageCircleQuestion, Clock3, LockKeyhole, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import portalImg from "@assets/family-new-home.jpg";
+import portalImg from "../../assets/images/family-new-home.jpg";
 
 const features = [
   { icon: LockKeyhole, label: "Secure personal access" },
