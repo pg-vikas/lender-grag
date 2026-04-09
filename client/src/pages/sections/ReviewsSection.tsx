@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SiGoogle, SiYelp, SiZillow } from "react-icons/si";
 
 const reviews = [
   { name: "Kevan Jones", role: "First-Time Buyer", location: "San Diego, CA", text: "Greg helped throughout the entire process from pre-approval all the way to closing. He answered every question promptly and we even got a lower rate than expected. Couldn't have asked for a better experience." },
@@ -50,14 +51,24 @@ export const ReviewsSection = (): JSX.Element => {
               Hear It From Them
             </h2>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 mr-3">
-              {[1,2,3,4,5].map(i => (
-                <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
-              ))}
-              <span className="text-lg font-bold text-[#0c1a14] ml-2">4.9</span>
-              <span className="text-sm text-gray-400 ml-1">on Zillow</span>
-            </div>
+          <div className="flex flex-wrap items-center gap-3">
+            {[
+              { label: "Zillow", href: "https://www.zillow.com/profile/LenderGreg", icon: SiZillow },
+              { label: "Yelp", href: "https://www.yelp.com", icon: SiYelp },
+              { label: "Google", href: "https://www.google.com/search?q=Lender+Greg+reviews", icon: SiGoogle },
+            ].map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-[#0c1a14] hover:border-[#004733]/20 hover:shadow-sm transition-all"
+                data-testid={`link-review-${item.label.toLowerCase()}`}
+              >
+                <item.icon className="w-4 h-4" />
+                {item.label}
+              </a>
+            ))}
           </div>
         </motion.div>
 
