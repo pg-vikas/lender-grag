@@ -15,7 +15,10 @@ import ResourcesPage from "@/pages/ResourcesPage";
 import FAQPage from "@/pages/FAQPage";
 import ContactPage from "@/pages/ContactPage";
 import ApplyPage from "@/pages/ApplyPage";
+import LoginPage from "@/pages/LoginPage";
+import SignupPage from "@/pages/SignupPage";
 
+const PortalPage = lazy(() => import("@/pages/PortalPage"));
 const AdminDashboard = lazy(() => import("./admin/pages/Dashboard"));
 const AdminCRM = lazy(() => import("./admin/pages/CRMPage"));
 const AdminLeads = lazy(() => import("./admin/pages/LeadsPage"));
@@ -54,6 +57,11 @@ function Router() {
         <Route path="/faq" component={FAQPage} />
         <Route path="/contact" component={ContactPage} />
         <Route path="/apply" component={ApplyPage} />
+        <Route path="/login" component={LoginPage} />
+        <Route path="/signup" component={SignupPage} />
+        <Route path="/portal">
+          {() => <Suspense fallback={<div className="min-h-screen bg-[#fafdf9] flex items-center justify-center"><div className="w-8 h-8 border-2 border-[#004733]/30 border-t-[#004733] rounded-full animate-spin" /></div>}><PortalPage /></Suspense>}
+        </Route>
         <Route path="/admin">
           {() => <Suspense fallback={<AdminLoading />}><AdminDashboard /></Suspense>}
         </Route>

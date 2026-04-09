@@ -78,13 +78,13 @@ export const AccountPortalSection = (): JSX.Element => {
             </div>
 
             <div className="mt-10 flex flex-wrap items-center gap-3">
-              <Link href="/apply">
+              <Link href="/signup">
                 <motion.span whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-flex items-center gap-2.5 h-12 px-7 rounded-2xl bg-[#d4a94c] hover:bg-[#c4953a] text-[#0c0c0c] font-bold text-[15px] shadow-xl shadow-[#d4a94c]/20 cursor-pointer transition-colors" data-testid="button-portal-signup">
                   Sign Up Now
                   <ArrowRight className="w-4 h-4" />
                 </motion.span>
               </Link>
-              <Link href="/apply">
+              <Link href="/login">
                 <motion.span whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-flex items-center gap-2.5 h-12 px-7 rounded-2xl bg-white/[0.06] hover:bg-white/[0.12] text-white font-bold text-[15px] border border-white/[0.1] cursor-pointer transition-colors" data-testid="button-portal-login">
                   Log In
                   <ChevronRight className="w-4 h-4" />

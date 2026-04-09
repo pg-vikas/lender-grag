@@ -30,6 +30,9 @@ A professional, high-conversion mortgage services website for Greg Wynn ("Lender
 | `/faq` | FAQPage | Full |
 | `/contact` | ContactPage | Full (with contact form) |
 | `/apply` | ApplyPage | Full (with application form) |
+| `/login` | LoginPage | Full (centered form, icon inputs, forgot password) |
+| `/signup` | SignupPage | Full (split layout, perks sidebar, 2-col form) |
+| `/portal` | PortalPage | Full (auth-gated client dashboard with 4 tabs) |
 
 ## Homepage Sections (in order)
 1. Header (sticky, shrinks on scroll, body-lock mobile menu, xl breakpoint, Log In + Sign Up buttons)

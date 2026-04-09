@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Phone, ArrowRight } from "lucide-react";
+import { Menu, X, Phone, ArrowRight, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "wouter";
 import logoImg from "@assets/lender-greg-logo-new-transparent.png";
+import { useAuth } from "@/lib/auth";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -13,17 +14,19 @@ const navLinks = [
   { label: "Resources", href: "/resources" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact" },
-  { label: "Log In", href: "/login" },
-  { label: "Sign Up", href: "/signup" },
 ];
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [location] = useLocation();
+  const { user, isAuthenticated, logout, loadSession } = useAuth();
+  const [, navigate] = useLocation();
 
   const isHome = location === "/";
   const transparent = isHome && !scrolled;
+
+  useEffect(() => { loadSession(); }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -106,24 +109,49 @@ export function Header() {
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </Button>
             </Link>
-              <Link href="/login">
-                <Button variant="ghost" className={`h-9 px-4 rounded-lg text-[13px] font-medium ${
-                  transparent
-                    ? "text-white/80 hover:text-white hover:bg-white/10"
-                    : "text-gray-600 hover:text-[#004733] hover:bg-[#004733]/[0.04]"
-                }`} data-testid="button-log-in">
-                  Log In
-                </Button>
-              </Link>
-              <Link href="/signup">
-                <Button className={`h-9 px-5 rounded-lg text-[13px] font-semibold shadow-sm transition-all duration-200 ${
-                  transparent
-                    ? "bg-white text-[#0c0c0c] hover:bg-white/90"
-                    : "bg-[#d4a94c] hover:bg-[#c4953a] text-[#0c0c0c]"
-                }`} data-testid="button-sign-up">
-                  Sign Up
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link href="/portal">
+                    <Button variant="ghost" className={`h-9 px-4 rounded-lg text-[13px] font-medium gap-2 ${
+                      transparent
+                        ? "text-white/80 hover:text-white hover:bg-white/10"
+                        : "text-gray-600 hover:text-[#004733] hover:bg-[#004733]/[0.04]"
+                    }`} data-testid="button-my-portal">
+                      <User className="w-3.5 h-3.5" /> My Portal
+                    </Button>
+                  </Link>
+                  <button
+                    onClick={() => { logout(); navigate("/"); }}
+                    className={`h-9 w-9 rounded-lg flex items-center justify-center transition-colors ${
+                      transparent ? "text-white/60 hover:text-white hover:bg-white/10" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                    }`}
+                    data-testid="button-header-logout"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login">
+                    <Button variant="ghost" className={`h-9 px-4 rounded-lg text-[13px] font-medium ${
+                      transparent
+                        ? "text-white/80 hover:text-white hover:bg-white/10"
+                        : "text-gray-600 hover:text-[#004733] hover:bg-[#004733]/[0.04]"
+                    }`} data-testid="button-log-in">
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link href="/signup">
+                    <Button className={`h-9 px-5 rounded-lg text-[13px] font-semibold shadow-sm transition-all duration-200 ${
+                      transparent
+                        ? "bg-white text-[#0c0c0c] hover:bg-white/90"
+                        : "bg-[#d4a94c] hover:bg-[#c4953a] text-[#0c0c0c]"
+                    }`} data-testid="button-sign-up">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
           </div>
 
           <button
@@ -186,16 +214,31 @@ export function Header() {
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
-                <Link href="/login">
-                  <Button variant="outline" className="w-full rounded-xl border-gray-200 text-gray-700 font-semibold h-12" data-testid="button-mobile-log-in">
-                    Log In
-                  </Button>
-                </Link>
-                <Link href="/signup">
-                  <Button className="w-full rounded-xl bg-[#d4a94c] hover:bg-[#c4953a] text-[#0c0c0c] font-semibold h-12" data-testid="button-mobile-sign-up">
-                    Sign Up
-                  </Button>
-                </Link>
+                {isAuthenticated ? (
+                  <>
+                    <Link href="/portal">
+                      <Button className="w-full rounded-xl bg-[#004733] hover:bg-[#003525] text-white font-semibold h-12 gap-2" data-testid="button-mobile-portal">
+                        <User className="w-4 h-4" /> My Portal
+                      </Button>
+                    </Link>
+                    <Button variant="outline" onClick={() => { logout(); navigate("/"); setMobileOpen(false); }} className="w-full rounded-xl border-gray-200 text-gray-700 font-semibold h-12 gap-2" data-testid="button-mobile-logout">
+                      <LogOut className="w-4 h-4" /> Log Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/login">
+                      <Button variant="outline" className="w-full rounded-xl border-gray-200 text-gray-700 font-semibold h-12" data-testid="button-mobile-log-in">
+                        Log In
+                      </Button>
+                    </Link>
+                    <Link href="/signup">
+                      <Button className="w-full rounded-xl bg-[#d4a94c] hover:bg-[#c4953a] text-[#0c0c0c] font-semibold h-12" data-testid="button-mobile-sign-up">
+                        Sign Up
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </motion.div>
             </div>
           </motion.div>
