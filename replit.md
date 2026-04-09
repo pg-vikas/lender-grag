@@ -56,6 +56,28 @@ A professional, high-conversion mortgage services website for Greg Wynn ("Lender
 - **Animations**: Framer Motion — mouse-reactive perspective (hero), spring-based floating cards, animated progress bar, donut chart transitions, review carousel with AnimatePresence, staggered reveals
 - **Patterns**: SVG grid overlays (hero, calculator, CTA), blur glows, gradient shapes
 
+## Super Admin Platform (Gorilla Apps — Phase 1)
+Accessible via `/admin` link in footer. Dark mode premium mortgage lender operating system.
+
+### Admin Routes
+| Route | Page | Description |
+|-------|------|-------------|
+| `/admin` | Dashboard | Command center with KPIs, pipeline snapshot, funnel, activity, alerts, leaderboard |
+| `/admin/crm` | CRM | Contact records with quick filters, table view, preview drawer |
+| `/admin/leads` | Leads | Lead management with status cards, search, filters, detail drawers |
+| `/admin/borrowers` | Borrowers | Borrower index with loan status, table view |
+| `/admin/borrowers/:id` | Borrower Detail | Profile, loan status, timeline, notes tabs |
+| `/admin/pipeline` | Pipeline | Kanban board + list view toggle, stage columns |
+| `/admin/pipeline/:id` | Loan Detail | Tabbed deal room: overview, milestones, notes, timeline |
+
+### Admin Tech
+- **State**: Zustand (`client/src/admin/store.ts`)
+- **Data**: Mock TypeScript data (`client/src/admin/data/mockData.ts`)
+- **Types**: `client/src/admin/types.ts`
+- **Shell**: Collapsible sidebar, sticky header, global search (⌘K), quick create menu, right drawers
+- **Palette**: Black/charcoal/graphite + Gorilla pink (#e91e8c) + cyan/amber/green accents
+- **Lazy loaded**: All admin pages via React.lazy for code splitting
+
 ## Key Features
 - Functional mortgage payment calculator with donut chart breakdown and custom slider UI
 - Mouse-reactive 3D hero dashboard card with perspective transforms
