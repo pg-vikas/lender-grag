@@ -2,10 +2,11 @@ import { useState } from "react";
 import { AppShell } from "../components/AppShell";
 import { StatusBadge } from "../components/StatusBadge";
 import { borrowers, loanFiles, getLOName, getProcessorName, getBranchName, notes as allNotes, activities } from "../data/mockData";
+import { documents, esignPackages, conditions, commThreads, commMessages, tasks, getBorrowerName, getUserName } from "../data/mockPhase2Data";
 import { useLocation, useRoute } from "wouter";
-import { ArrowLeft, Phone, Mail, User, MapPin, FileText, Clock, CheckCircle2, Circle, MessageSquare, ListChecks, StickyNote } from "lucide-react";
+import { ArrowLeft, Phone, Mail, User, MapPin, FileText, Clock, CheckCircle2, Circle, MessageSquare, ListChecks, StickyNote, PenTool, ClipboardCheck, CheckSquare, AlertTriangle, Eye, Send } from "lucide-react";
 
-const tabs = ["Overview", "Loan Status", "Timeline", "Notes", "Tasks", "Documents"];
+const tabs = ["Overview", "Loan Status", "Timeline", "Notes", "Documents", "E-Sign", "Conditions", "Communications", "Tasks"];
 
 export default function BorrowerDetailPage() {
   const [, params] = useRoute("/admin/borrowers/:borrowerId");
@@ -61,22 +62,18 @@ export default function BorrowerDetailPage() {
           </div>
         </div>
 
-        <div className="flex gap-1 border-b border-white/[0.06]">
-          {tabs.map((tab) => {
-            const disabled = ["Tasks", "Documents"].includes(tab);
-            return (
-              <button
-                key={tab}
-                onClick={() => !disabled && setActiveTab(tab)}
-                disabled={disabled}
-                className={`px-4 py-2.5 text-[13px] font-bold border-b-2 transition-all ${
-                  activeTab === tab ? "border-[#e91e8c] text-white" : disabled ? "border-transparent text-white/15 cursor-not-allowed" : "border-transparent text-white/35 hover:text-white/60"
-                }`}
-              >
-                {tab}{disabled && <span className="ml-1 text-[9px] text-white/15">P2</span>}
-              </button>
-            );
-          })}
+        <div className="flex gap-1 border-b border-white/[0.06] overflow-x-auto">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2.5 text-[13px] font-bold border-b-2 transition-all whitespace-nowrap ${
+                activeTab === tab ? "border-[#e91e8c] text-white" : "border-transparent text-white/35 hover:text-white/60"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
 
         {activeTab === "Overview" && (
@@ -187,6 +184,133 @@ export default function BorrowerDetailPage() {
             ))}
           </div>
         )}
+
+        {activeTab === "Documents" && (() => {
+          const bwDocs = documents.filter(d => d.borrowerId === borrower.id);
+          return (
+            <div className="bg-[#111] border border-white/[0.06] rounded-xl overflow-hidden">
+              <table className="w-full">
+                <thead><tr className="border-b border-white/[0.06]">{["Document", "Category", "Status", "Requested", "Uploaded"].map(h => <th key={h} className="text-left px-4 py-3 text-[11px] font-bold text-white/30 uppercase tracking-wider">{h}</th>)}</tr></thead>
+                <tbody>
+                  {bwDocs.map(doc => (
+                    <tr key={doc.id} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+                      <td className="px-4 py-3 text-[13px] font-medium text-white flex items-center gap-2"><FileText className="w-3.5 h-3.5 text-white/20" /> {doc.name}</td>
+                      <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full bg-white/[0.04] text-white/40 text-[10px]">{doc.category}</span></td>
+                      <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${doc.status === "Accepted" ? "bg-green-400/10 text-green-400" : doc.status === "Needs Revision" ? "bg-red-400/10 text-red-400" : doc.status === "Requested" ? "bg-amber-400/10 text-amber-400" : "bg-cyan-400/10 text-cyan-400"}`}>{doc.status}</span></td>
+                      <td className="px-4 py-3 text-[11px] text-white/30">{new Date(doc.requestedAt).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 text-[11px] text-white/30">{doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString() : "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {bwDocs.length === 0 && <p className="py-8 text-center text-white/25 text-[13px]">No documents for this borrower</p>}
+            </div>
+          );
+        })()}
+
+        {activeTab === "E-Sign" && (() => {
+          const bwEsign = esignPackages.filter(p => p.borrowerId === borrower.id);
+          return (
+            <div className="space-y-3">
+              {bwEsign.map(pkg => (
+                <div key={pkg.id} className="bg-[#111] border border-white/[0.06] rounded-xl p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <PenTool className="w-4 h-4 text-white/20" />
+                    <div>
+                      <p className="text-[13px] font-semibold text-white">{pkg.name}</p>
+                      <p className="text-[11px] text-white/25">{pkg.sentAt ? `Sent ${new Date(pkg.sentAt).toLocaleDateString()}` : "Draft"} · {pkg.recipientCount} recipients</p>
+                    </div>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${pkg.status === "Completed" ? "bg-green-400/10 text-green-400" : pkg.status === "Expired" ? "bg-red-400/10 text-red-400" : pkg.status === "Draft" ? "bg-white/[0.06] text-white/40" : "bg-cyan-400/10 text-cyan-400"}`}>{pkg.status}</span>
+                </div>
+              ))}
+              {bwEsign.length === 0 && <p className="py-8 text-center text-white/25 text-[13px]">No e-sign packages for this borrower</p>}
+            </div>
+          );
+        })()}
+
+        {activeTab === "Conditions" && (() => {
+          const bwConds = conditions.filter(c => c.borrowerId === borrower.id);
+          return (
+            <div className="space-y-3">
+              {bwConds.map(cond => (
+                <div key={cond.id} className="bg-[#111] border border-white/[0.06] rounded-xl p-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-[13px] font-semibold text-white">{cond.title}</p>
+                      <p className="text-[12px] text-white/35 mt-1">{cond.description}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${cond.priority === "Urgent" ? "bg-red-500/10 text-red-500" : cond.priority === "High" ? "bg-amber-400/10 text-amber-400" : "bg-cyan-400/10 text-cyan-400"}`}>{cond.priority}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${cond.status === "Cleared" ? "bg-green-400/10 text-green-400" : cond.status === "Overdue" ? "bg-red-500/10 text-red-500" : cond.status === "Requested" ? "bg-amber-400/10 text-amber-400" : "bg-cyan-400/10 text-cyan-400"}`}>{cond.status}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 mt-2 text-[11px] text-white/25">
+                    <span>Due: {new Date(cond.dueDate).toLocaleDateString()}</span>
+                    <span>Reviewer: {getUserName(cond.assignedReviewerId)}</span>
+                    {cond.linkedDocumentIds.length > 0 && <span className="flex items-center gap-0.5"><FileText className="w-2.5 h-2.5" /> {cond.linkedDocumentIds.length} docs</span>}
+                  </div>
+                </div>
+              ))}
+              {bwConds.length === 0 && <p className="py-8 text-center text-white/25 text-[13px]">No conditions for this borrower</p>}
+            </div>
+          );
+        })()}
+
+        {activeTab === "Communications" && (() => {
+          const bwThreads = commThreads.filter(t => t.borrowerId === borrower.id);
+          return (
+            <div className="space-y-3">
+              {bwThreads.map(thread => {
+                const msgs = commMessages.filter(m => m.threadId === thread.id);
+                const lastMsg = msgs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
+                return (
+                  <div key={thread.id} className="bg-[#111] border border-white/[0.06] rounded-xl p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className={`w-3.5 h-3.5 ${thread.channel === "sms" ? "text-green-400" : thread.channel === "email" ? "text-cyan-400" : "text-amber-400"}`} />
+                        <span className="text-[13px] font-semibold text-white">{thread.subject}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="px-1.5 py-0.5 rounded bg-white/[0.04] text-white/25 text-[9px] font-medium">{thread.channel.toUpperCase()}</span>
+                        {thread.unreadCount > 0 && <span className="w-4 h-4 rounded-full bg-[#e91e8c] text-white text-[9px] font-bold flex items-center justify-center">{thread.unreadCount}</span>}
+                      </div>
+                    </div>
+                    {lastMsg && <p className="text-[12px] text-white/35 truncate">{lastMsg.senderName}: {lastMsg.content}</p>}
+                    <p className="text-[10px] text-white/15 mt-1">{new Date(thread.lastMessageAt).toLocaleString()}</p>
+                  </div>
+                );
+              })}
+              {bwThreads.length === 0 && <p className="py-8 text-center text-white/25 text-[13px]">No communication threads for this borrower</p>}
+            </div>
+          );
+        })()}
+
+        {activeTab === "Tasks" && (() => {
+          const bwTasks = tasks.filter(t => t.borrowerId === borrower.id);
+          return (
+            <div className="space-y-3">
+              {bwTasks.map(task => (
+                <div key={task.id} className="bg-[#111] border border-white/[0.06] rounded-xl p-4 flex items-center gap-3">
+                  {task.status === "Completed" ? <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0" /> : task.status === "Overdue" ? <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" /> : <Circle className="w-4 h-4 text-white/15 flex-shrink-0" />}
+                  <div className="flex-1">
+                    <p className={`text-[13px] font-medium ${task.status === "Completed" ? "text-white/30 line-through" : "text-white"}`}>{task.title}</p>
+                    <div className="flex items-center gap-2 mt-1 text-[11px] text-white/25">
+                      <span>{getUserName(task.assigneeId)}</span>
+                      <span>·</span>
+                      <span>Due {new Date(task.dueDate).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${task.priority === "Urgent" ? "bg-red-500/10 text-red-500" : task.priority === "High" ? "bg-amber-400/10 text-amber-400" : "bg-cyan-400/10 text-cyan-400"}`}>{task.priority}</span>
+                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${task.status === "Completed" ? "bg-green-400/10 text-green-400" : task.status === "Overdue" ? "bg-red-500/10 text-red-500" : "bg-white/[0.06] text-white/40"}`}>{task.status}</span>
+                  </div>
+                </div>
+              ))}
+              {bwTasks.length === 0 && <p className="py-8 text-center text-white/25 text-[13px]">No tasks for this borrower</p>}
+            </div>
+          );
+        })()}
       </div>
     </AppShell>
   );

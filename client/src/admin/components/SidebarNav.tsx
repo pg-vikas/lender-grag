@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Activity, Bell, Users, UserPlus, Briefcase, Handshake, Radio,
   FileText, FilePlus, FileCheck, ListChecks, Calendar, Zap,
   ShieldCheck, BarChart3, Settings, PanelLeftClose, PanelLeft,
-  ChevronRight
+  ChevronRight, PenTool, ClipboardCheck, MessageSquare, CheckSquare
 } from "lucide-react";
 
 interface NavItem {
@@ -50,7 +50,11 @@ const navGroups: NavGroup[] = [
   {
     title: "Operations",
     items: [
-      { label: "Tasks", icon: ListChecks, disabled: true },
+      { label: "Documents", icon: FileText, href: "/admin/documents" },
+      { label: "E-Sign", icon: PenTool, href: "/admin/esign" },
+      { label: "Conditions", icon: ClipboardCheck, href: "/admin/conditions" },
+      { label: "Communications", icon: MessageSquare, href: "/admin/communications" },
+      { label: "Tasks", icon: CheckSquare, href: "/admin/tasks" },
       { label: "Calendar", icon: Calendar, disabled: true },
       { label: "Automations", icon: Zap, disabled: true },
     ],

@@ -169,3 +169,166 @@ export interface CRMRecord {
 }
 
 export type DashboardMode = "Executive" | "Sales" | "Operations";
+
+export type DocumentCategory = "Identification" | "Income" | "Assets" | "Tax Returns" | "Bank Statements" | "Purchase Contract" | "Disclosures" | "Title / Escrow" | "Insurance" | "Conditions" | "Miscellaneous";
+export type DocumentStatus = "Requested" | "Borrower Received" | "Uploaded" | "Under Review" | "Accepted" | "Needs Revision" | "Rejected";
+
+export interface Document {
+  id: string;
+  name: string;
+  borrowerId: string;
+  loanFileId: string;
+  category: DocumentCategory;
+  status: DocumentStatus;
+  uploadedBy: string;
+  uploadedAt: string | null;
+  requestedBy: string;
+  requestedAt: string;
+  reviewerId: string | null;
+  reviewNotes: string | null;
+  borrowerVisibleNotes: string | null;
+  notesCount: number;
+}
+
+export type ESignStatus = "Draft" | "Sent" | "Viewed" | "In Progress" | "Completed" | "Expired" | "Failed";
+
+export interface ESignEventLog {
+  action: string;
+  userId: string;
+  timestamp: string;
+}
+
+export interface ESignPackage {
+  id: string;
+  name: string;
+  borrowerId: string;
+  loanFileId: string;
+  templateId: string | null;
+  signerIds: string[];
+  status: ESignStatus;
+  sentAt: string | null;
+  completedAt: string | null;
+  documentUrl: string;
+  eventLog: ESignEventLog[];
+  recipientCount: number;
+}
+
+export interface ESignTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  pageCount: number;
+  fieldCount: number;
+  lastUsed: string;
+  usageCount: number;
+}
+
+export interface ESignField {
+  id: string;
+  packageId: string;
+  type: "signature" | "initials" | "date_signed" | "date" | "full_name" | "text" | "checkbox";
+  signerId: string;
+  page: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  required: boolean;
+  label: string;
+  placeholder?: string;
+}
+
+export type ConditionStatus = "Requested" | "Borrower Uploaded" | "Under Review" | "Accepted" | "Needs Revision" | "Cleared" | "Overdue";
+export type ConditionType = "income_verification" | "asset_verification" | "letter_of_explanation" | "updated_bank_statement" | "title_item" | "insurance_item" | "purchase_contract_revision" | "disclosure_item" | "miscellaneous";
+export type Priority = "Low" | "Medium" | "High" | "Urgent";
+
+export interface Condition {
+  id: string;
+  title: string;
+  description: string;
+  borrowerId: string;
+  loanFileId: string;
+  type: ConditionType;
+  status: ConditionStatus;
+  dueDate: string;
+  priority: Priority;
+  assignedReviewerId: string;
+  linkedDocumentIds: string[];
+  notes: string[];
+  createdAt: string;
+}
+
+export type CommChannel = "sms" | "email" | "internal" | "portal";
+
+export interface CommThread {
+  id: string;
+  borrowerId: string;
+  loanFileId: string;
+  channel: CommChannel;
+  subject: string;
+  unreadCount: number;
+  lastMessageAt: string;
+  participantIds: string[];
+  pinned: boolean;
+  loanStage: string;
+}
+
+export interface CommMessage {
+  id: string;
+  threadId: string;
+  senderId: string;
+  senderName: string;
+  content: string;
+  timestamp: string;
+  channel: CommChannel;
+  isInternal: boolean;
+  attachments: string[];
+}
+
+export interface CannedResponse {
+  id: string;
+  category: string;
+  title: string;
+  content: string;
+}
+
+export type TaskStatus = "To Do" | "In Progress" | "Waiting" | "Completed" | "Overdue";
+export type TaskType = "follow_up_call" | "request_document" | "review_condition" | "send_update" | "milestone_check" | "borrower_follow_up" | "processor_review" | "internal_review";
+
+export interface Task {
+  id: string;
+  title: string;
+  description: string;
+  borrowerId: string;
+  loanFileId: string;
+  assigneeId: string;
+  dueDate: string;
+  priority: Priority;
+  status: TaskStatus;
+  type: TaskType;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type TimelineEventType =
+  | "document_requested" | "document_uploaded" | "document_reviewed"
+  | "document_accepted" | "document_revision_requested"
+  | "esign_sent" | "esign_viewed" | "esign_completed"
+  | "condition_created" | "condition_status_changed"
+  | "task_created" | "task_completed"
+  | "message_sent" | "message_received"
+  | ActivityType;
+
+export interface TimelineEvent {
+  id: string;
+  type: TimelineEventType;
+  title: string;
+  detail: string;
+  userId: string;
+  timestamp: string;
+  entityId: string;
+  entityType: "lead" | "borrower" | "loan" | "document" | "esign" | "condition" | "task" | "message";
+  linkedObjectId?: string;
+}

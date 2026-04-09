@@ -2,15 +2,16 @@ import { useState } from "react";
 import { AppShell } from "../components/AppShell";
 import { StatusBadge } from "../components/StatusBadge";
 import { loanFiles, borrowers, getLOName, getProcessorName, getBranchName, notes as allNotes, activities } from "../data/mockData";
+import { documents, esignPackages, conditions, commThreads, commMessages, tasks, getBorrowerName, getUserName } from "../data/mockPhase2Data";
 import { useLocation, useRoute } from "wouter";
 import {
   ArrowLeft, Phone, Mail, FileText, StickyNote, ListChecks, ChevronRight,
   CheckCircle2, Circle, Clock, AlertTriangle, Calendar, User, MapPin, DollarSign,
-  Building, Percent
+  Building, Percent, PenTool, ClipboardCheck, CheckSquare, Eye, Send, MessageSquare
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-const tabs = ["Overview", "Milestones", "Borrowers", "Notes", "Timeline", "Compliance", "Documents"];
+const tabs = ["Overview", "Milestones", "Borrowers", "Notes", "Timeline", "Documents", "E-Sign", "Conditions", "Communications", "Tasks"];
 
 export default function LoanDetailPage() {
   const [, params] = useRoute("/admin/pipeline/:loanId");
@@ -61,24 +62,19 @@ export default function LoanDetailPage() {
 
         <div className="flex flex-col lg:flex-row gap-5">
           <div className="flex-1 space-y-4">
-            <div className="flex gap-1 border-b border-white/[0.06] pb-0">
-              {tabs.map((tab) => {
-                const disabled = ["Compliance", "Documents"].includes(tab);
-                return (
-                  <button
-                    key={tab}
-                    onClick={() => !disabled && setActiveTab(tab)}
-                    disabled={disabled}
-                    className={`px-4 py-2.5 text-[13px] font-bold border-b-2 transition-all ${
-                      activeTab === tab ? "border-[#e91e8c] text-white" : disabled ? "border-transparent text-white/15 cursor-not-allowed" : "border-transparent text-white/35 hover:text-white/60"
-                    }`}
-                    data-testid={`tab-${tab.toLowerCase()}`}
-                  >
-                    {tab}
-                    {disabled && <span className="ml-1 text-[9px] font-bold text-white/15">P2</span>}
-                  </button>
-                );
-              })}
+            <div className="flex gap-1 border-b border-white/[0.06] pb-0 overflow-x-auto">
+              {tabs.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2.5 text-[13px] font-bold border-b-2 transition-all whitespace-nowrap ${
+                    activeTab === tab ? "border-[#e91e8c] text-white" : "border-transparent text-white/35 hover:text-white/60"
+                  }`}
+                  data-testid={`tab-${tab.toLowerCase().replace(/\s/g, "-")}`}
+                >
+                  {tab}
+                </button>
+              ))}
             </div>
 
             {activeTab === "Overview" && (
@@ -207,6 +203,133 @@ export default function LoanDetailPage() {
                 ))}
               </div>
             )}
+
+            {activeTab === "Documents" && (() => {
+              const loanDocs = documents.filter(d => d.loanFileId === loan.id);
+              return (
+                <div className="bg-[#111] border border-white/[0.06] rounded-xl overflow-hidden">
+                  <table className="w-full">
+                    <thead><tr className="border-b border-white/[0.06]">{["Document", "Borrower", "Category", "Status", "Requested", "Uploaded"].map(h => <th key={h} className="text-left px-4 py-3 text-[11px] font-bold text-white/30 uppercase tracking-wider">{h}</th>)}</tr></thead>
+                    <tbody>
+                      {loanDocs.map(doc => (
+                        <tr key={doc.id} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+                          <td className="px-4 py-3 text-[13px] font-medium text-white flex items-center gap-2"><FileText className="w-3.5 h-3.5 text-white/20" /> {doc.name}</td>
+                          <td className="px-4 py-3 text-[12px] text-white/40">{getBorrowerName(doc.borrowerId)}</td>
+                          <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full bg-white/[0.04] text-white/40 text-[10px]">{doc.category}</span></td>
+                          <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${doc.status === "Accepted" ? "bg-green-400/10 text-green-400" : doc.status === "Needs Revision" ? "bg-red-400/10 text-red-400" : doc.status === "Requested" ? "bg-amber-400/10 text-amber-400" : "bg-cyan-400/10 text-cyan-400"}`}>{doc.status}</span></td>
+                          <td className="px-4 py-3 text-[11px] text-white/30">{new Date(doc.requestedAt).toLocaleDateString()}</td>
+                          <td className="px-4 py-3 text-[11px] text-white/30">{doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString() : "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {loanDocs.length === 0 && <p className="py-8 text-center text-white/25 text-[13px]">No documents for this loan</p>}
+                </div>
+              );
+            })()}
+
+            {activeTab === "E-Sign" && (() => {
+              const loanEsign = esignPackages.filter(p => p.loanFileId === loan.id);
+              return (
+                <div className="space-y-3">
+                  {loanEsign.map(pkg => (
+                    <div key={pkg.id} className="bg-[#111] border border-white/[0.06] rounded-xl p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <PenTool className="w-4 h-4 text-white/20" />
+                        <div>
+                          <p className="text-[13px] font-semibold text-white">{pkg.name}</p>
+                          <p className="text-[11px] text-white/25">{getBorrowerName(pkg.borrowerId)} · {pkg.sentAt ? new Date(pkg.sentAt).toLocaleDateString() : "Draft"} · {pkg.recipientCount} recipients</p>
+                        </div>
+                      </div>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${pkg.status === "Completed" ? "bg-green-400/10 text-green-400" : pkg.status === "Expired" ? "bg-red-400/10 text-red-400" : pkg.status === "Draft" ? "bg-white/[0.06] text-white/40" : "bg-cyan-400/10 text-cyan-400"}`}>{pkg.status}</span>
+                    </div>
+                  ))}
+                  {loanEsign.length === 0 && <p className="py-8 text-center text-white/25 text-[13px]">No e-sign packages for this loan</p>}
+                </div>
+              );
+            })()}
+
+            {activeTab === "Conditions" && (() => {
+              const loanConds = conditions.filter(c => c.loanFileId === loan.id);
+              return (
+                <div className="space-y-3">
+                  {loanConds.map(cond => (
+                    <div key={cond.id} className="bg-[#111] border border-white/[0.06] rounded-xl p-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="text-[13px] font-semibold text-white">{cond.title}</p>
+                          <p className="text-[12px] text-white/35 mt-1">{cond.description}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${cond.priority === "Urgent" ? "bg-red-500/10 text-red-500" : cond.priority === "High" ? "bg-amber-400/10 text-amber-400" : "bg-cyan-400/10 text-cyan-400"}`}>{cond.priority}</span>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${cond.status === "Cleared" ? "bg-green-400/10 text-green-400" : cond.status === "Overdue" ? "bg-red-500/10 text-red-500" : cond.status === "Requested" ? "bg-amber-400/10 text-amber-400" : "bg-cyan-400/10 text-cyan-400"}`}>{cond.status}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 mt-2 text-[11px] text-white/25">
+                        <span>Due: {new Date(cond.dueDate).toLocaleDateString()}</span>
+                        <span>Reviewer: {getUserName(cond.assignedReviewerId)}</span>
+                      </div>
+                    </div>
+                  ))}
+                  {loanConds.length === 0 && <p className="py-8 text-center text-white/25 text-[13px]">No conditions for this loan</p>}
+                </div>
+              );
+            })()}
+
+            {activeTab === "Communications" && (() => {
+              const loanThreads = commThreads.filter(t => t.loanFileId === loan.id);
+              return (
+                <div className="space-y-3">
+                  {loanThreads.map(thread => {
+                    const msgs = commMessages.filter(m => m.threadId === thread.id);
+                    const lastMsg = msgs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
+                    return (
+                      <div key={thread.id} className="bg-[#111] border border-white/[0.06] rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <MessageSquare className={`w-3.5 h-3.5 ${thread.channel === "sms" ? "text-green-400" : thread.channel === "email" ? "text-cyan-400" : "text-amber-400"}`} />
+                            <span className="text-[13px] font-semibold text-white">{thread.subject}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="px-1.5 py-0.5 rounded bg-white/[0.04] text-white/25 text-[9px] font-medium">{thread.channel.toUpperCase()}</span>
+                            {thread.unreadCount > 0 && <span className="w-4 h-4 rounded-full bg-[#e91e8c] text-white text-[9px] font-bold flex items-center justify-center">{thread.unreadCount}</span>}
+                          </div>
+                        </div>
+                        {lastMsg && <p className="text-[12px] text-white/35 truncate">{lastMsg.senderName}: {lastMsg.content}</p>}
+                        <p className="text-[10px] text-white/15 mt-1">{new Date(thread.lastMessageAt).toLocaleString()}</p>
+                      </div>
+                    );
+                  })}
+                  {loanThreads.length === 0 && <p className="py-8 text-center text-white/25 text-[13px]">No communication threads for this loan</p>}
+                </div>
+              );
+            })()}
+
+            {activeTab === "Tasks" && (() => {
+              const loanTasks = tasks.filter(t => t.loanFileId === loan.id);
+              return (
+                <div className="space-y-3">
+                  {loanTasks.map(task => (
+                    <div key={task.id} className="bg-[#111] border border-white/[0.06] rounded-xl p-4 flex items-center gap-3">
+                      {task.status === "Completed" ? <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0" /> : task.status === "Overdue" ? <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" /> : <Circle className="w-4 h-4 text-white/15 flex-shrink-0" />}
+                      <div className="flex-1">
+                        <p className={`text-[13px] font-medium ${task.status === "Completed" ? "text-white/30 line-through" : "text-white"}`}>{task.title}</p>
+                        <div className="flex items-center gap-2 mt-1 text-[11px] text-white/25">
+                          <span>{getUserName(task.assigneeId)}</span>
+                          <span>·</span>
+                          <span>Due {new Date(task.dueDate).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${task.priority === "Urgent" ? "bg-red-500/10 text-red-500" : task.priority === "High" ? "bg-amber-400/10 text-amber-400" : "bg-cyan-400/10 text-cyan-400"}`}>{task.priority}</span>
+                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${task.status === "Completed" ? "bg-green-400/10 text-green-400" : task.status === "Overdue" ? "bg-red-500/10 text-red-500" : "bg-white/[0.06] text-white/40"}`}>{task.status}</span>
+                      </div>
+                    </div>
+                  ))}
+                  {loanTasks.length === 0 && <p className="py-8 text-center text-white/25 text-[13px]">No tasks for this loan</p>}
+                </div>
+              );
+            })()}
           </div>
 
           <div className="lg:w-[280px] flex-shrink-0 space-y-3">

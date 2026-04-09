@@ -26,6 +26,12 @@ const AdminBorrowers = lazy(() => import("./admin/pages/BorrowersPage"));
 const AdminBorrowerDetail = lazy(() => import("./admin/pages/BorrowerDetailPage"));
 const AdminPipeline = lazy(() => import("./admin/pages/PipelinePage"));
 const AdminLoanDetail = lazy(() => import("./admin/pages/LoanDetailPage"));
+const AdminDocuments = lazy(() => import("./admin/pages/DocumentsPage"));
+const AdminESign = lazy(() => import("./admin/pages/ESignPage"));
+const AdminESignTemplates = lazy(() => import("./admin/pages/ESignTemplatesPage"));
+const AdminConditions = lazy(() => import("./admin/pages/ConditionsPage"));
+const AdminCommunications = lazy(() => import("./admin/pages/CommunicationsPage"));
+const AdminTasks = lazy(() => import("./admin/pages/TasksPage"));
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -82,6 +88,24 @@ function Router() {
         </Route>
         <Route path="/admin/pipeline">
           {() => <Suspense fallback={<AdminLoading />}><AdminPipeline /></Suspense>}
+        </Route>
+        <Route path="/admin/documents">
+          {() => <Suspense fallback={<AdminLoading />}><AdminDocuments /></Suspense>}
+        </Route>
+        <Route path="/admin/esign/templates">
+          {() => <Suspense fallback={<AdminLoading />}><AdminESignTemplates /></Suspense>}
+        </Route>
+        <Route path="/admin/esign">
+          {() => <Suspense fallback={<AdminLoading />}><AdminESign /></Suspense>}
+        </Route>
+        <Route path="/admin/conditions">
+          {() => <Suspense fallback={<AdminLoading />}><AdminConditions /></Suspense>}
+        </Route>
+        <Route path="/admin/communications">
+          {() => <Suspense fallback={<AdminLoading />}><AdminCommunications /></Suspense>}
+        </Route>
+        <Route path="/admin/tasks">
+          {() => <Suspense fallback={<AdminLoading />}><AdminTasks /></Suspense>}
         </Route>
         <Route component={NotFound} />
       </Switch>
