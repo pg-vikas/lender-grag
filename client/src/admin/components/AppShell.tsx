@@ -7,9 +7,11 @@ import { useAdminStore } from "../store";
 
 interface AppShellProps {
   children: React.ReactNode;
+  title?: string;
+  subtitle?: string;
 }
 
-export function AppShell({ children }: AppShellProps) {
+export function AppShell({ children, title, subtitle }: AppShellProps) {
   const { sidebarCollapsed } = useAdminStore();
 
   return (
@@ -24,6 +26,12 @@ export function AppShell({ children }: AppShellProps) {
         style={{ marginLeft: sidebarCollapsed ? 64 : 240 }}
       >
         <div className="p-6">
+          {title && (
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold text-white" data-testid="text-page-title">{title}</h1>
+              {subtitle && <p className="text-sm text-white/40 mt-1" data-testid="text-page-subtitle">{subtitle}</p>}
+            </div>
+          )}
           {children}
         </div>
       </main>

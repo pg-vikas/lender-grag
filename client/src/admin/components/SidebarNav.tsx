@@ -5,7 +5,8 @@ import {
   LayoutDashboard, Activity, Bell, Users, UserPlus, Briefcase, Handshake, Radio,
   FileText, FilePlus, FileCheck, ListChecks, Calendar, Zap,
   ShieldCheck, BarChart3, Settings, PanelLeftClose, PanelLeft,
-  ChevronRight, PenTool, ClipboardCheck, MessageSquare, CheckSquare
+  ChevronRight, PenTool, ClipboardCheck, MessageSquare, CheckSquare,
+  DollarSign, Package, Building2, Shield, Crown
 } from "lucide-react";
 
 interface NavItem {
@@ -56,15 +57,25 @@ const navGroups: NavGroup[] = [
       { label: "Communications", icon: MessageSquare, href: "/admin/communications" },
       { label: "Tasks", icon: CheckSquare, href: "/admin/tasks" },
       { label: "Calendar", icon: Calendar, disabled: true },
-      { label: "Automations", icon: Zap, disabled: true },
+      { label: "Automations", icon: Zap, href: "/admin/automations" },
+    ],
+  },
+  {
+    title: "Products & Pricing",
+    items: [
+      { label: "Pricing Desk", icon: DollarSign, href: "/admin/pricing" },
+      { label: "Products", icon: Package, href: "/admin/products" },
     ],
   },
   {
     title: "Management",
     items: [
-      { label: "Compliance", icon: ShieldCheck, disabled: true },
-      { label: "Reports", icon: BarChart3, disabled: true },
-      { label: "Settings", icon: Settings, disabled: true },
+      { label: "Compliance", icon: ShieldCheck, href: "/admin/compliance" },
+      { label: "Branches", icon: Building2, href: "/admin/branches" },
+      { label: "Team", icon: Users, href: "/admin/team" },
+      { label: "Reports", icon: BarChart3, href: "/admin/reports" },
+      { label: "Executive", icon: Crown, href: "/admin/executive" },
+      { label: "Settings", icon: Settings, href: "/admin/settings" },
     ],
   },
 ];

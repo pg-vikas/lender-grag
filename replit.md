@@ -78,11 +78,21 @@ Accessible via `/admin` link in footer. Dark mode premium mortgage lender operat
 | `/admin/conditions` | Conditions | Kanban board + list view toggle, priority/status badges, detail drawer |
 | `/admin/communications` | Communications | 3-column hub: thread list (channel filters), message thread, borrower context rail |
 | `/admin/tasks` | Tasks | Task dashboard with list/board views, priority/status badges, detail drawer |
+| `/admin/automations` | Automations | Workflow automation engine with card list, templates, builder, run stats |
+| `/admin/compliance` | Compliance | Risk monitoring with severity flags, audit trail, stacked area risk trend chart |
+| `/admin/reports` | Reports & Analytics | Report presets with category filters, volume/source/branch charts, favorites |
+| `/admin/pricing` | Pricing Desk | Scenario builder, product comparison, lock tracker table |
+| `/admin/products` | Products & Programs | Product catalog with card/matrix views, eligibility detail drawer |
+| `/admin/branches` | Branches | Branch performance cards, volume chart, LO leaderboard |
+| `/admin/team` | Team Management | Team table with role filters, profile drawer, permissions matrix |
+| `/admin/executive` | Executive Controls | KPI row, volume/branch charts, branch comparison, executive alerts |
+| `/admin/settings` | Settings | Left-nav settings with company, notifications, compliance rules, security sections |
 
 ### Admin Tech
 - **State**: Zustand (`client/src/admin/store.ts`)
-- **Data**: Mock TypeScript data (`client/src/admin/data/mockData.ts`, `client/src/admin/data/mockPhase2Data.ts`)
-- **Types**: `client/src/admin/types.ts` (includes Phase 2: Document, ESignPackage, ESignTemplate, ESignField, Condition, CommThread, CommMessage, CannedResponse, Task, TimelineEvent)
+- **Data**: Mock TypeScript data (`client/src/admin/data/mockData.ts`, `client/src/admin/data/mockPhase2Data.ts`, `client/src/admin/data/mockPhase3Data.ts`)
+- **Types**: `client/src/admin/types.ts` (includes Phase 2: Document, ESignPackage, ESignTemplate, ESignField, Condition, CommThread, CommMessage, CannedResponse, Task, TimelineEvent; Phase 3: Automation, ComplianceFlag, AuditEvent, ReportPreset, PricingScenario, LockRecord, MortgageProduct, TeamMember, PermissionSet, ExecutiveAlert)
+- **Charts**: recharts (AreaChart, BarChart, LineChart) used in Compliance, Reports, Branches, Executive pages
 - **Shell**: Collapsible sidebar, sticky header, global search (⌘K), quick create menu, right drawers
 - **Palette**: Black/charcoal/graphite + Gorilla pink (#e91e8c) + cyan/amber/green accents
 - **Lazy loaded**: All admin pages via React.lazy for code splitting

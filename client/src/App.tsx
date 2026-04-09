@@ -32,6 +32,15 @@ const AdminESignTemplates = lazy(() => import("./admin/pages/ESignTemplatesPage"
 const AdminConditions = lazy(() => import("./admin/pages/ConditionsPage"));
 const AdminCommunications = lazy(() => import("./admin/pages/CommunicationsPage"));
 const AdminTasks = lazy(() => import("./admin/pages/TasksPage"));
+const AdminAutomations = lazy(() => import("./admin/pages/AutomationsPage"));
+const AdminCompliance = lazy(() => import("./admin/pages/CompliancePage"));
+const AdminReports = lazy(() => import("./admin/pages/ReportsPage"));
+const AdminPricing = lazy(() => import("./admin/pages/PricingDeskPage"));
+const AdminProducts = lazy(() => import("./admin/pages/ProductsProgramsPage"));
+const AdminBranches = lazy(() => import("./admin/pages/BranchesPage"));
+const AdminTeam = lazy(() => import("./admin/pages/TeamPage"));
+const AdminExecutive = lazy(() => import("./admin/pages/ExecutivePage"));
+const AdminSettings = lazy(() => import("./admin/pages/SettingsPage"));
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -106,6 +115,33 @@ function Router() {
         </Route>
         <Route path="/admin/tasks">
           {() => <Suspense fallback={<AdminLoading />}><AdminTasks /></Suspense>}
+        </Route>
+        <Route path="/admin/automations">
+          {() => <Suspense fallback={<AdminLoading />}><AdminAutomations /></Suspense>}
+        </Route>
+        <Route path="/admin/compliance">
+          {() => <Suspense fallback={<AdminLoading />}><AdminCompliance /></Suspense>}
+        </Route>
+        <Route path="/admin/reports">
+          {() => <Suspense fallback={<AdminLoading />}><AdminReports /></Suspense>}
+        </Route>
+        <Route path="/admin/pricing">
+          {() => <Suspense fallback={<AdminLoading />}><AdminPricing /></Suspense>}
+        </Route>
+        <Route path="/admin/products">
+          {() => <Suspense fallback={<AdminLoading />}><AdminProducts /></Suspense>}
+        </Route>
+        <Route path="/admin/branches">
+          {() => <Suspense fallback={<AdminLoading />}><AdminBranches /></Suspense>}
+        </Route>
+        <Route path="/admin/team">
+          {() => <Suspense fallback={<AdminLoading />}><AdminTeam /></Suspense>}
+        </Route>
+        <Route path="/admin/executive">
+          {() => <Suspense fallback={<AdminLoading />}><AdminExecutive /></Suspense>}
+        </Route>
+        <Route path="/admin/settings">
+          {() => <Suspense fallback={<AdminLoading />}><AdminSettings /></Suspense>}
         </Route>
         <Route component={NotFound} />
       </Switch>

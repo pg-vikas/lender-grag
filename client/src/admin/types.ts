@@ -332,3 +332,164 @@ export interface TimelineEvent {
   entityType: "lead" | "borrower" | "loan" | "document" | "esign" | "condition" | "task" | "message";
   linkedObjectId?: string;
 }
+
+export type AutomationStatus = "Active" | "Draft" | "Paused" | "Failed";
+export type AutomationTrigger = "lead_created" | "no_contact_timeout" | "lead_status_changed" | "application_started" | "application_abandoned" | "document_uploaded" | "document_revision_needed" | "condition_created" | "condition_overdue" | "loan_stage_changed" | "esign_sent" | "esign_completed" | "closing_approaching" | "file_inactive" | "borrower_birthday" | "loan_anniversary";
+export type AutomationAction = "assign_user" | "create_task" | "send_sms" | "send_email" | "send_portal_notification" | "add_tag" | "update_status" | "move_stage" | "notify_manager" | "create_condition" | "request_document" | "create_alert";
+export type AutomationModule = "leads" | "borrowers" | "pipeline" | "documents" | "esign" | "conditions" | "communications" | "tasks";
+
+export interface Automation {
+  id: string;
+  name: string;
+  triggerType: AutomationTrigger;
+  actionTypes: AutomationAction[];
+  status: AutomationStatus;
+  ownerId: string;
+  module: AutomationModule;
+  createdAt: string;
+  lastRunAt: string | null;
+  runCount: number;
+  description: string;
+  stepCount: number;
+  isTemplate?: boolean;
+}
+
+export type ComplianceFlagType = "missing_disclosure" | "unsigned_document" | "overdue_condition" | "stale_file" | "missing_assignee" | "missing_milestone_date" | "missing_critical_document" | "lock_expiration_risk";
+export type ComplianceSeverity = "critical" | "high" | "medium" | "low";
+export type ComplianceFlagStatus = "Open" | "In Review" | "Resolved" | "Dismissed";
+
+export interface ComplianceFlag {
+  id: string;
+  loanFileId: string;
+  borrowerId: string;
+  type: ComplianceFlagType;
+  severity: ComplianceSeverity;
+  status: ComplianceFlagStatus;
+  title: string;
+  description: string;
+  createdAt: string;
+  dueDate: string | null;
+  assignedTo: string;
+  resolvedAt: string | null;
+}
+
+export interface AuditEvent {
+  id: string;
+  type: string;
+  description: string;
+  userId: string;
+  loanFileId: string | null;
+  timestamp: string;
+  module: string;
+}
+
+export interface ReportPreset {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  lastViewed: string | null;
+  isFavorite: boolean;
+}
+
+export interface PricingScenarioInput {
+  loanType: string;
+  purpose: string;
+  ficoBucket: string;
+  ltv: number;
+  occupancy: string;
+  propertyType: string;
+  loanAmount: number;
+  term: number;
+  lockTerm: number;
+}
+
+export interface PricingResult {
+  productId: string;
+  productName: string;
+  rate: number;
+  points: number;
+  estimatedPayment: number;
+  fitNotes: string;
+  eligible: boolean;
+}
+
+export interface PricingScenario {
+  id: string;
+  loanFileId: string;
+  borrowerId: string;
+  inputs: PricingScenarioInput;
+  comparedProducts: PricingResult[];
+  selectedProductId: string | null;
+  lockDate: string | null;
+  lockExpiration: string | null;
+  notes: string;
+  createdAt: string;
+}
+
+export interface LockRecord {
+  id: string;
+  borrowerId: string;
+  loanFileId: string;
+  productId: string;
+  productName: string;
+  rate: number;
+  lockDate: string;
+  lockExpiration: string;
+  daysRemaining: number;
+  status: "Active" | "Expiring" | "Expired" | "Extended";
+}
+
+export interface MortgageProduct {
+  id: string;
+  name: string;
+  category: string;
+  active: boolean;
+  minFico: number;
+  maxLtv: number;
+  occupancyAllowed: string[];
+  propertyTypesAllowed: string[];
+  overlays: string[];
+  talkingPoints: string[];
+  updatedAt: string;
+}
+
+export type TeamRole = "Loan Officer" | "Processor" | "Branch Manager" | "Admin" | "Executive";
+export type TeamStatus = "Active" | "Inactive" | "Suspended";
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: TeamRole;
+  branchId: string;
+  activeLeadCount: number;
+  activeFileCount: number;
+  responseTime: number;
+  fundedVolume: number;
+  status: TeamStatus;
+  permissionsSetId: string;
+  avatar?: string;
+}
+
+export interface PermissionSet {
+  id: string;
+  name: string;
+  description: string;
+  permissions: Record<string, boolean>;
+}
+
+export type ExecutiveAlertSeverity = "critical" | "warning" | "info";
+
+export interface ExecutiveAlert {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  severity: ExecutiveAlertSeverity;
+  module: string;
+  impactedCount: number;
+  createdAt: string;
+  dismissed: boolean;
+}
