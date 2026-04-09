@@ -51,21 +51,22 @@ export const ReviewsSection = (): JSX.Element => {
               Hear It From Them
             </h2>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-4">
             {[
-              { label: "Zillow", href: "https://www.zillow.com/profile/LenderGreg", icon: SiZillow },
-              { label: "Yelp", href: "https://www.yelp.com", icon: SiYelp },
-              { label: "Google", href: "https://www.google.com/search?q=Lender+Greg+reviews", icon: SiGoogle },
+              { label: "Zillow", href: "https://www.zillow.com/profile/LenderGreg", icon: SiZillow, color: "#0074e4", hoverBg: "hover:bg-[#0074e4]/10", borderColor: "border-[#0074e4]/30" },
+              { label: "Yelp", href: "https://www.yelp.com", icon: SiYelp, color: "#d32323", hoverBg: "hover:bg-[#d32323]/10", borderColor: "border-[#d32323]/30" },
+              { label: "Google", href: "https://www.google.com/search?q=Lender+Greg+reviews", icon: SiGoogle, color: "#4285f4", hoverBg: "hover:bg-[#4285f4]/10", borderColor: "border-[#4285f4]/30" },
             ].map((item) => (
               <a
                 key={item.label}
                 href={item.href}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-[#0c1a14] hover:border-[#004733]/20 hover:shadow-sm transition-all"
+                className={`inline-flex items-center gap-2.5 rounded-full border-2 ${item.borderColor} bg-white px-6 py-3 text-base font-extrabold ${item.hoverBg} hover:shadow-md transition-all`}
+                style={{ color: item.color }}
                 data-testid={`link-review-${item.label.toLowerCase()}`}
               >
-                <item.icon className="w-4 h-4" />
+                <item.icon className="w-6 h-6" />
                 {item.label}
               </a>
             ))}
