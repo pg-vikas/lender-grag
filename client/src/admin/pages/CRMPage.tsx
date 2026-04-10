@@ -2,18 +2,15 @@ import { useState } from "react";
 import { AppShell } from "../components/AppShell";
 import { StatusBadge } from "../components/StatusBadge";
 import { crmRecords } from "../data/mockData";
-import { useAdminStore } from "../store";
-import { Search, Phone, MessageSquare, Mail, ListChecks, Filter } from "lucide-react";
+import { Search, Phone, MessageSquare, Mail, Filter } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
-import type { RecordType } from "../types";
 
 const quickFilters = ["All Records", "Leads", "Borrowers", "Hot Follow Ups", "No Recent Activity"];
 
 export default function CRMPage() {
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("All Records");
-  const { openDrawer } = useAdminStore();
   const [, navigate] = useLocation();
 
   let filtered = crmRecords;
@@ -85,10 +82,7 @@ export default function CRMPage() {
                       <motion.tr
                         key={r.id}
                         className="border-b border-white/[0.03] hover:bg-white/[0.02] cursor-pointer transition-colors"
-                        onClick={() => {
-                          if (r.recordType === "Borrower") navigate(`/admin/borrowers/${r.id}`);
-                          else openDrawer("crm-preview", r);
-                        }}
+                        onClick={() => navigate(`/admin/crm/${r.id}`)}
                         data-testid={`crm-row-${r.id}`}
                       >
                         <td className="px-4 py-3 text-[13px] font-medium text-white/80">{r.name}</td>

@@ -66,7 +66,8 @@ Accessible via `/admin` link in footer. Dark mode premium mortgage lender operat
 | Route | Page | Description |
 |-------|------|-------------|
 | `/admin` | Dashboard | Command center with KPIs, pipeline snapshot, funnel, activity, alerts, leaderboard |
-| `/admin/crm` | CRM | Contact records with quick filters, table view, preview drawer |
+| `/admin/crm` | CRM | Contact records with quick filters, table view, click-through to profile |
+| `/admin/crm/:id` | CRM Profile | 3-column client detail: contact/team (left), communications with Email/SMS/Call compose (center), tasks/activity log/notes (right) |
 | `/admin/leads` | Leads | Lead management with status cards, search, filters, detail drawers |
 | `/admin/borrowers` | Borrowers | Borrower index with loan status, table view |
 | `/admin/borrowers/:id` | Borrower Detail | Profile, loan status, timeline, notes + Documents, E-Sign, Conditions, Communications, Tasks tabs |

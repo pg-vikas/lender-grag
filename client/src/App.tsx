@@ -41,6 +41,7 @@ const AdminBranches = lazy(() => import("./admin/pages/BranchesPage"));
 const AdminTeam = lazy(() => import("./admin/pages/TeamPage"));
 const AdminExecutive = lazy(() => import("./admin/pages/ExecutivePage"));
 const AdminSettings = lazy(() => import("./admin/pages/SettingsPage"));
+const AdminCRMProfile = lazy(() => import("./admin/pages/CRMProfilePage"));
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -79,6 +80,9 @@ function Router() {
         </Route>
         <Route path="/admin">
           {() => <Suspense fallback={<AdminLoading />}><AdminDashboard /></Suspense>}
+        </Route>
+        <Route path="/admin/crm/:recordId">
+          {() => <Suspense fallback={<AdminLoading />}><AdminCRMProfile /></Suspense>}
         </Route>
         <Route path="/admin/crm">
           {() => <Suspense fallback={<AdminLoading />}><AdminCRM /></Suspense>}
