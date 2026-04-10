@@ -75,21 +75,21 @@ export default function PipelinePage() {
       <div className="space-y-5">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-black text-white tracking-tight">Loan Pipeline</h1>
-            <p className="text-[14px] text-white/35 mt-1">{loanFiles.length} active loan files</p>
+            <h1 className="text-[28px] font-black text-white tracking-tight">Loan Pipeline</h1>
+            <p className="text-[15px] font-medium text-white/45 mt-1">{loanFiles.length} active loan files</p>
           </div>
           <div className="flex items-center gap-2">
             <div className="flex bg-white/[0.04] rounded-lg border border-white/[0.06] p-0.5">
               <button
                 onClick={() => setPipelineView("kanban")}
-                className={`px-3 py-1.5 rounded-md text-[12px] font-bold flex items-center gap-1.5 transition-all ${pipelineView === "kanban" ? "bg-white/[0.08] text-white" : "text-white/35"}`}
+                className={`px-3 py-1.5 rounded-md text-[13px] font-extrabold flex items-center gap-1.5 transition-all ${pipelineView === "kanban" ? "bg-white/[0.08] text-white" : "text-white/35"}`}
                 data-testid="button-view-kanban"
               >
                 <LayoutGrid className="w-3.5 h-3.5" /> Board
               </button>
               <button
                 onClick={() => setPipelineView("list")}
-                className={`px-3 py-1.5 rounded-md text-[12px] font-bold flex items-center gap-1.5 transition-all ${pipelineView === "list" ? "bg-white/[0.08] text-white" : "text-white/35"}`}
+                className={`px-3 py-1.5 rounded-md text-[13px] font-extrabold flex items-center gap-1.5 transition-all ${pipelineView === "list" ? "bg-white/[0.08] text-white" : "text-white/35"}`}
                 data-testid="button-view-list"
               >
                 <List className="w-3.5 h-3.5" /> List
@@ -101,7 +101,7 @@ export default function PipelinePage() {
         <div className="flex items-center gap-2">
           <div className="flex-1 max-w-[400px] flex items-center gap-2 h-10 px-3 rounded-lg bg-white/[0.04] border border-white/[0.06]">
             <Search className="w-4 h-4 text-white/25" />
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search pipeline..." className="flex-1 bg-transparent text-white text-[13px] placeholder:text-white/25 focus:outline-none" data-testid="input-pipeline-search" />
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search pipeline..." className="flex-1 bg-transparent text-white text-[14px] font-medium placeholder:text-white/25 focus:outline-none" data-testid="input-pipeline-search" />
           </div>
           <button className="h-10 px-3 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white/30 hover:text-white/60 flex items-center gap-1.5 text-[12px]">
             <Filter className="w-3.5 h-3.5" /> Filters
@@ -145,7 +145,7 @@ export default function PipelinePage() {
                 <thead>
                   <tr className="border-b border-white/[0.06]">
                     {["Borrower", "Stage", "Loan Type", "Purpose", "Amount", "Rate", "LO", "Processor", "Branch", "Est. Close", "Flags"].map((h) => (
-                      <th key={h} className="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-white/25">{h}</th>
+                    <th key={h} className="px-4 py-3 text-[11px] font-extrabold uppercase tracking-wider text-white/30">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -155,23 +155,23 @@ export default function PipelinePage() {
                     return (
                       <motion.tr
                         key={lf.id}
-                        className="border-b border-white/[0.03] hover:bg-white/[0.02] cursor-pointer transition-colors"
+                        className="border-b border-white/[0.03] bg-gradient-to-r from-white/[0.03] via-transparent to-white/[0.01] hover:from-white/[0.06] hover:to-white/[0.02] cursor-pointer transition-colors"
                         onClick={() => navigate(`/admin/pipeline/${lf.id}`)}
                         data-testid={`pipeline-row-${lf.id}`}
                       >
-                        <td className="px-4 py-3 text-[13px] font-medium text-white/80">{bw?.fullName || "Unassigned"}</td>
+                        <td className="px-4 py-3 text-[14px] font-semibold text-white/90">{bw?.fullName || "Unassigned"}</td>
                         <td className="px-4 py-3"><StatusBadge status={lf.stage} /></td>
-                        <td className="px-4 py-3 text-[12px] text-white/40">{lf.loanType}</td>
-                        <td className="px-4 py-3"><span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${lf.purpose === "Purchase" ? "bg-cyan-400/10 text-cyan-400" : "bg-purple-400/10 text-purple-400"}`}>{lf.purpose}</span></td>
-                        <td className="px-4 py-3 text-[12px] text-white/50 font-medium">${(lf.amount / 1000).toFixed(0)}K</td>
-                        <td className="px-4 py-3 text-[12px] text-white/40">{lf.rate ? `${lf.rate}%` : "—"}</td>
-                        <td className="px-4 py-3 text-[12px] text-white/50">{getLOName(lf.assignedLOId)}</td>
-                        <td className="px-4 py-3 text-[12px] text-white/40">{lf.processorId ? getProcessorName(lf.processorId) : "—"}</td>
-                        <td className="px-4 py-3 text-[12px] text-white/40">{lf.branchId}</td>
-                        <td className="px-4 py-3 text-[11px] text-white/30">{lf.estimatedClose ? new Date(lf.estimatedClose).toLocaleDateString() : "—"}</td>
+                        <td className="px-4 py-3 text-[13px] font-medium text-white/55">{lf.loanType}</td>
+                        <td className="px-4 py-3"><span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${lf.purpose === "Purchase" ? "bg-cyan-400/10 text-cyan-400" : "bg-purple-400/10 text-purple-400"}`}>{lf.purpose}</span></td>
+                        <td className="px-4 py-3 text-[13px] font-semibold text-white/65">${(lf.amount / 1000).toFixed(0)}K</td>
+                        <td className="px-4 py-3 text-[13px] font-medium text-white/55">{lf.rate ? `${lf.rate}%` : "—"}</td>
+                        <td className="px-4 py-3 text-[13px] font-medium text-white/60">{getLOName(lf.assignedLOId)}</td>
+                        <td className="px-4 py-3 text-[13px] font-medium text-white/55">{lf.processorId ? getProcessorName(lf.processorId) : "—"}</td>
+                        <td className="px-4 py-3 text-[13px] font-medium text-white/55">{lf.branchId}</td>
+                        <td className="px-4 py-3 text-[12px] font-medium text-white/40">{lf.estimatedClose ? new Date(lf.estimatedClose).toLocaleDateString() : "—"}</td>
                         <td className="px-4 py-3">
                           {lf.flags.map((f) => (
-                            <span key={f} className="px-1.5 py-0.5 rounded-full bg-amber-400/10 text-amber-400 text-[9px] font-bold">{f.replace("_", " ")}</span>
+                            <span key={f} className="px-1.5 py-0.5 rounded-full bg-amber-400/10 text-amber-400 text-[10px] font-extrabold">{f.replace("_", " ")}</span>
                           ))}
                         </td>
                       </motion.tr>

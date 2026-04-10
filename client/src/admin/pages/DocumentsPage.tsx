@@ -62,7 +62,7 @@ export default function DocumentsPage() {
     <AppShell>
       <div className="space-y-5">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <h1 className="text-xl font-black text-white" data-testid="text-documents-title">Documents</h1>
+          <h1 className="text-[28px] font-black text-white" data-testid="text-documents-title">Documents</h1>
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
@@ -80,15 +80,15 @@ export default function DocumentsPage() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {stats.map(s => (
             <div key={s.label} className="bg-[#111] border border-white/[0.06] rounded-xl p-4">
-              <p className="text-[11px] text-white/30 font-medium">{s.label}</p>
-              <p className={`text-2xl font-black mt-1 ${s.color}`}>{s.value}</p>
+              <p className="text-[11px] text-white/35 font-semibold">{s.label}</p>
+              <p className={`text-[22px] font-black mt-1 ${s.color}`}>{s.value}</p>
             </div>
           ))}
         </div>
 
         <div className="flex gap-1.5 overflow-x-auto pb-1 items-center">
           {views.map(v => (
-            <button key={v} onClick={() => setActiveView(v)} className={`px-3 py-1.5 rounded-lg text-[12px] font-medium whitespace-nowrap transition-colors ${activeView === v ? "bg-white/[0.08] text-white" : "text-white/30 hover:text-white/50 hover:bg-white/[0.04]"}`}>{v}</button>
+            <button key={v} onClick={() => setActiveView(v)} className={`px-3 py-1.5 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${activeView === v ? "bg-white/[0.08] text-white" : "text-white/35 hover:text-white/60 hover:bg-white/[0.04]"}`}>{v}</button>
           ))}
           {activeView === "By Loan File" && (
             <select value={groupByLoan || ""} onChange={e => setGroupByLoan(e.target.value || null)} className="h-8 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white text-[12px] px-2 focus:outline-none ml-2">
@@ -110,7 +110,7 @@ export default function DocumentsPage() {
               <thead>
                 <tr className="border-b border-white/[0.06]">
                   {["Document", "Borrower", "Loan", "Category", "Status", "Requested", "Uploaded", "Actions"].map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-[11px] font-bold text-white/30 uppercase tracking-wider">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-[11px] font-extrabold text-white/35 uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -118,20 +118,20 @@ export default function DocumentsPage() {
                 {filtered.map(doc => {
                   const loan = loanFiles.find(l => l.id === doc.loanFileId);
                   return (
-                    <tr key={doc.id} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors cursor-pointer" onClick={() => setSelectedDoc(doc)} data-testid={`row-doc-${doc.id}`}>
+                    <tr key={doc.id} className="border-b border-white/[0.04] bg-gradient-to-r from-white/[0.03] via-transparent to-white/[0.01] hover:from-white/[0.06] hover:to-white/[0.02] transition-colors cursor-pointer" onClick={() => setSelectedDoc(doc)} data-testid={`row-doc-${doc.id}`}>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <FileText className="w-4 h-4 text-white/20" />
-                          <span className="text-[13px] font-medium text-white">{doc.name}</span>
+                          <span className="text-[14px] font-semibold text-white">{doc.name}</span>
                           {doc.notesCount > 0 && <span className="w-4 h-4 rounded-full bg-amber-400/10 text-amber-400 text-[9px] font-bold flex items-center justify-center">{doc.notesCount}</span>}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-[12px] text-white/50">{getBorrowerName(doc.borrowerId)}</td>
-                      <td className="px-4 py-3 text-[12px] text-white/40">{loan?.propertyAddress?.split(",")[0] || doc.loanFileId}</td>
-                      <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full bg-white/[0.04] text-white/40 text-[10px] font-medium">{doc.category}</span></td>
-                      <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${statusColor(doc.status)}`}>{doc.status}</span></td>
-                      <td className="px-4 py-3 text-[11px] text-white/30">{new Date(doc.requestedAt).toLocaleDateString()}</td>
-                      <td className="px-4 py-3 text-[11px] text-white/30">{doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString() : "—"}</td>
+                      <td className="px-4 py-3 text-[13px] font-medium text-white/55">{getBorrowerName(doc.borrowerId)}</td>
+                      <td className="px-4 py-3 text-[13px] font-medium text-white/55">{loan?.propertyAddress?.split(",")[0] || doc.loanFileId}</td>
+                      <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full bg-white/[0.05] text-white/45 text-[10px] font-medium">{doc.category}</span></td>
+                      <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${statusColor(doc.status)}`}>{doc.status}</span></td>
+                      <td className="px-4 py-3 text-[12px] font-medium text-white/40">{new Date(doc.requestedAt).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 text-[12px] font-medium text-white/40">{doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString() : "—"}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
                           <button className="w-7 h-7 rounded-md bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-white/30 hover:text-white/60 transition-colors"><Eye className="w-3.5 h-3.5" /></button>

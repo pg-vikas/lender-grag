@@ -30,8 +30,8 @@ export default function CRMPage() {
     <AppShell>
       <div className="space-y-5">
         <div>
-          <h1 className="text-2xl font-black text-white tracking-tight">CRM</h1>
-          <p className="text-[14px] text-white/35 mt-1">Manage all contacts and relationships</p>
+          <h1 className="text-[28px] font-black text-white tracking-tight">CRM</h1>
+          <p className="text-[15px] font-medium text-white/45 mt-1">Manage all contacts and relationships</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4">
@@ -40,7 +40,7 @@ export default function CRMPage() {
               <button
                 key={f}
                 onClick={() => setActiveFilter(f)}
-                className={`w-full text-left px-3 py-2 rounded-lg text-[13px] font-medium transition-all ${
+                className={`w-full text-left px-3 py-2 rounded-lg text-[14px] font-semibold transition-all ${
                   activeFilter === f ? "bg-white/[0.08] text-white" : "text-white/35 hover:bg-white/[0.04] hover:text-white/60"
                 }`}
                 data-testid={`crm-filter-${f.toLowerCase().replace(/\s+/g, "-")}`}
@@ -73,7 +73,7 @@ export default function CRMPage() {
                   <thead>
                     <tr className="border-b border-white/[0.06]">
                       {["Name", "Type", "Status", "Source", "Assigned LO", "Branch", "Last Activity", "Tags", "Actions"].map((h) => (
-                        <th key={h} className="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-white/25">{h}</th>
+                        <th key={h} className="px-4 py-3 text-[11px] font-extrabold uppercase tracking-wider text-white/30">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -81,21 +81,21 @@ export default function CRMPage() {
                     {filtered.map((r) => (
                       <motion.tr
                         key={r.id}
-                        className="border-b border-white/[0.03] hover:bg-white/[0.02] cursor-pointer transition-colors"
+                        className="border-b border-white/[0.03] bg-gradient-to-r from-white/[0.03] via-transparent to-white/[0.01] hover:from-white/[0.06] hover:to-white/[0.02] cursor-pointer transition-colors"
                         onClick={() => navigate(`/admin/crm/${r.id}`)}
                         data-testid={`crm-row-${r.id}`}
                       >
-                        <td className="px-4 py-3 text-[13px] font-medium text-white/80">{r.name}</td>
-                        <td className="px-4 py-3"><span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${r.recordType === "Lead" ? "bg-[#e91e8c]/10 text-[#e91e8c]" : "bg-cyan-400/10 text-cyan-400"}`}>{r.recordType}</span></td>
+                        <td className="px-4 py-3 text-[14px] font-semibold text-white/90">{r.name}</td>
+                        <td className="px-4 py-3"><span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${r.recordType === "Lead" ? "bg-[#e91e8c]/10 text-[#e91e8c]" : "bg-cyan-400/10 text-cyan-400"}`}>{r.recordType}</span></td>
                         <td className="px-4 py-3"><StatusBadge status={r.status} /></td>
-                        <td className="px-4 py-3 text-[12px] text-white/40">{r.source}</td>
-                        <td className="px-4 py-3 text-[12px] text-white/50">{r.assignedLO}</td>
-                        <td className="px-4 py-3 text-[12px] text-white/40">{r.branch}</td>
-                        <td className="px-4 py-3 text-[11px] text-white/30">{new Date(r.lastActivity).toLocaleDateString()}</td>
+                        <td className="px-4 py-3 text-[13px] font-medium text-white/55">{r.source}</td>
+                        <td className="px-4 py-3 text-[13px] font-medium text-white/60">{r.assignedLO}</td>
+                        <td className="px-4 py-3 text-[13px] font-medium text-white/55">{r.branch}</td>
+                        <td className="px-4 py-3 text-[12px] font-medium text-white/40">{new Date(r.lastActivity).toLocaleDateString()}</td>
                         <td className="px-4 py-3">
                           <div className="flex gap-1">
                             {r.tags.slice(0, 2).map((t) => (
-                              <span key={t} className="px-1.5 py-0.5 rounded-full bg-white/[0.04] text-white/30 text-[9px]">{t}</span>
+                              <span key={t} className="px-1.5 py-0.5 rounded-full bg-white/[0.05] text-white/40 text-[10px] font-medium">{t}</span>
                             ))}
                           </div>
                         </td>
