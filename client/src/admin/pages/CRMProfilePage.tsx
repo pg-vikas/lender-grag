@@ -60,6 +60,7 @@ export default function CRMProfilePage() {
   const [activeCommTab, setActiveCommTab] = useState<string>("Email");
   const [activityFilter, setActivityFilter] = useState<string>("All Activities");
   const [messageText, setMessageText] = useState("");
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const [noteText, setNoteText] = useState("");
   const [showAddTask, setShowAddTask] = useState(false);
   const [detailsExpanded, setDetailsExpanded] = useState(true);
@@ -386,15 +387,41 @@ export default function CRMProfilePage() {
                     data-testid="input-comm-message"
                   />
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between relative">
                   <button className="flex items-center gap-1.5 text-xs text-white/30 hover:text-white/50 transition-colors" data-testid="button-attach-file">
                     <Paperclip className="w-3.5 h-3.5" /> Attach Files
                   </button>
                   <div className="flex items-center gap-2">
                     {(activeCommTab === "Email" || activeCommTab === "SMS") && (
-                      <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.09] text-white/50 text-xs font-medium hover:bg-white/[0.1] hover:text-white/70 transition-colors" data-testid="button-schedule-message">
-                        <CalendarClock className="w-3.5 h-3.5" /> Schedule
-                      </button>
+                      <div className="relative">
+                        <button onClick={() => setScheduleOpen(!scheduleOpen)} className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.09] text-white/50 text-xs font-medium hover:bg-white/[0.1] hover:text-white/70 transition-colors" data-testid="button-schedule-message">
+                          <CalendarClock className="w-3.5 h-3.5" /> Schedule
+                        </button>
+                        {scheduleOpen && (
+                          <div className="absolute right-0 bottom-full mb-2 w-64 rounded-xl border border-white/[0.09] bg-[#202020] shadow-2xl p-3 z-20" data-testid="panel-schedule-message">
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-xs font-semibold text-white/80">Schedule {activeCommTab}</p>
+                              <button onClick={() => setScheduleOpen(false)} className="text-white/25 hover:text-white/60" data-testid="button-close-schedule">
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                            <div className="space-y-2">
+                              <div>
+                                <label className="text-[10px] text-white/35 uppercase tracking-wider font-bold mb-1 block">Send date</label>
+                                <input type="date" className="w-full bg-white/[0.04] border border-white/[0.09] rounded-lg px-3 py-2 text-xs text-white outline-none" data-testid="input-schedule-date" />
+                              </div>
+                              <div>
+                                <label className="text-[10px] text-white/35 uppercase tracking-wider font-bold mb-1 block">Send time</label>
+                                <input type="time" className="w-full bg-white/[0.04] border border-white/[0.09] rounded-lg px-3 py-2 text-xs text-white outline-none" data-testid="input-schedule-time" />
+                              </div>
+                              <div className="flex items-center justify-between gap-2 pt-1">
+                                <button onClick={() => setScheduleOpen(false)} className="text-xs text-white/35 hover:text-white/60" data-testid="button-cancel-schedule">Cancel</button>
+                                <button onClick={() => setScheduleOpen(false)} className="px-3 py-2 rounded-lg bg-[#e91e8c] text-white text-xs font-medium hover:bg-[#e91e8c]/80 transition-colors" data-testid="button-confirm-schedule">Schedule {activeCommTab}</button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     )}
                     <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#e91e8c] text-white text-xs font-medium hover:bg-[#e91e8c]/80 transition-colors" data-testid="button-send-message">
                       <Send className="w-3.5 h-3.5" /> Send {activeCommTab}
