@@ -231,6 +231,24 @@ export default function PortalPage() {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
                 <div>
+                  <h3 className="text-[18px] font-black text-[#0c1a14]">Pre-Approval</h3>
+                  <p className="text-[13px] font-medium text-gray-500">Access your current approval letter</p>
+                </div>
+                <FileText className="w-5 h-5 text-[#004733]" />
+              </div>
+              <div className="rounded-2xl border border-[#004733]/10 bg-gradient-to-r from-[#004733]/[0.06] to-[#05a270]/[0.08] p-5">
+                <p className="text-[12px] font-bold text-[#004733] uppercase tracking-wider mb-2">Pre-Approval Letter</p>
+                <p className="text-[18px] font-black text-[#0c1a14]">Ready to download</p>
+                <p className="text-[13px] text-gray-600 mt-1">Updated Apr 9, 2026 • Valid for 30 days</p>
+                <button className="mt-4 h-10 px-4 rounded-xl bg-[#004733] text-white text-[13px] font-semibold flex items-center gap-2 hover:bg-[#003626] transition-colors" data-testid="button-download-preapproval">
+                  <Download className="w-4 h-4" /> Download Letter
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <div className="flex items-center justify-between mb-5">
+                <div>
                   <h3 className="text-[18px] font-black text-[#0c1a14]">Checklist</h3>
                   <p className="text-[13px] font-medium text-gray-500">Simple next steps to keep things moving</p>
                 </div>
@@ -248,24 +266,6 @@ export default function PortalPage() {
                     </span>
                   </div>
                 ))}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <h3 className="text-[18px] font-black text-[#0c1a14]">Pre-Approval</h3>
-                  <p className="text-[13px] font-medium text-gray-500">Access your current approval letter</p>
-                </div>
-                <FileText className="w-5 h-5 text-[#004733]" />
-              </div>
-              <div className="rounded-2xl border border-[#004733]/10 bg-gradient-to-r from-[#004733]/[0.06] to-[#05a270]/[0.08] p-5">
-                <p className="text-[12px] font-bold text-[#004733] uppercase tracking-wider mb-2">Pre-Approval Letter</p>
-                <p className="text-[18px] font-black text-[#0c1a14]">Ready to download</p>
-                <p className="text-[13px] text-gray-600 mt-1">Updated Apr 9, 2026 • Valid for 30 days</p>
-                <button className="mt-4 h-10 px-4 rounded-xl bg-[#004733] text-white text-[13px] font-semibold flex items-center gap-2 hover:bg-[#003626] transition-colors" data-testid="button-download-preapproval">
-                  <Download className="w-4 h-4" /> Download Letter
-                </button>
               </div>
             </div>
 
