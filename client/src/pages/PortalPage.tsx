@@ -131,7 +131,7 @@ export default function PortalPage() {
       <div className="max-w-[1100px] mx-auto px-6 -mt-1">
         <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-6 mb-12">
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="rounded-2xl border border-[#004733]/10 bg-gradient-to-br from-white via-[#f7fbf9] to-[#eef8f3] shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <h3 className="text-[18px] font-black text-[#0c1a14]">Loan Progress</h3>
@@ -163,7 +163,7 @@ export default function PortalPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="rounded-2xl border border-[#004733]/10 bg-gradient-to-br from-white via-[#f8fcfb] to-[#f0f7ff] shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <h3 className="text-[18px] font-black text-[#0c1a14]">Documents & Uploads</h3>
@@ -175,7 +175,7 @@ export default function PortalPage() {
               </div>
               <div className="space-y-2">
                 {mockDocs.map((doc) => (
-                  <div key={doc.name} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-gradient-to-r from-[#004733]/[0.03] via-white to-[#05a270]/[0.03]">
+                  <div key={doc.name} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-gradient-to-r from-[#004733]/[0.05] via-white to-[#8b5cf6]/[0.04]">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${doc.status === "verified" ? "bg-green-50" : "bg-amber-50"}`}>
                       {doc.status === "verified" ? <FileCheck className="w-5 h-5 text-green-500" /> : <Clock className="w-5 h-5 text-amber-500" />}
                     </div>
@@ -189,7 +189,7 @@ export default function PortalPage() {
                   </div>
                 ))}
               </div>
-              <div className="mt-5 rounded-2xl border-2 border-dashed border-gray-200 p-8 text-center bg-gradient-to-r from-white to-[#004733]/[0.02]">
+              <div className="mt-5 rounded-2xl border-2 border-dashed border-gray-200 p-8 text-center bg-gradient-to-r from-[#f8fcfa] via-white to-[#eef2ff]">
                 <div className="w-14 h-14 rounded-2xl bg-[#004733]/5 flex items-center justify-center mx-auto mb-3">
                   <Upload className="w-6 h-6 text-[#004733]" />
                 </div>
@@ -200,7 +200,7 @@ export default function PortalPage() {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="rounded-2xl border border-[#004733]/10 bg-gradient-to-br from-white via-[#f8fbff] to-[#f3f7ff] shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <h3 className="text-[18px] font-black text-[#0c1a14]">Pre-Approval</h3>
@@ -228,7 +228,7 @@ export default function PortalPage() {
               </div>
               <div className="space-y-3">
                 {lenderNotes.map((note) => (
-                  <div key={note.title} className="rounded-2xl border border-gray-100 p-4 bg-gradient-to-r from-[#004733]/[0.03] via-white to-[#05a270]/[0.03]">
+                  <div key={note.title} className="rounded-2xl border border-gray-100 p-4 bg-gradient-to-r from-[#004733]/[0.05] via-white to-[#8b5cf6]/[0.04]">
                     <div className="flex items-center justify-between mb-1">
                       <p className="text-[14px] font-bold text-[#0c1a14]">{note.title}</p>
                       <span className="text-[11px] text-gray-400">{note.time}</span>
@@ -237,7 +237,7 @@ export default function PortalPage() {
                   </div>
                 ))}
               </div>
-              <div className="mt-4 rounded-2xl border border-gray-100 bg-gray-50 p-4">
+              <div className="mt-4 rounded-2xl border border-gray-100 bg-gradient-to-r from-[#f7faf9] via-white to-[#f6f4ff] p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <Bell className="w-4 h-4 text-[#004733]" />
                   <p className="text-[13px] font-bold text-[#0c1a14]">Recent lender update</p>
@@ -246,7 +246,7 @@ export default function PortalPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="rounded-2xl border border-[#004733]/10 bg-gradient-to-br from-white via-[#f8fbf8] to-[#f4f7ff] shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <h3 className="text-[18px] font-black text-[#0c1a14]">Checklist</h3>
@@ -256,7 +256,7 @@ export default function PortalPage() {
               </div>
               <div className="space-y-3">
                 {checklist.map((item) => (
-                  <div key={item.label} className="flex items-center gap-3 rounded-2xl border border-gray-100 p-3 bg-gradient-to-r from-white via-[#004733]/[0.02] to-white">
+                  <div key={item.label} className="flex items-center gap-3 rounded-2xl border border-gray-100 p-3 bg-gradient-to-r from-[#004733]/[0.04] via-white to-[#8b5cf6]/[0.04]">
                     {item.done ? <CheckCircle2 className="w-5 h-5 text-[#05a270]" /> : <Circle className="w-5 h-5 text-gray-300" />}
                     <div className="flex-1">
                       <p className={`text-[14px] font-semibold ${item.done ? "text-[#0c1a14]" : "text-gray-700"}`}>{item.label}</p>
