@@ -8,7 +8,6 @@ import { BrokerAdvantageSection } from "./sections/BrokerAdvantageSection";
 import { ProcessSection } from "./sections/ProcessSection";
 import { ReviewsSection } from "./sections/ReviewsSection";
 import { ResourcesSection } from "./sections/ResourcesSection";
-import { LearnBeforeYouBorrowSection } from "./sections/LearnBeforeYouBorrowSection";
 import { AccountPortalSection } from "./sections/AccountPortalSection";
 import { FAQSection } from "./sections/FAQSection";
 import { FinalCTASection } from "./sections/FinalCTASection";
@@ -20,7 +19,6 @@ export const HomeScreen = (): JSX.Element => {
       <Header />
       <HeroSection />
       <ResourcesSection />
-      <LearnBeforeYouBorrowSection />
       <StatsSection />
       <CalculatorSection />
       <BrokerAdvantageSection />
