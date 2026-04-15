@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Phone, Mail, MessageSquare, Building2, User, MapPin, Edit2,
   Send, Paperclip, Clock, CheckCircle2, Circle, AlertTriangle, Plus,
-  FileText, PenTool, ShieldAlert, ChevronRight, ChevronDown,
+  FileText, PenTool, ShieldAlert, ChevronRight, ChevronDown, X,
   Bold, Italic, Underline, Link2, Image, Tag, ExternalLink, CalendarClock
 } from "lucide-react";
 

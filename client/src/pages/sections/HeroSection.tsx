@@ -2,7 +2,7 @@ import { ArrowRight, Star, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import gregPhoto from "@assets/bccb6149-2450-49bb-bcc6-1719871865b3_1775248779071.png";
+import gregPhoto from "@/assets/images/greg-hero-portrait.png";
 
 const stagger = {
   hidden: {},

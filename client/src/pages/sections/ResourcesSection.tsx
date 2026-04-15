@@ -1,8 +1,8 @@
 import { BookOpen, CheckSquare, Home, FileText, AlertTriangle, MessageCircle, X, Send, GripVertical, Pencil, Check, Phone, User, Signal, Wifi, BatteryFull } from "lucide-react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
-import deskImg from "@assets/shutterstock_2137168113_1775459050359.jpg";
-import gregHeadshot from "@assets/2484_SD_HEADSHOTS_FORSOCIALMEDIA_(1)_1775508830894.JPG";
+import deskImg from "@/assets/images/desk-workspace.jpg";
+import gregHeadshot from "@/assets/images/greg-headshot.jpg";
 
 interface StickyNote {
   id: number;

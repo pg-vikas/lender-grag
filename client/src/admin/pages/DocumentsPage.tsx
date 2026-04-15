@@ -46,8 +46,8 @@ export default function DocumentsPage() {
     return true;
   });
 
-  const uniqueLoanIds = [...new Set(documents.map(d => d.loanFileId))];
-  const uniqueBorrowerIds = [...new Set(documents.map(d => d.borrowerId))];
+  const uniqueLoanIds = Array.from(new Set(documents.map(d => d.loanFileId)));
+  const uniqueBorrowerIds = Array.from(new Set(documents.map(d => d.borrowerId)));
 
   const stats = [
     { label: "Active Requests", value: documents.filter(d => d.status === "Requested" || d.status === "Borrower Received").length, color: "text-amber-400", bg: "bg-amber-400/10" },

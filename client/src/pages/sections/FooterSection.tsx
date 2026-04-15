@@ -1,6 +1,6 @@
 import { Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "wouter";
-import logoImg from "@assets/lender-greg-logo-new-transparent.png";
+import logoImg from "@/assets/images/lender-greg-logo.png";
 
 const navCols = [
   {
@@ -73,7 +73,7 @@ export const FooterSection = (): JSX.Element => {
 
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between gap-4">
           <p className="text-white/40 text-xs">
-            © {new Date().getFullYear()} Lender Greg. All rights reserved. NMLS 276890. Equal Housing Lender.
+            Copyright {new Date().getFullYear()} Lender Greg. All rights reserved. NMLS 276890. Equal Housing Lender.
           </p>
           <div className="flex gap-6 items-center">
             <a href="#" className="text-white/40 hover:text-white/60 transition-colors text-xs">Privacy Policy</a>

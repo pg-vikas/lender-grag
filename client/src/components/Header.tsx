@@ -3,7 +3,7 @@ import { Menu, X, Phone, ArrowRight, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "wouter";
-import logoImg from "@assets/lender-greg-logo-new-transparent.png";
+import logoImg from "@/assets/images/lender-greg-logo.png";
 import { useAuth } from "@/lib/auth";
 
 const navLinks = [

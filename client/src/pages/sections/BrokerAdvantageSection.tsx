@@ -2,13 +2,13 @@ import { motion, useInView } from "framer-motion";
 import { ArrowRight, CheckCircle2, Network, ShieldCheck, Sparkles } from "lucide-react";
 import { useRef } from "react";
 import { Link } from "wouter";
-import gregLogo from "@assets/Sleek_Lender_Greg_logo_design_1775465481480.png";
-import uwmLogo from "@assets/New_UWM_Logo_1_1775504391128.png";
-import chaseLogo from "@assets/6787fb6fedafc63876131fb8_chase-logo-1_1775504276201.png";
-import rocketLogo from "@assets/Logos_RocketMortgage-web-padded_1775504276201.png";
-import bofaLogo from "@assets/banbk_of_america_1775504276201.webp";
-import pennymacLogo from "@assets/PennyMac_Financial_Services_Logo.svg_1775504276202.png";
-import citibankLogo from "@assets/image_1775550527819.png";
+import gregLogo from "@/assets/images/lender-greg-mark.png";
+import uwmLogo from "@/assets/images/uwm-logo.png";
+import chaseLogo from "@/assets/images/chase-logo.png";
+import rocketLogo from "@/assets/images/rocket-mortgage-logo.png";
+import bofaLogo from "@/assets/images/bank-of-america-logo.webp";
+import pennymacLogo from "@/assets/images/pennymac-logo.png";
+import citibankLogo from "@/assets/images/citibank-logo.png";
 
 const lenders = [
   {
