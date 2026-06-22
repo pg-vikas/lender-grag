@@ -30,7 +30,7 @@ function getSmtpConfig() {
   const pass = getRequiredEnv("SMTP_PASS");
   const fromEmail = getRequiredEnv("SMTP_FROM_EMAIL");
   const fromName = process.env.SMTP_FROM_NAME?.trim() || "Lender Greg";
-  const toEmail = getRequiredEnv("SMTP_TO_EMAIL");
+  const toEmail = process.env.SMTP_TO_EMAIL?.trim();
 
   return {
     host,
@@ -51,9 +51,14 @@ export async function sendNotificationEmail(payload: MailPayload) {
     auth: smtp.auth,
   });
 
+  const to = payload.to || smtp.toEmail;
+  if (!to) {
+    throw new Error("Missing required environment variable: SMTP_TO_EMAIL");
+  }
+
   await transporter.sendMail({
     from: smtp.from,
-    to: payload.to || smtp.toEmail,
+    to,
     replyTo: payload.replyTo,
     subject: payload.subject,
     text: payload.text,

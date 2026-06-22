@@ -23,15 +23,20 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { signup, isAuthenticated, user, loadSession } = useAuth();
+  const { signup, isAuthenticated, hasLoadedSession, user, loadSession } = useAuth();
   const [, navigate] = useLocation();
 
-  useEffect(() => { void loadSession(); }, [loadSession]);
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (!hasLoadedSession) {
+      void loadSession();
+    }
+  }, [hasLoadedSession, loadSession]);
+
+  useEffect(() => {
+    if (hasLoadedSession && isAuthenticated && user) {
       navigate(user.role === "admin" ? "/admin" : "/portal");
     }
-  }, [isAuthenticated, navigate, user]);
+  }, [hasLoadedSession, isAuthenticated, navigate, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,8 +45,8 @@ export default function SignupPage() {
       setError("Please fill in all fields");
       return;
     }
-    if (password.length < 12) {
-      setError("Password must be at least 12 characters");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
       return;
     }
     if (password !== confirmPassword) {
@@ -133,7 +138,7 @@ export default function SignupPage() {
                     <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Password</label>
                     <div className="relative">
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 12 characters" disabled={isSubmitting} className="h-12 rounded-xl border-gray-200 pl-10 pr-10" data-testid="input-signup-password" />
+                      <Input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 8 characters" disabled={isSubmitting} className="h-12 rounded-xl border-gray-200 pl-10 pr-10" data-testid="input-signup-password" />
                       <button type="button" disabled={isSubmitting} onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:opacity-50">
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -155,12 +160,20 @@ export default function SignupPage() {
                 </Button>
               </form>
 
-              <p className="text-center text-sm text-gray-500 mt-5">
-                Already have an account?{" "}
-                <Link href="/login">
-                  <span className="text-[#004733] font-semibold hover:underline cursor-pointer" data-testid="link-to-login">Log in</span>
-                </Link>
-              </p>
+              <div className="text-center text-sm text-gray-500 mt-5 space-y-2">
+                <p>
+                  Already have an account?{" "}
+                  <Link href="/login">
+                    <span className="text-[#004733] font-semibold hover:underline cursor-pointer" data-testid="link-to-login">Log in</span>
+                  </Link>
+                </p>
+                <p>
+                  Forgot your password?{" "}
+                  <Link href="/forgot-password">
+                    <span className="text-[#004733] font-semibold hover:underline cursor-pointer" data-testid="link-signup-forgot-password">Reset it here</span>
+                  </Link>
+                </p>
+              </div>
 
               <p className="text-xs text-gray-400 text-center mt-4 flex items-center justify-center gap-1.5">
                 <Shield className="w-3 h-3" />

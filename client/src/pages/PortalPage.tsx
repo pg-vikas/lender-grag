@@ -51,22 +51,24 @@ const lenderNotes = [
 ];
 
 export default function PortalPage() {
-  const { user, isAuthenticated, isLoading, logout, loadSession } = useAuth();
+  const { user, isAuthenticated, isLoading, hasLoadedSession, logout, loadSession } = useAuth();
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState("overview");
   const [messageText, setMessageText] = useState("");
 
   useEffect(() => {
-    void loadSession();
-  }, [loadSession]);
+    if (!hasLoadedSession) {
+      void loadSession();
+    }
+  }, [hasLoadedSession, loadSession]);
 
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || user?.role !== "client")) {
+    if (hasLoadedSession && !isLoading && (!isAuthenticated || user?.role !== "client")) {
       navigate("/login");
     }
-  }, [isAuthenticated, isLoading, navigate, user]);
+  }, [hasLoadedSession, isAuthenticated, isLoading, navigate, user]);
 
-  if (isLoading || !user) return (
+  if (isLoading || !hasLoadedSession || !user) return (
     <div className="min-h-screen bg-[#fafdf9] flex items-center justify-center">
       <div className="w-8 h-8 border-2 border-[#004733]/30 border-t-[#004733] rounded-full animate-spin" />
     </div>

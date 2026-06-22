@@ -13,15 +13,20 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login, isAuthenticated, user, loadSession } = useAuth();
+  const { login, isAuthenticated, isLoading, hasLoadedSession, user, loadSession } = useAuth();
   const [, navigate] = useLocation();
 
-  useEffect(() => { void loadSession(); }, [loadSession]);
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (!hasLoadedSession) {
+      void loadSession();
+    }
+  }, [hasLoadedSession, loadSession]);
+
+  useEffect(() => {
+    if (hasLoadedSession && isAuthenticated && user) {
       navigate(user.role === "admin" ? "/admin" : "/portal");
     }
-  }, [isAuthenticated, navigate, user]);
+  }, [hasLoadedSession, isAuthenticated, navigate, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +78,7 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isLoading}
                     className="h-12 rounded-xl border-gray-200 pl-10"
                     data-testid="input-login-email"
                   />
@@ -83,7 +88,9 @@ export default function LoginPage() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="text-sm font-medium text-[#0c1a14]">Password</label>
-                  <button type="button" className="text-xs text-[#05a270] hover:text-[#004733] font-medium transition-colors">Forgot password?</button>
+                  <Link href={`/forgot-password${email ? `?email=${encodeURIComponent(email)}` : ""}`}>
+                    <span className="text-xs text-[#05a270] hover:text-[#004733] font-medium transition-colors cursor-pointer" data-testid="link-forgot-password">Forgot password?</span>
+                  </Link>
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -92,13 +99,13 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isLoading}
                     className="h-12 rounded-xl border-gray-200 pl-10 pr-10"
                     data-testid="input-login-password"
                   />
                   <button
                     type="button"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isLoading}
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:opacity-50"
                   >
@@ -113,7 +120,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isLoading}
                 className="w-full h-12 rounded-xl bg-[#004733] hover:bg-[#003626] text-white font-semibold gap-2 text-[15px] mt-2"
                 data-testid="button-login-submit"
               >

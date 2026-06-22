@@ -4,11 +4,34 @@ import { type Server } from "http";
 import viteConfig from "../vite.config";
 import fs from "fs";
 import path from "path";
-import { nanoid } from "nanoid";
 
 const viteLogger = createLogger();
 
+async function removeIfExists(targetPath: string) {
+  try {
+    await fs.promises.rm(targetPath, { recursive: true, force: true });
+  } catch (error) {
+    console.warn(`[vite] Could not clear cache path: ${targetPath}`, error);
+  }
+}
+
+async function clearViteCache() {
+  const rootDir = path.resolve(import.meta.dirname, "..");
+
+  await Promise.all([
+    removeIfExists(path.resolve(rootDir, "node_modules", ".vite")),
+    removeIfExists(path.resolve(rootDir, "node_modules", ".vite-dev")),
+    removeIfExists(path.resolve(rootDir, "node_modules", ".cache", "vite")),
+  ]);
+}
+
 export async function setupVite(server: Server, app: Express) {
+  // Clear stale Vite cache once when the dev server starts. Do not restart Vite
+  // from inside request handling because it can cancel vite:dep-scan imports.
+  if (process.env.NODE_ENV === "development") {
+    await clearViteCache();
+  }
+
   const serverOptions = {
     middlewareMode: true,
     hmr: { server, path: "/vite-hmr" },
@@ -18,11 +41,14 @@ export async function setupVite(server: Server, app: Express) {
   const vite = await createViteServer({
     ...viteConfig,
     configFile: false,
+    optimizeDeps: (viteConfig as any).optimizeDeps,
     customLogger: {
       ...viteLogger,
       error: (msg, options) => {
+        // Log Vite errors without killing the Node process. Vite can emit
+        // temporary "server is being restarted or closed" dep-scan errors while
+        // the browser is reconnecting, and process.exit(1) creates a loop.
         viteLogger.error(msg, options);
-        process.exit(1);
       },
     },
     server: serverOptions,
@@ -42,17 +68,13 @@ export async function setupVite(server: Server, app: Express) {
         "index.html",
       );
 
-      // always reload the index.html file from disk incase it changes
-      let template = await fs.promises.readFile(clientTemplate, "utf-8");
-      template = template.replace(
-        `src="/src/main.tsx"`,
-        `src="/src/main.tsx?v=${nanoid()}"`,
-      );
+      const template = await fs.promises.readFile(clientTemplate, "utf-8");
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
-      vite.ssrFixStacktrace(e as Error);
-      next(e);
+      const error = e as Error;
+      vite.ssrFixStacktrace(error);
+      next(error);
     }
   });
 }

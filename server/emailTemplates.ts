@@ -106,7 +106,7 @@ export function renderEmailTemplate(options: RenderEmailOptions) {
       <body style="margin:0;padding:0;background:#eef4f1;font-family:Arial,sans-serif;">
         <div style="padding:32px 16px;">
           <div style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:28px;overflow:hidden;box-shadow:0 18px 60px rgba(8,20,16,0.08);">
-            <div style="padding:20px 28px;background:linear-gradient(135deg,#0c1a14 0%,#004733 55%,#05a270 100%);">
+            <div style="padding:20px 28px;background:#004733;">
               <div style="font-size:12px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:#d7f7ea;margin-bottom:10px;">Lender Greg</div>
               <div style="font-size:28px;line-height:1.2;font-weight:800;color:#ffffff;max-width:420px;">Smart mortgage guidance, responsive service, and a smoother path home.</div>
             </div>
@@ -128,8 +128,8 @@ export function renderEmailTemplate(options: RenderEmailOptions) {
             <div style="padding:24px 28px;background:#f7fbf9;border-top:1px solid #e3eee9;">
               <div style="font-size:14px;font-weight:700;color:#0c1a14;margin-bottom:8px;">Need anything sooner?</div>
               <div style="font-size:14px;line-height:1.7;color:#4b5563;">
-                Visit <a href="${escapeHtml(appUrl)}" style="color:#004733;font-weight:700;text-decoration:none;">${escapeHtml(appUrl)}</a>
-                or reply to this email and the team will help you out.
+                Visit our <a href="${escapeHtml(appUrl)}" style="color:#004733;font-weight:700;text-decoration:none;">${escapeHtml(appUrl)}</a>
+                and get in touch with us - our team is here to help.
               </div>
               <div style="margin-top:14px;font-size:12px;line-height:1.6;color:#6b7280;">
                 This message was sent by Lender Greg. If you did not expect this email, you can safely ignore it.

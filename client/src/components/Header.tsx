@@ -20,7 +20,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [location] = useLocation();
-  const { user, isAuthenticated, logout, loadSession } = useAuth();
+  const { user, isAuthenticated, hasLoadedSession, logout, loadSession } = useAuth();
   const [, navigate] = useLocation();
 
   const isHome = location === "/";
@@ -28,7 +28,11 @@ export function Header() {
   const portalHref = user?.role === "admin" ? "/admin" : "/portal";
   const portalLabel = user?.role === "admin" ? "Admin Dashboard" : "My Portal";
 
-  useEffect(() => { void loadSession(); }, [loadSession]);
+  useEffect(() => {
+    if (!hasLoadedSession) {
+      void loadSession();
+    }
+  }, [hasLoadedSession, loadSession]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);

@@ -9,6 +9,7 @@ import {
 } from "@shared/schema";
 import { sendNotificationEmail } from "./mailer";
 import { renderEmailTemplate, renderTextFields } from "./emailTemplates";
+import { registerPasswordResetRoutes } from "./auth/passwordReset";
 
 async function sendContactSubmissionEmail(submission: ContactFormSubmission) {
   const fields = [
@@ -80,6 +81,13 @@ export async function registerRoutes(
 
   // use storage to perform CRUD operations on the storage interface
   // e.g. storage.insertUser(user) or storage.getUserByUsername(username)
+
+  registerPasswordResetRoutes(app, {
+    storage,
+    mailer: {
+      sendMail: sendNotificationEmail,
+    },
+  });
 
   app.post("/api/contact", async (req, res, next) => {
     try {

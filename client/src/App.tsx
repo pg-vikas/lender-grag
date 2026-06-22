@@ -19,6 +19,8 @@ import ContactPage from "@/pages/ContactPage";
 import ApplyPage from "@/pages/ApplyPage";
 import LoginPage from "@/pages/LoginPage";
 import SignupPage from "@/pages/SignupPage";
+import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
+import ResetPasswordPage from "@/pages/ResetPasswordPage";
 
 const PortalPage = lazy(() => import("@/pages/PortalPage"));
 const AdminDashboard = lazy(() => import("./admin/pages/Dashboard"));
@@ -76,15 +78,17 @@ function RoleProtectedRoute({
   requiredRole: UserRole;
   children: JSX.Element;
 }) {
-  const { user, isAuthenticated, isLoading, loadSession } = useAuth();
+  const { user, isAuthenticated, isLoading, hasLoadedSession, loadSession } = useAuth();
   const [, navigate] = useLocation();
 
   useEffect(() => {
-    void loadSession();
-  }, [loadSession]);
+    if (!hasLoadedSession) {
+      void loadSession();
+    }
+  }, [hasLoadedSession, loadSession]);
 
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading || !hasLoadedSession) {
       return;
     }
 
@@ -96,9 +100,9 @@ function RoleProtectedRoute({
     if (user.role !== requiredRole) {
       navigate(user.role === "admin" ? "/admin" : "/portal");
     }
-  }, [isAuthenticated, isLoading, navigate, requiredRole, user]);
+  }, [hasLoadedSession, isAuthenticated, isLoading, navigate, requiredRole, user]);
 
-  if (isLoading || !isAuthenticated || !user || user.role !== requiredRole) {
+  if (isLoading || !hasLoadedSession || !isAuthenticated || !user || user.role !== requiredRole) {
     return <SessionLoading />;
   }
 
@@ -121,6 +125,9 @@ function Router() {
         <Route path="/apply" component={ApplyPage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/signup" component={SignupPage} />
+        <Route path="/forgot-password" component={ForgotPasswordPage} />
+        <Route path="/reset-password/:token" component={ResetPasswordPage} />
+        <Route path="/reset-password" component={ResetPasswordPage} />
         <Route path="/portal">
           {() => (
             <RoleProtectedRoute requiredRole="client">

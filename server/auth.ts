@@ -2,7 +2,7 @@ import "./env";
 import crypto from "crypto";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
-import type { Express, RequestHandler } from "express";
+import type { Express, NextFunction, Request, RequestHandler, Response } from "express";
 import {
   loginSchema,
   sessionUserSchema,
@@ -203,6 +203,17 @@ async function sendWelcomeEmail(user: SessionUser) {
 }
 
 export function registerAuthRoutes(app: Express) {
+  const saveSessionAndSendUser = (statusCode: number, req: Request, res: Response, next: NextFunction) => {
+    req.session.save((error) => {
+      if (error) {
+        next(error);
+        return;
+      }
+
+      res.status(statusCode).json({ user: req.session.user ?? null });
+    });
+  };
+
   app.get("/api/auth/me", (req, res) => {
     res.status(200).json({ user: req.session.user ?? null });
   });
@@ -232,7 +243,7 @@ export function registerAuthRoutes(app: Express) {
         console.error("Welcome email failed:", mailError);
       }
 
-      res.status(201).json({ user: req.session.user });
+      saveSessionAndSendUser(201, req, res, next);
     } catch (error) {
       next(error);
     }
@@ -253,7 +264,7 @@ export function registerAuthRoutes(app: Express) {
       }
 
       req.session.user = toSessionUser(user);
-      res.status(200).json({ user: req.session.user });
+      saveSessionAndSendUser(200, req, res, next);
     } catch (error) {
       next(error);
     }
