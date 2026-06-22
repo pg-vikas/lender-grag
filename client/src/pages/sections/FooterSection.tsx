@@ -35,7 +35,7 @@ export const FooterSection = (): JSX.Element => {
                 <img
                   src={logoImg}
                   alt="Lender Greg"
-                  className="h-14 w-auto object-contain brightness-[1.6] cursor-pointer"
+                  className="h-20 w-auto object-contain brightness-[1.6] cursor-pointer"
                 />
               </Link>
             </div>
