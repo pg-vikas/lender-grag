@@ -64,13 +64,16 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
   const [isLifted, setIsLifted] = useState(false);
   const [question, setQuestion] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (isExpanded && inputRef.current) {
       setTimeout(() => inputRef.current?.focus(), 350);
     }
-    if (!isExpanded) { setQuestion(""); setSubmitted(false); }
+    if (!isExpanded) { setQuestion(""); setSubmitted(false); setName(""); setEmail(""); setPhone(""); }
   }, [isExpanded]);
 
   const pFactor = 1.2 + note.id * 0.4;
@@ -104,7 +107,7 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
   }, [isDragging, isExpanded, onExpand]);
 
   const handleSubmit = () => {
-    if (question.trim()) setSubmitted(true);
+    if (name.trim() && email.trim() && question.trim()) setSubmitted(true);
   };
 
   return (
@@ -191,6 +194,38 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
                       <p className="text-[16px] font-semibold mb-2" style={{ color: note.color, fontFamily: "'Caveat', cursive" }}>
                         Ask Greg about this:
                       </p>
+                      <div className="space-y-2 mb-2">
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          placeholder="Name"
+                          className="w-full rounded-lg px-3 py-2 text-[15px] border-none outline-none"
+                          style={{ background: "rgba(255,255,255,0.5)", color: "#333", fontFamily: "'Caveat', cursive" }}
+                          data-testid={`input-note-name-${note.id}`}
+                        />
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          placeholder="Email"
+                          className="w-full rounded-lg px-3 py-2 text-[15px] border-none outline-none"
+                          style={{ background: "rgba(255,255,255,0.5)", color: "#333", fontFamily: "'Caveat', cursive" }}
+                          data-testid={`input-note-email-${note.id}`}
+                        />
+                        <input
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          placeholder="Phone"
+                          className="w-full rounded-lg px-3 py-2 text-[15px] border-none outline-none"
+                          style={{ background: "rgba(255,255,255,0.5)", color: "#333", fontFamily: "'Caveat', cursive" }}
+                          data-testid={`input-note-phone-${note.id}`}
+                        />
+                      </div>
                       <textarea
                         ref={inputRef}
                         value={question}
@@ -390,7 +425,7 @@ function DeskPhone() {
               onClick={() => {
                 if (!calling) {
                   setCalling(true);
-                  window.open("tel:+1234567890", "_self");
+                  window.open("tel:+16195509885", "_self");
                   setTimeout(() => setCalling(false), 3000);
                 }
               }}
