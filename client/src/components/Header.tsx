@@ -61,7 +61,7 @@ export function Header() {
               <img
                 src={logoImg}
                 alt="Lender Greg"
-                className={`h-[100px] md:h-[115px] w-auto object-contain transition-all duration-300 ${
+                className={`h-[125px] md:h-[140px] w-auto object-contain transition-all duration-300 ${
                   transparent ? "brightness-[1.6]" : ""
                 }`}
               />
