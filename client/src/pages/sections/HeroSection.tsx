@@ -183,6 +183,7 @@ export const HeroSection = (): JSX.Element => {
             <p className="text-white text-[22px] md:text-[26px] font-extrabold tracking-tight">Greg Wynn</p>
             <p className="text-white/50 text-[13px] font-medium">Branch Manager & Loan Officer</p>
             <p className="text-white/35 text-[12px] mt-0.5">NMLS 276890</p>
+            <p className="text-white/50 text-[12px] mt-0.5 font-semibold">(619) 550-9885</p>
           </div>
         </motion.div>
       </div>
