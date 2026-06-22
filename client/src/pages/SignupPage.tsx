@@ -14,6 +14,31 @@ const perks = [
   "Get instant status updates",
 ];
 
+const getPhoneDigits = (value: string) => {
+  const digits = value.replace(/\D/g, "");
+  const normalizedDigits = digits.length === 11 && digits.startsWith("1") ? digits.slice(1) : digits;
+
+  return normalizedDigits.slice(0, 10);
+};
+
+const formatPhoneNumber = (value: string) => {
+  const digits = getPhoneDigits(value);
+
+  if (digits.length === 0) {
+    return "";
+  }
+
+  if (digits.length < 4) {
+    return `(${digits}`;
+  }
+
+  if (digits.length < 7) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  }
+
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+};
+
 export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -38,11 +63,23 @@ export default function SignupPage() {
     }
   }, [hasLoadedSession, isAuthenticated, navigate, user]);
 
+  const handlePhoneChange = (value: string) => {
+    setPhone(formatPhoneNumber(value));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    const phoneDigits = getPhoneDigits(phone);
+    const formattedPhone = formatPhoneNumber(phoneDigits);
+
     if (!name || !email || !phone || !password) {
       setError("Please fill in all fields");
+      return;
+    }
+    if (phoneDigits.length !== 10) {
+      setError("Please enter a valid 10-digit phone number");
       return;
     }
     if (password.length < 8) {
@@ -55,7 +92,7 @@ export default function SignupPage() {
     }
     setIsSubmitting(true);
     try {
-      await signup(name, email, phone, password);
+      await signup(name, email, formattedPhone, password);
       navigate("/portal");
     } catch (error) {
       setError(error instanceof Error ? error.message : "Something went wrong. Please try again.");
@@ -128,7 +165,7 @@ export default function SignupPage() {
                     <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Phone</label>
                     <div className="relative">
                       <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(619) 550-9885" disabled={isSubmitting} className="h-12 rounded-xl border-gray-200 pl-10" data-testid="input-signup-phone" />
+                      <Input type="tel" inputMode="numeric" value={phone} onChange={(e) => handlePhoneChange(e.target.value)} placeholder="(619) 550-9000" maxLength={18} disabled={isSubmitting} className="h-12 rounded-xl border-gray-200 pl-10" data-testid="input-signup-phone" />
                     </div>
                   </div>
                 </div>

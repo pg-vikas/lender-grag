@@ -37,6 +37,23 @@ function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
 
+function getPhoneDigits(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  const normalizedDigits = digits.length === 11 && digits.startsWith("1") ? digits.slice(1) : digits;
+
+  return normalizedDigits.slice(0, 10);
+}
+
+function formatPhoneNumber(phone: string) {
+  const digits = getPhoneDigits(phone);
+
+  if (digits.length !== 10) {
+    return phone.trim();
+  }
+
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 function scryptAsync(password: string, salt: string) {
   return new Promise<Buffer>((resolve, reject) => {
     crypto.scrypt(password, salt, HASH_KEYLEN, (error, derivedKey) => {
@@ -231,7 +248,7 @@ export function registerAuthRoutes(app: Express) {
       const user = await storage.createUser({
         email: normalizeEmail(input.email),
         fullName: input.name.trim(),
-        phone: input.phone.trim(),
+        phone: formatPhoneNumber(input.phone),
         role: "client",
         passwordHash,
       });

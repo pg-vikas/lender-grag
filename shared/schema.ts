@@ -62,7 +62,15 @@ export type ApplyFormSubmission = z.infer<typeof applyFormSchema>;
 export const signupSchema = z.object({
   name: z.string().trim().min(2, "Name is required"),
   email: z.string().trim().email("Valid email is required"),
-  phone: z.string().trim().min(7, "Phone is required"),
+  phone: z
+    .string()
+    .trim()
+    .refine((value) => {
+      const digits = value.replace(/\D/g, "");
+      const normalizedDigits = digits.length === 11 && digits.startsWith("1") ? digits.slice(1) : digits;
+
+      return normalizedDigits.length === 10;
+    }, "Please enter a valid 10-digit phone number"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
