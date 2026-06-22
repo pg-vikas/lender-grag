@@ -92,7 +92,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-[#0c1a14]">Phone</p>
-                    <p className="text-gray-500 text-sm">(619) 555-1234</p>
+                    <p className="text-gray-500 text-sm">(619) 550-9885</p>
                   </div>
                 </a>
                 <a href="mailto:greg@lendergreg.com" className="flex items-start gap-4 group">

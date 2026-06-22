@@ -44,7 +44,7 @@ export const FooterSection = (): JSX.Element => {
             </p>
             <div className="space-y-2.5">
               <a href="tel:+16195551234" className="flex items-center gap-2.5 text-white/60 hover:text-white transition-colors text-sm">
-                <Phone className="w-4 h-4" /> (619) 555-1234
+                <Phone className="w-4 h-4" /> (619) 550-9885
               </a>
               <a href="mailto:greg@lendergreg.com" className="flex items-center gap-2.5 text-white/60 hover:text-white transition-colors text-sm">
                 <Mail className="w-4 h-4" /> greg@lendergreg.com

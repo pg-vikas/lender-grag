@@ -39,7 +39,7 @@ function CompanySection() {
         </div>
         <div>
           <label className="text-xs text-white/40 mb-1.5 block">Phone</label>
-          <input defaultValue="(619) 555-1234" className="w-full bg-white/[0.04] border border-white/[0.06] rounded-lg px-3 py-2 text-sm text-white outline-none" data-testid="input-phone" />
+          <input defaultValue="(619) 550-9885" className="w-full bg-white/[0.04] border border-white/[0.06] rounded-lg px-3 py-2 text-sm text-white outline-none" data-testid="input-phone" />
         </div>
       </div>
       <div>

@@ -112,7 +112,7 @@ export default function SignupPage() {
                     <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Phone</label>
                     <div className="relative">
                       <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(619) 555-0000" className="h-12 rounded-xl border-gray-200 pl-10" data-testid="input-signup-phone" />
+                      <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(619) 550-9885" className="h-12 rounded-xl border-gray-200 pl-10" data-testid="input-signup-phone" />
                     </div>
                   </div>
                 </div>

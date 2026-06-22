@@ -82,7 +82,7 @@ export function FloatingAssistant() {
           ...prev,
           {
             role: "assistant",
-            text: "Great question! Greg will get back to you personally. For the fastest response, call Greg directly at (925) 216-7578 or click the phone on the desk above!",
+            text: "Great question! Greg will get back to you personally. For the fastest response, call Greg directly at (619) 550-9885 or click the phone on the desk above!",
           },
         ]);
       }, 1500 + Math.random() * 1000);
