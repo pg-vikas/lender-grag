@@ -1,13 +1,16 @@
 import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
-import { rm, readFile } from "fs/promises";
+import { copyFile, mkdir, rm, readFile } from "fs/promises";
+import { dirname } from "path";
+import { createRequire } from "module";
 
 // server deps to bundle to reduce openat(2) syscalls
 // which helps cold start times
+const require = createRequire(import.meta.url);
+
 const allowlist = [
   "@google/generative-ai",
   "axios",
-  "connect-pg-simple",
   "cors",
   "date-fns",
   "drizzle-orm",
@@ -59,6 +62,18 @@ async function buildAll() {
     external: externals,
     logLevel: "info",
   });
+
+  await copyRuntimeAssets();
+}
+
+async function copyRuntimeAssets() {
+  try {
+    const connectPgSimpleTableSql = require.resolve("connect-pg-simple/table.sql");
+    await mkdir(dirname("dist/table.sql"), { recursive: true });
+    await copyFile(connectPgSimpleTableSql, "dist/table.sql");
+  } catch (error) {
+    console.warn("Could not copy connect-pg-simple table.sql. Session table creation may require node_modules at runtime.", error);
+  }
 }
 
 buildAll().catch((err) => {
