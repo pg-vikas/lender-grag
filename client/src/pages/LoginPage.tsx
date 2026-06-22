@@ -12,22 +12,32 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { login, isAuthenticated, loadSession } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { login, isAuthenticated, user, loadSession } = useAuth();
   const [, navigate] = useLocation();
 
-  useEffect(() => { loadSession(); }, []);
-  useEffect(() => { if (isAuthenticated) navigate("/portal"); }, [isAuthenticated, navigate]);
+  useEffect(() => { void loadSession(); }, [loadSession]);
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate(user.role === "admin" ? "/admin" : "/portal");
+    }
+  }, [isAuthenticated, navigate, user]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     if (!email || !password) {
       setError("Please fill in all fields");
       return;
     }
-    const success = login(email, password);
-    if (success) navigate("/portal");
-    else setError("Invalid credentials");
+    setIsSubmitting(true);
+    try {
+      await login(email, password);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Invalid credentials");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -63,6 +73,7 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
+                    disabled={isSubmitting}
                     className="h-12 rounded-xl border-gray-200 pl-10"
                     data-testid="input-login-email"
                   />
@@ -81,13 +92,15 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
+                    disabled={isSubmitting}
                     className="h-12 rounded-xl border-gray-200 pl-10 pr-10"
                     data-testid="input-login-password"
                   />
                   <button
                     type="button"
+                    disabled={isSubmitting}
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:opacity-50"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -100,10 +113,11 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full h-12 rounded-xl bg-[#004733] hover:bg-[#003626] text-white font-semibold gap-2 text-[15px] mt-2"
                 data-testid="button-login-submit"
               >
-                Log In <ArrowRight className="w-4 h-4" />
+                {isSubmitting ? "Logging In..." : "Log In"} <ArrowRight className="w-4 h-4" />
               </Button>
             </form>
 
@@ -122,7 +136,7 @@ export default function LoginPage() {
 
           <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1.5">
             <Shield className="w-3 h-3" />
-            256-bit encryption. Your data is always safe.
+            Session-based authentication with role-aware access control.
           </p>
         </motion.div>
       </section>

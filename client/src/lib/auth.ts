@@ -1,65 +1,69 @@
 import { create } from "zustand";
+import type { SessionUser } from "@shared/schema";
+import { apiRequest } from "./queryClient";
 
-interface AuthUser {
-  name: string;
-  email: string;
-  phone: string;
-  joined: string;
-}
+type AuthUser = SessionUser;
 
 interface AuthStore {
   user: AuthUser | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => boolean;
-  signup: (name: string, email: string, phone: string, password: string) => boolean;
-  logout: () => void;
-  loadSession: () => void;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<boolean>;
+  signup: (name: string, email: string, phone: string, password: string) => Promise<boolean>;
+  logout: () => Promise<void>;
+  loadSession: () => Promise<void>;
+}
+
+async function fetchCurrentSession() {
+  const response = await fetch("/api/auth/me", {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to load session");
+  }
+
+  return (await response.json()) as { user: AuthUser | null };
 }
 
 export const useAuth = create<AuthStore>((set) => ({
   user: null,
   isAuthenticated: false,
+  isLoading: false,
 
-  login: (email, _password) => {
+  login: async (email, password) => {
+    const response = await apiRequest("POST", "/api/auth/login", { email, password });
+    const data = (await response.json()) as { user: AuthUser };
+    set({ user: data.user, isAuthenticated: true, isLoading: false });
+    return true;
+  },
+
+  signup: async (name, email, phone, password) => {
+    const response = await apiRequest("POST", "/api/auth/signup", { name, email, phone, password });
+    const data = (await response.json()) as { user: AuthUser };
+    set({ user: data.user, isAuthenticated: true, isLoading: false });
+    return true;
+  },
+
+  logout: async () => {
     try {
-      const stored = localStorage.getItem("lg_user");
-      if (stored) {
-        const user = JSON.parse(stored) as AuthUser;
-        if (user.email === email) {
-          set({ user, isAuthenticated: true });
-          return true;
-        }
-      }
-    } catch {
-      localStorage.removeItem("lg_user");
+      await apiRequest("POST", "/api/auth/logout");
+    } finally {
+      set({ user: null, isAuthenticated: false, isLoading: false });
     }
-    const user: AuthUser = { name: email.split("@")[0], email, phone: "", joined: new Date().toISOString() };
-    localStorage.setItem("lg_user", JSON.stringify(user));
-    set({ user, isAuthenticated: true });
-    return true;
   },
 
-  signup: (name, email, phone, _password) => {
-    const user: AuthUser = { name, email, phone, joined: new Date().toISOString() };
-    localStorage.setItem("lg_user", JSON.stringify(user));
-    set({ user, isAuthenticated: true });
-    return true;
-  },
-
-  logout: () => {
-    localStorage.removeItem("lg_user");
-    set({ user: null, isAuthenticated: false });
-  },
-
-  loadSession: () => {
-    const stored = localStorage.getItem("lg_user");
-    if (stored) {
-      try {
-        const user = JSON.parse(stored) as AuthUser;
-        set({ user, isAuthenticated: true });
-      } catch {
-        localStorage.removeItem("lg_user");
-      }
+  loadSession: async () => {
+    set({ isLoading: true });
+    try {
+      const data = await fetchCurrentSession();
+      set({
+        user: data.user,
+        isAuthenticated: Boolean(data.user),
+        isLoading: false,
+      });
+    } catch {
+      set({ user: null, isAuthenticated: false, isLoading: false });
     }
   },
 }));

@@ -22,30 +22,41 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { signup, isAuthenticated, loadSession } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { signup, isAuthenticated, user, loadSession } = useAuth();
   const [, navigate] = useLocation();
 
-  useEffect(() => { loadSession(); }, []);
-  useEffect(() => { if (isAuthenticated) navigate("/portal"); }, [isAuthenticated, navigate]);
+  useEffect(() => { void loadSession(); }, [loadSession]);
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate(user.role === "admin" ? "/admin" : "/portal");
+    }
+  }, [isAuthenticated, navigate, user]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     if (!name || !email || !phone || !password) {
       setError("Please fill in all fields");
       return;
     }
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (password.length < 12) {
+      setError("Password must be at least 12 characters");
       return;
     }
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-    const success = signup(name, email, phone, password);
-    if (success) navigate("/portal");
-    else setError("Something went wrong. Please try again.");
+    setIsSubmitting(true);
+    try {
+      await signup(name, email, phone, password);
+      navigate("/portal");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -96,7 +107,7 @@ export default function SignupPage() {
                   <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Full Name</label>
                   <div className="relative">
                     <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="John Smith" className="h-12 rounded-xl border-gray-200 pl-10" data-testid="input-signup-name" />
+                    <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="John Smith" disabled={isSubmitting} className="h-12 rounded-xl border-gray-200 pl-10" data-testid="input-signup-name" />
                   </div>
                 </div>
 
@@ -105,14 +116,14 @@ export default function SignupPage() {
                     <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Email</label>
                     <div className="relative">
                       <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" className="h-12 rounded-xl border-gray-200 pl-10" data-testid="input-signup-email" />
+                      <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" disabled={isSubmitting} className="h-12 rounded-xl border-gray-200 pl-10" data-testid="input-signup-email" />
                     </div>
                   </div>
                   <div>
                     <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Phone</label>
                     <div className="relative">
                       <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(619) 555-0000" className="h-12 rounded-xl border-gray-200 pl-10" data-testid="input-signup-phone" />
+                      <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(619) 550-9885" disabled={isSubmitting} className="h-12 rounded-xl border-gray-200 pl-10" data-testid="input-signup-phone" />
                     </div>
                   </div>
                 </div>
@@ -122,8 +133,8 @@ export default function SignupPage() {
                     <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Password</label>
                     <div className="relative">
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" className="h-12 rounded-xl border-gray-200 pl-10 pr-10" data-testid="input-signup-password" />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                      <Input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 12 characters" disabled={isSubmitting} className="h-12 rounded-xl border-gray-200 pl-10 pr-10" data-testid="input-signup-password" />
+                      <button type="button" disabled={isSubmitting} onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:opacity-50">
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
@@ -132,15 +143,15 @@ export default function SignupPage() {
                     <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Confirm Password</label>
                     <div className="relative">
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input type={showPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm" className="h-12 rounded-xl border-gray-200 pl-10" data-testid="input-signup-confirm" />
+                      <Input type={showPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm" disabled={isSubmitting} className="h-12 rounded-xl border-gray-200 pl-10" data-testid="input-signup-confirm" />
                     </div>
                   </div>
                 </div>
 
                 {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
 
-                <Button type="submit" className="w-full h-12 rounded-xl bg-[#004733] hover:bg-[#003626] text-white font-semibold gap-2 text-[15px] mt-1" data-testid="button-signup-submit">
-                  Create Account <ArrowRight className="w-4 h-4" />
+                <Button type="submit" disabled={isSubmitting} className="w-full h-12 rounded-xl bg-[#004733] hover:bg-[#003626] text-white font-semibold gap-2 text-[15px] mt-1" data-testid="button-signup-submit">
+                  {isSubmitting ? "Creating Account..." : "Create Account"} <ArrowRight className="w-4 h-4" />
                 </Button>
               </form>
 
@@ -153,7 +164,7 @@ export default function SignupPage() {
 
               <p className="text-xs text-gray-400 text-center mt-4 flex items-center justify-center gap-1.5">
                 <Shield className="w-3 h-3" />
-                Your information is encrypted and secure
+                Secure client signup with encrypted session handling
               </p>
             </div>
           </div>

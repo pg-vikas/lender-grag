@@ -64,13 +64,16 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
   const [isLifted, setIsLifted] = useState(false);
   const [question, setQuestion] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (isExpanded && inputRef.current) {
       setTimeout(() => inputRef.current?.focus(), 350);
     }
-    if (!isExpanded) { setQuestion(""); setSubmitted(false); }
+    if (!isExpanded) { setQuestion(""); setSubmitted(false); setName(""); setEmail(""); setPhone(""); }
   }, [isExpanded]);
 
   const pFactor = 1.2 + note.id * 0.4;
@@ -104,7 +107,7 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
   }, [isDragging, isExpanded, onExpand]);
 
   const handleSubmit = () => {
-    if (question.trim()) setSubmitted(true);
+    if (name.trim() && email.trim() && question.trim()) setSubmitted(true);
   };
 
   return (
@@ -191,6 +194,38 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
                       <p className="text-[16px] font-semibold mb-2" style={{ color: note.color, fontFamily: "'Caveat', cursive" }}>
                         Ask Greg about this:
                       </p>
+                      <div className="space-y-2 mb-2">
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          placeholder="Name"
+                          className="w-full rounded-lg px-3 py-2 text-[15px] border-none outline-none"
+                          style={{ background: "rgba(255,255,255,0.5)", color: "#333", fontFamily: "'Caveat', cursive" }}
+                          data-testid={`input-note-name-${note.id}`}
+                        />
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          placeholder="Email"
+                          className="w-full rounded-lg px-3 py-2 text-[15px] border-none outline-none"
+                          style={{ background: "rgba(255,255,255,0.5)", color: "#333", fontFamily: "'Caveat', cursive" }}
+                          data-testid={`input-note-email-${note.id}`}
+                        />
+                        <input
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          placeholder="Phone"
+                          className="w-full rounded-lg px-3 py-2 text-[15px] border-none outline-none"
+                          style={{ background: "rgba(255,255,255,0.5)", color: "#333", fontFamily: "'Caveat', cursive" }}
+                          data-testid={`input-note-phone-${note.id}`}
+                        />
+                      </div>
                       <textarea
                         ref={inputRef}
                         value={question}
@@ -264,6 +299,9 @@ function StickyNoteCard({ note, onEdit, onAskGreg, constraintsRef, mouseX, mouse
 }
 
 function AskGregModal({ topic, onClose }: { topic: string; onClose: () => void }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [question, setQuestion] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -278,8 +316,13 @@ function AskGregModal({ topic, onClose }: { topic: string; onClose: () => void }
         </div>
         {!submitted ? (
           <>
+            <div className="space-y-3 mb-3">
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-[14px] placeholder:text-white/20 outline-none focus:border-[#d4a94c]/40 transition-colors" data-testid="input-ask-greg-name" />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-[14px] placeholder:text-white/20 outline-none focus:border-[#d4a94c]/40 transition-colors" data-testid="input-ask-greg-email" />
+              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-[14px] placeholder:text-white/20 outline-none focus:border-[#d4a94c]/40 transition-colors" data-testid="input-ask-greg-phone" />
+            </div>
             <textarea value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Type your question here..." rows={4} className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white text-[14px] placeholder:text-white/20 outline-none focus:border-[#d4a94c]/40 resize-none transition-colors" data-testid="input-ask-greg" />
-            <motion.button onClick={() => { if (question.trim()) setSubmitted(true); }} className="w-full mt-4 h-12 rounded-xl bg-gradient-to-r from-[#d4a94c] to-[#c4953a] text-[#0c0c0c] font-bold text-[14px] flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-[#d4a94c]/20 transition-shadow" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} data-testid="button-send-question"><Send className="w-4 h-4" />Send to Greg</motion.button>
+            <motion.button onClick={() => { if (name.trim() && email.trim() && question.trim()) setSubmitted(true); }} className="w-full mt-4 h-12 rounded-xl bg-gradient-to-r from-[#d4a94c] to-[#c4953a] text-[#0c0c0c] font-bold text-[14px] flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-[#d4a94c]/20 transition-shadow" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} data-testid="button-send-question"><Send className="w-4 h-4" />Send to Greg</motion.button>
           </>
         ) : (
           <motion.div className="text-center py-6" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -382,7 +425,7 @@ function DeskPhone() {
               onClick={() => {
                 if (!calling) {
                   setCalling(true);
-                  window.open("tel:+1234567890", "_self");
+                  window.open("tel:+16195509885", "_self");
                   setTimeout(() => setCalling(false), 3000);
                 }
               }}

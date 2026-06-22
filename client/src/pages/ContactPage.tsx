@@ -5,15 +5,30 @@ import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function ContactPage() {
   const { toast } = useToast();
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ title: "Message sent!", description: "Greg will get back to you within 24 hours." });
-    setForm({ name: "", email: "", phone: "", message: "" });
+    setIsSubmitting(true);
+
+    try {
+      await apiRequest("POST", "/api/contact", form);
+      toast({ title: "Message sent!", description: "Greg will get back to you within 24 hours." });
+      setForm({ name: "", email: "", phone: "", message: "" });
+    } catch (error) {
+      toast({
+        title: "Unable to send message",
+        description: error instanceof Error ? error.message : "Please try again in a moment.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -41,6 +56,7 @@ export default function ContactPage() {
                     value={form.name}
                     onChange={e => setForm({ ...form, name: e.target.value })}
                     className="h-12 rounded-xl border-gray-200 focus:border-[#004733] focus:ring-[#004733]/20"
+                    disabled={isSubmitting}
                     required
                     data-testid="input-name"
                   />
@@ -50,6 +66,7 @@ export default function ContactPage() {
                     value={form.email}
                     onChange={e => setForm({ ...form, email: e.target.value })}
                     className="h-12 rounded-xl border-gray-200 focus:border-[#004733] focus:ring-[#004733]/20"
+                    disabled={isSubmitting}
                     required
                     data-testid="input-email"
                   />
@@ -60,6 +77,7 @@ export default function ContactPage() {
                   value={form.phone}
                   onChange={e => setForm({ ...form, phone: e.target.value })}
                   className="h-12 rounded-xl border-gray-200 focus:border-[#004733] focus:ring-[#004733]/20"
+                  disabled={isSubmitting}
                   data-testid="input-phone"
                 />
                 <textarea
@@ -68,11 +86,12 @@ export default function ContactPage() {
                   onChange={e => setForm({ ...form, message: e.target.value })}
                   rows={5}
                   className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:border-[#004733] focus:ring-2 focus:ring-[#004733]/20 resize-none"
+                  disabled={isSubmitting}
                   required
                   data-testid="input-message"
                 />
-                <Button type="submit" className="h-12 px-8 rounded-xl bg-[#004733] hover:bg-[#003626] text-white font-semibold gap-2" data-testid="button-send-message">
-                  <Send className="w-4 h-4" /> Send Message
+                <Button type="submit" disabled={isSubmitting} className="h-12 px-8 rounded-xl bg-[#004733] hover:bg-[#003626] text-white font-semibold gap-2" data-testid="button-send-message">
+                  <Send className="w-4 h-4" /> {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
               </form>
             </motion.div>
@@ -92,7 +111,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-[#0c1a14]">Phone</p>
-                    <p className="text-gray-500 text-sm">(619) 555-1234</p>
+                    <p className="text-gray-500 text-sm">(619) 550-9885</p>
                   </div>
                 </a>
                 <a href="mailto:greg@lendergreg.com" className="flex items-start gap-4 group">

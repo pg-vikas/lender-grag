@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 const benefits = [
   { icon: Clock, text: "Pre-approval in as little as 24 hours" },
@@ -15,11 +16,25 @@ const benefits = [
 export default function ApplyPage() {
   const { toast } = useToast();
   const [form, setForm] = useState({ name: "", email: "", phone: "", loanType: "", homePrice: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ title: "Application received!", description: "Greg will review your information and reach out within 24 hours." });
-    setForm({ name: "", email: "", phone: "", loanType: "", homePrice: "" });
+    setIsSubmitting(true);
+
+    try {
+      await apiRequest("POST", "/api/apply", form);
+      toast({ title: "Application received!", description: "Greg will review your information and reach out within 24 hours." });
+      setForm({ name: "", email: "", phone: "", loanType: "", homePrice: "" });
+    } catch (error) {
+      toast({
+        title: "Unable to submit application",
+        description: error instanceof Error ? error.message : "Please try again in a moment.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -53,14 +68,14 @@ export default function ApplyPage() {
                   <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Full Name</label>
                   <Input
                     value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                    className="h-12 rounded-xl border-gray-200" required data-testid="input-apply-name"
+                    className="h-12 rounded-xl border-gray-200" required disabled={isSubmitting} data-testid="input-apply-name"
                   />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Email</label>
                   <Input
                     type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                    className="h-12 rounded-xl border-gray-200" required data-testid="input-apply-email"
+                    className="h-12 rounded-xl border-gray-200" required disabled={isSubmitting} data-testid="input-apply-email"
                   />
                 </div>
               </div>
@@ -69,14 +84,14 @@ export default function ApplyPage() {
                   <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Phone</label>
                   <Input
                     type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
-                    className="h-12 rounded-xl border-gray-200" required data-testid="input-apply-phone"
+                    className="h-12 rounded-xl border-gray-200" required disabled={isSubmitting} data-testid="input-apply-phone"
                   />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Target Home Price</label>
                   <Input
                     value={form.homePrice} onChange={e => setForm({ ...form, homePrice: e.target.value })}
-                    placeholder="$400,000" className="h-12 rounded-xl border-gray-200" data-testid="input-apply-price"
+                    placeholder="$400,000" className="h-12 rounded-xl border-gray-200" disabled={isSubmitting} data-testid="input-apply-price"
                   />
                 </div>
               </div>
@@ -86,6 +101,7 @@ export default function ApplyPage() {
                   value={form.loanType}
                   onChange={e => setForm({ ...form, loanType: e.target.value })}
                   className="w-full h-12 rounded-xl border border-gray-200 px-4 text-sm focus:outline-none focus:border-[#004733] focus:ring-2 focus:ring-[#004733]/20 bg-white"
+                  disabled={isSubmitting}
                   required
                   data-testid="select-loan-type"
                 >
@@ -98,8 +114,8 @@ export default function ApplyPage() {
                   <option value="other">Other / Not Sure</option>
                 </select>
               </div>
-              <Button type="submit" className="w-full h-14 rounded-xl bg-[#004733] hover:bg-[#003626] text-white text-lg font-semibold gap-2 mt-4" data-testid="button-submit-application">
-                Submit Application <ArrowRight className="w-5 h-5" />
+              <Button type="submit" disabled={isSubmitting} className="w-full h-14 rounded-xl bg-[#004733] hover:bg-[#003626] text-white text-lg font-semibold gap-2 mt-4" data-testid="button-submit-application">
+                {isSubmitting ? "Submitting..." : "Submit Application"} <ArrowRight className="w-5 h-5" />
               </Button>
             </form>
 

@@ -51,22 +51,22 @@ const lenderNotes = [
 ];
 
 export default function PortalPage() {
-  const { user, isAuthenticated, logout, loadSession } = useAuth();
+  const { user, isAuthenticated, isLoading, logout, loadSession } = useAuth();
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState("overview");
   const [messageText, setMessageText] = useState("");
 
   useEffect(() => {
-    loadSession();
-  }, []);
+    void loadSession();
+  }, [loadSession]);
 
   useEffect(() => {
-    if (!isAuthenticated && !localStorage.getItem("lg_user")) {
+    if (!isLoading && (!isAuthenticated || user?.role !== "client")) {
       navigate("/login");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, isLoading, navigate, user]);
 
-  if (!user) return (
+  if (isLoading || !user) return (
     <div className="min-h-screen bg-[#fafdf9] flex items-center justify-center">
       <div className="w-8 h-8 border-2 border-[#004733]/30 border-t-[#004733] rounded-full animate-spin" />
     </div>
@@ -100,7 +100,7 @@ export default function PortalPage() {
                   <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">2</span>
                 </button>
               </div>
-              <button onClick={() => { logout(); navigate("/"); }} className="h-10 px-4 rounded-xl bg-white/10 border border-white/15 text-white/70 text-sm font-medium hover:bg-white/20 transition-colors flex items-center gap-2" data-testid="button-portal-logout">
+              <button onClick={async () => { await logout(); navigate("/"); }} className="h-10 px-4 rounded-xl bg-white/10 border border-white/15 text-white/70 text-sm font-medium hover:bg-white/20 transition-colors flex items-center gap-2" data-testid="button-portal-logout">
                 <LogOut className="w-4 h-4" /> Log Out
               </button>
             </div>

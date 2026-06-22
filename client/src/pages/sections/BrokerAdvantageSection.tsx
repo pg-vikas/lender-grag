@@ -2,7 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { ArrowRight, CheckCircle2, Network, ShieldCheck, Sparkles } from "lucide-react";
 import { useRef } from "react";
 import { Link } from "wouter";
-import gregLogo from "@/assets/images/lender-greg-mark.png";
+import gregLogo from "@/assets/images/lender-greg-logo.png";
 import uwmLogo from "@/assets/images/uwm-logo.png";
 import chaseLogo from "@/assets/images/chase-logo.png";
 import rocketLogo from "@/assets/images/rocket-mortgage-logo.png";

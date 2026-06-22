@@ -25,8 +25,10 @@ export function Header() {
 
   const isHome = location === "/";
   const transparent = isHome && !scrolled;
+  const portalHref = user?.role === "admin" ? "/admin" : "/portal";
+  const portalLabel = user?.role === "admin" ? "Admin Dashboard" : "My Portal";
 
-  useEffect(() => { loadSession(); }, []);
+  useEffect(() => { void loadSession(); }, [loadSession]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -61,7 +63,7 @@ export function Header() {
               <img
                 src={logoImg}
                 alt="Lender Greg"
-                className={`h-[100px] md:h-[115px] w-auto object-contain transition-all duration-300 ${
+                className={`h-[125px] md:h-[140px] w-auto object-contain transition-all duration-300 ${
                   transparent ? "brightness-[1.6]" : ""
                 }`}
               />
@@ -111,17 +113,17 @@ export function Header() {
             </Link>
               {isAuthenticated ? (
                 <>
-                  <Link href="/portal">
+                  <Link href={portalHref}>
                     <Button variant="ghost" className={`h-9 px-4 rounded-lg text-[13px] font-medium gap-2 ${
                       transparent
                         ? "text-white/80 hover:text-white hover:bg-white/10"
                         : "text-gray-600 hover:text-[#004733] hover:bg-[#004733]/[0.04]"
                     }`} data-testid="button-my-portal">
-                      <User className="w-3.5 h-3.5" /> My Portal
+                      <User className="w-3.5 h-3.5" /> {portalLabel}
                     </Button>
                   </Link>
                   <button
-                    onClick={() => { logout(); navigate("/"); }}
+                    onClick={async () => { await logout(); navigate("/"); }}
                     className={`h-9 w-9 rounded-lg flex items-center justify-center transition-colors ${
                       transparent ? "text-white/60 hover:text-white hover:bg-white/10" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
                     }`}
@@ -216,12 +218,12 @@ export function Header() {
                 </Link>
                 {isAuthenticated ? (
                   <>
-                    <Link href="/portal">
+                    <Link href={portalHref}>
                       <Button className="w-full rounded-xl bg-[#004733] hover:bg-[#003525] text-white font-semibold h-12 gap-2" data-testid="button-mobile-portal">
-                        <User className="w-4 h-4" /> My Portal
+                        <User className="w-4 h-4" /> {portalLabel}
                       </Button>
                     </Link>
-                    <Button variant="outline" onClick={() => { logout(); navigate("/"); setMobileOpen(false); }} className="w-full rounded-xl border-gray-200 text-gray-700 font-semibold h-12 gap-2" data-testid="button-mobile-logout">
+                    <Button variant="outline" onClick={async () => { await logout(); navigate("/"); setMobileOpen(false); }} className="w-full rounded-xl border-gray-200 text-gray-700 font-semibold h-12 gap-2" data-testid="button-mobile-logout">
                       <LogOut className="w-4 h-4" /> Log Out
                     </Button>
                   </>

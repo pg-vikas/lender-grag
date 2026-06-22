@@ -3,6 +3,8 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { ZodError } from "zod";
+import { configureSessions, ensureAdminUser, registerAuthRoutes } from "./auth";
 
 const app = express();
 const httpServer = createServer(app)
@@ -22,6 +24,8 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
+configureSessions(app);
+registerAuthRoutes(app);
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -61,11 +65,18 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  await ensureAdminUser();
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    const status =
+      err instanceof ZodError
+        ? 400
+        : err.status || err.statusCode || 500;
+    const message =
+      err instanceof ZodError
+        ? err.issues[0]?.message || "Invalid request"
+        : err.message || "Internal Server Error";
 
     console.error("Internal Server Error:", err);
 

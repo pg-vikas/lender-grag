@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import { useEffect, lazy, Suspense } from "react";
+import { useAuth } from "@/lib/auth";
+import type { UserRole } from "@shared/schema";
 
 import { HomeScreen } from "@/pages/HomeScreen";
 import AboutPage from "@/pages/AboutPage";
@@ -59,6 +61,50 @@ function AdminLoading() {
   );
 }
 
+function SessionLoading() {
+  return (
+    <div className="min-h-screen bg-[#fafdf9] flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-[#004733]/30 border-t-[#004733] rounded-full animate-spin" />
+    </div>
+  );
+}
+
+function RoleProtectedRoute({
+  requiredRole,
+  children,
+}: {
+  requiredRole: UserRole;
+  children: JSX.Element;
+}) {
+  const { user, isAuthenticated, isLoading, loadSession } = useAuth();
+  const [, navigate] = useLocation();
+
+  useEffect(() => {
+    void loadSession();
+  }, [loadSession]);
+
+  useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
+    if (!isAuthenticated || !user) {
+      navigate("/login");
+      return;
+    }
+
+    if (user.role !== requiredRole) {
+      navigate(user.role === "admin" ? "/admin" : "/portal");
+    }
+  }, [isAuthenticated, isLoading, navigate, requiredRole, user]);
+
+  if (isLoading || !isAuthenticated || !user || user.role !== requiredRole) {
+    return <SessionLoading />;
+  }
+
+  return children;
+}
+
 function Router() {
   return (
     <>
@@ -76,76 +122,172 @@ function Router() {
         <Route path="/login" component={LoginPage} />
         <Route path="/signup" component={SignupPage} />
         <Route path="/portal">
-          {() => <Suspense fallback={<div className="min-h-screen bg-[#fafdf9] flex items-center justify-center"><div className="w-8 h-8 border-2 border-[#004733]/30 border-t-[#004733] rounded-full animate-spin" /></div>}><PortalPage /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="client">
+              <Suspense fallback={<SessionLoading />}><PortalPage /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin">
-          {() => <Suspense fallback={<AdminLoading />}><AdminDashboard /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminDashboard /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/crm/:recordId">
-          {() => <Suspense fallback={<AdminLoading />}><AdminCRMProfile /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminCRMProfile /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/crm">
-          {() => <Suspense fallback={<AdminLoading />}><AdminCRM /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminCRM /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/leads">
-          {() => <Suspense fallback={<AdminLoading />}><AdminLeads /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminLeads /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/borrowers/:borrowerId">
-          {() => <Suspense fallback={<AdminLoading />}><AdminBorrowerDetail /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminBorrowerDetail /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/borrowers">
-          {() => <Suspense fallback={<AdminLoading />}><AdminBorrowers /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminBorrowers /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/pipeline/:loanId">
-          {() => <Suspense fallback={<AdminLoading />}><AdminLoanDetail /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminLoanDetail /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/pipeline">
-          {() => <Suspense fallback={<AdminLoading />}><AdminPipeline /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminPipeline /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/documents">
-          {() => <Suspense fallback={<AdminLoading />}><AdminDocuments /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminDocuments /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/esign/templates">
-          {() => <Suspense fallback={<AdminLoading />}><AdminESignTemplates /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminESignTemplates /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/esign">
-          {() => <Suspense fallback={<AdminLoading />}><AdminESign /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminESign /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/conditions">
-          {() => <Suspense fallback={<AdminLoading />}><AdminConditions /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminConditions /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/communications">
-          {() => <Suspense fallback={<AdminLoading />}><AdminCommunications /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminCommunications /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/tasks">
-          {() => <Suspense fallback={<AdminLoading />}><AdminTasks /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminTasks /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/automations">
-          {() => <Suspense fallback={<AdminLoading />}><AdminAutomations /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminAutomations /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/compliance">
-          {() => <Suspense fallback={<AdminLoading />}><AdminCompliance /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminCompliance /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/reports">
-          {() => <Suspense fallback={<AdminLoading />}><AdminReports /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminReports /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/pricing">
-          {() => <Suspense fallback={<AdminLoading />}><AdminPricing /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminPricing /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/products">
-          {() => <Suspense fallback={<AdminLoading />}><AdminProducts /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminProducts /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/branches">
-          {() => <Suspense fallback={<AdminLoading />}><AdminBranches /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminBranches /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/team">
-          {() => <Suspense fallback={<AdminLoading />}><AdminTeam /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminTeam /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/executive">
-          {() => <Suspense fallback={<AdminLoading />}><AdminExecutive /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminExecutive /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route path="/admin/settings">
-          {() => <Suspense fallback={<AdminLoading />}><AdminSettings /></Suspense>}
+          {() => (
+            <RoleProtectedRoute requiredRole="admin">
+              <Suspense fallback={<AdminLoading />}><AdminSettings /></Suspense>
+            </RoleProtectedRoute>
+          )}
         </Route>
         <Route component={NotFound} />
       </Switch>

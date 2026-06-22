@@ -35,7 +35,7 @@ export const FooterSection = (): JSX.Element => {
                 <img
                   src={logoImg}
                   alt="Lender Greg"
-                  className="h-14 w-auto object-contain brightness-[1.6] cursor-pointer"
+                  className="h-20 w-auto object-contain brightness-[1.6] cursor-pointer"
                 />
               </Link>
             </div>
@@ -44,7 +44,7 @@ export const FooterSection = (): JSX.Element => {
             </p>
             <div className="space-y-2.5">
               <a href="tel:+16195551234" className="flex items-center gap-2.5 text-white/60 hover:text-white transition-colors text-sm">
-                <Phone className="w-4 h-4" /> (619) 555-1234
+                <Phone className="w-4 h-4" /> (619) 550-9885
               </a>
               <a href="mailto:greg@lendergreg.com" className="flex items-center gap-2.5 text-white/60 hover:text-white transition-colors text-sm">
                 <Mail className="w-4 h-4" /> greg@lendergreg.com
@@ -73,7 +73,7 @@ export const FooterSection = (): JSX.Element => {
 
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between gap-4">
           <p className="text-white/40 text-xs">
-            Copyright {new Date().getFullYear()} Lender Greg. All rights reserved. NMLS 276890. Equal Housing Lender.
+            © {new Date().getFullYear()} Lender Greg. All rights reserved. NMLS 276890. Equal Housing Lender.
           </p>
           <div className="flex gap-6 items-center">
             <a href="#" className="text-white/40 hover:text-white/60 transition-colors text-xs">Privacy Policy</a>
