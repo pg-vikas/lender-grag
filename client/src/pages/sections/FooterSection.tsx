@@ -79,9 +79,6 @@ export const FooterSection = (): JSX.Element => {
             <a href="#" className="text-white/40 hover:text-white/60 transition-colors text-xs">Privacy Policy</a>
             <a href="#" className="text-white/40 hover:text-white/60 transition-colors text-xs">Terms of Service</a>
             <a href="#" className="text-white/40 hover:text-white/60 transition-colors text-xs">Disclaimer</a>
-            <Link href="/admin">
-              <span className="text-white/20 hover:text-white/50 transition-colors text-xs cursor-pointer" data-testid="link-admin-login">Admin</span>
-            </Link>
           </div>
         </div>
       </div>

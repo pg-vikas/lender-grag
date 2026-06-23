@@ -102,9 +102,11 @@ export default function PortalPage() {
                   <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">2</span>
                 </button>
               </div>
-              <button onClick={async () => { await logout(); navigate("/"); }} className="h-10 px-4 rounded-xl bg-white/10 border border-white/15 text-white/70 text-sm font-medium hover:bg-white/20 transition-colors flex items-center gap-2" data-testid="button-portal-logout">
+             
+              {/* <button onClick={async () => { await logout(); navigate("/"); }} className="h-10 px-4 rounded-xl bg-white/10 border border-white/15 text-white/70 text-sm font-medium hover:bg-white/20 transition-colors flex items-center gap-2" data-testid="button-portal-logout">
                 <LogOut className="w-4 h-4" /> Log Out
-              </button>
+              </button> */}
+             
             </div>
           </div>
           <div className="grid md:grid-cols-4 gap-3">

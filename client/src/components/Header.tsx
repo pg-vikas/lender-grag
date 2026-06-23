@@ -23,10 +23,12 @@ export function Header() {
   const { user, isAuthenticated, hasLoadedSession, logout, loadSession } = useAuth();
   const [, navigate] = useLocation();
 
-  const isHome = location === "/";
-  const transparent = isHome && !scrolled;
+  const darkHeroRoutes = ["/", "/portal"];
+  const hasDarkHeroHeader = darkHeroRoutes.includes(location);
+  const transparent = hasDarkHeroHeader && !scrolled;
   const portalHref = user?.role === "admin" ? "/admin" : "/portal";
   const portalLabel = user?.role === "admin" ? "Admin Dashboard" : "My Portal";
+  const isPortalActive = location === portalHref || (portalHref === "/admin" && location.startsWith("/admin"));
 
   useEffect(() => {
     if (!hasLoadedSession) {
@@ -105,23 +107,29 @@ export function Header() {
                 Book a Call
               </Button>
             </Link>
-            <Link href="/apply">
-              <Button className={`h-9 px-5 rounded-lg text-[13px] font-semibold shadow-sm gap-1.5 group transition-all duration-200 ${
-                transparent
-                  ? "bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border border-white/20"
-                  : "bg-[#004733] hover:bg-[#003525] text-white"
-              }`} data-testid="button-get-preapproved">
-                Get Pre-Approved
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-              </Button>
-            </Link>
+            {hasLoadedSession && !isAuthenticated && (
+              <Link href="/apply">
+                <Button className={`h-9 px-5 rounded-lg text-[13px] font-semibold shadow-sm gap-1.5 group transition-all duration-200 ${
+                  transparent
+                    ? "bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border border-white/20"
+                    : "bg-[#004733] hover:bg-[#003525] text-white"
+                }`} data-testid="button-get-preapproved">
+                  Get Pre-Approved
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </Button>
+              </Link>
+            )}
               {isAuthenticated ? (
                 <>
                   <Link href={portalHref}>
-                    <Button variant="ghost" className={`h-9 px-4 rounded-lg text-[13px] font-medium gap-2 ${
+                    <Button variant="ghost" className={`h-9 px-4 rounded-lg text-[13px] font-medium gap-2 transition-all duration-200 ${
                       transparent
-                        ? "text-white/80 hover:text-white hover:bg-white/10"
-                        : "text-gray-600 hover:text-[#004733] hover:bg-[#004733]/[0.04]"
+                        ? isPortalActive
+                          ? "text-white bg-white/15"
+                          : "text-white/80 hover:text-white hover:bg-white/10"
+                        : isPortalActive
+                          ? "text-[#004733] bg-[#004733]/[0.06]"
+                          : "text-gray-600 hover:text-[#004733] hover:bg-[#004733]/[0.04]"
                     }`} data-testid="button-my-portal">
                       <User className="w-3.5 h-3.5" /> {portalLabel}
                     </Button>
@@ -131,7 +139,7 @@ export function Header() {
                     className={`h-9 w-9 rounded-lg flex items-center justify-center transition-colors ${
                       transparent ? "text-white/60 hover:text-white hover:bg-white/10" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
                     }`}
-                    data-testid="button-header-logout"
+                    data-testid="button-header-logout" title="Log Out"
                   >
                     <LogOut className="w-4 h-4" />
                   </button>
@@ -214,12 +222,14 @@ export function Header() {
                     Book a Call
                   </Button>
                 </Link>
-                <Link href="/apply">
-                  <Button className="w-full rounded-xl bg-[#004733] hover:bg-[#003525] text-white font-semibold h-12 gap-2">
-                    Get Pre-Approved
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-                </Link>
+                {hasLoadedSession && !isAuthenticated && (
+                  <Link href="/apply">
+                    <Button className="w-full rounded-xl bg-[#004733] hover:bg-[#003525] text-white font-semibold h-12 gap-2">
+                      Get Pre-Approved
+                      <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </Link>
+                )}
                 {isAuthenticated ? (
                   <>
                     <Link href={portalHref}>

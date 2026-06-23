@@ -9,6 +9,7 @@ import {
 } from "@shared/schema";
 import { sendNotificationEmail } from "./mailer";
 import { renderEmailTemplate, renderTextFields } from "./emailTemplates";
+import { requireRole } from "./auth";
 import { registerPasswordResetRoutes } from "./auth/passwordReset";
 
 async function sendContactSubmissionEmail(submission: ContactFormSubmission) {
@@ -87,6 +88,36 @@ export async function registerRoutes(
     mailer: {
       sendMail: sendNotificationEmail,
     },
+  });
+
+
+  app.get("/api/admin/clients", requireRole("admin"), async (_req, res, next) => {
+    try {
+      const clients = await storage.listClientUsers();
+
+      res.status(200).json({
+        clients: clients.map((client) => ({
+          id: client.id,
+          name: client.fullName,
+          email: client.email,
+          phone: client.phone,
+          industry: "Mortgage Client",
+          compliance: false,
+          revenue: "$0.00",
+          billing: "---",
+          contacted: new Date(client.createdAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "2-digit",
+            year: "numeric",
+          }),
+          assigned: "Greg Wynn",
+          status: "Brand New",
+          createdAt: client.createdAt.toISOString(),
+        })),
+      });
+    } catch (error) {
+      next(error);
+    }
   });
 
   app.post("/api/contact", async (req, res, next) => {

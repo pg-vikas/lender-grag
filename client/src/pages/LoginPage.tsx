@@ -38,6 +38,11 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       await login(email, password);
+      const loggedInUser = useAuth.getState().user;
+
+      if (loggedInUser) {
+        navigate(loggedInUser.role === "admin" ? "/admin" : "/portal");
+      }
     } catch (error) {
       setError(error instanceof Error ? error.message : "Invalid credentials");
     } finally {

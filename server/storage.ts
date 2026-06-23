@@ -1,7 +1,7 @@
 import "./env";
 import { randomUUID } from "crypto";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { Pool } from "pg";
 import { passwordResetTokens, users, type InsertUser, type PasswordResetToken, type User } from "@shared/schema";
 
@@ -46,6 +46,7 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  listClientUsers(): Promise<User[]>;
   createPasswordResetToken(data: {
     userId: string | number;
     tokenHash: string;
@@ -85,6 +86,14 @@ export class DatabaseStorage implements IStorage {
       .returning();
 
     return user;
+  }
+
+  async listClientUsers(): Promise<User[]> {
+    return db
+      .select()
+      .from(users)
+      .where(eq(users.role, "client"))
+      .orderBy(desc(users.createdAt));
   }
 
   async createPasswordResetToken(data: {
