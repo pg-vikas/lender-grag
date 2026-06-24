@@ -54,13 +54,13 @@ function Router() {
   return (
     <Switch>
       <Route path="/admin/home" component={Home} />
-      <Route path="/admin/clients">
-        <ClientsPage isActiveOnly={false} />
-      </Route>
       <Route path="/admin/clients/active">
         <ClientsPage isActiveOnly={true} />
       </Route>
       <Route path="/admin/clients/:id" component={ClientDetailsPage} />
+      <Route path="/admin/clients">
+        <ClientsPage isActiveOnly={false} />
+      </Route>
       <Route path="/admin/tasks" component={TasksPage} />
       <Route path="/admin/projects" component={ProjectsPage} />
       <Route path="/admin/projects/:id" component={ProjectDetailsPage} />

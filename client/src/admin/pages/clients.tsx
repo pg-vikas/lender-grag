@@ -52,6 +52,18 @@ import {
 import { Link, useLocation } from "wouter";
 import { useAppStore } from "@/admin/lib/store";
 import { useAuth } from "@/lib/auth";
+import { useToast } from "@/admin/hooks/use-toast";
+import {
+  EditClientProfileModal,
+  type ClientEditFormData,
+  formatClientPhoneNumber,
+  getDefaultClientEditFormData,
+  getFriendlyClientSaveError,
+  normalizeClientStatus,
+  validateClientCreateForm,
+  validateClientEditForm,
+} from "@/admin/components/clients/EditClientProfileModal";
+import { normalizeRichTextValue } from "@/admin/components/clients/RichTextEditor";
 
 type ClientListItem = {
   id: string;
@@ -60,16 +72,33 @@ type ClientListItem = {
   phone?: string;
   industry: string;
   compliance: boolean;
+  photoUrl?: string;
   revenue: string;
   billing: string;
   contacted: string;
   assigned: string;
   status: string;
+  background?: string;
+  currentAddress?: string;
+  loanPurpose?: string;
+  propertyType?: string;
+  estimatedValue?: string;
+  downPayment?: string;
+  targetLoanAmount?: string;
   createdAt?: string;
 };
 
 type ClientsApiResponse = {
   clients: ClientListItem[];
+};
+
+const getClientListValue = (value?: string, fallback = "Not added") => {
+  const cleanValue = value?.trim();
+  return cleanValue || fallback;
+};
+
+const getClientTargetLoanDisplay = (client: ClientListItem) => {
+  return getClientListValue(client.targetLoanAmount);
 };
 
 // Reusable Sidebar Component
@@ -546,6 +575,7 @@ export function Header({ title }: { title: string }) {
 }
 
 export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: boolean }) {
+  const { toast } = useToast();
   const [openMenus, setOpenMenus] = useState<string>('crm');
   const [isAddClientModalOpen, setIsAddClientModalOpen] = useState(false);
   const [isEditClientModalOpen, setIsEditClientModalOpen] = useState(false);
@@ -559,13 +589,20 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [appliedSearchQuery, setAppliedSearchQuery] = useState('');
-  const [editingClientData, setEditingClientData] = useState({ name: "", email: "", phone: "", industry: "", status: "" });
+  const [editingClientData, setEditingClientData] = useState<ClientEditFormData>(getDefaultClientEditFormData());
+  const [newClientData, setNewClientData] = useState<ClientEditFormData>(getDefaultClientEditFormData());
+  const [newClientPassword, setNewClientPassword] = useState("");
+  const [sendWelcomeEmail, setSendWelcomeEmail] = useState(true);
+  const [isSavingClient, setIsSavingClient] = useState(false);
+  const [isCreatingClient, setIsCreatingClient] = useState(false);
+  const [editClientError, setEditClientError] = useState("");
+  const [addClientError, setAddClientError] = useState("");
   
   // State for dynamic links and toggles
   const [isEditorEnabled, setIsEditorEnabled] = useState(false);
   const [clientLinks, setClientLinks] = useState([{ label: '', url: '' }]);
   
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
 
   const handleAddLink = () => {
     setClientLinks([...clientLinks, { label: '', url: '' }]);
@@ -595,6 +632,196 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
     setSearchQuery('');
     setAppliedSearchQuery('');
     setActiveFilter('All');
+  };
+
+  const resetNewClientForm = () => {
+    setNewClientData(getDefaultClientEditFormData());
+    setNewClientPassword("");
+    setSendWelcomeEmail(true);
+    setAddClientError("");
+  };
+
+  const openAddClientModal = () => {
+    resetNewClientForm();
+    setIsAddClientModalOpen(true);
+  };
+
+  const closeAddClientModal = () => {
+    setIsAddClientModalOpen(false);
+    resetNewClientForm();
+  };
+
+  const handleCreateClient = async () => {
+    const validationMessage = validateClientCreateForm(newClientData, newClientPassword);
+    if (validationMessage) {
+      setAddClientError(validationMessage);
+      toast({
+        title: "Please check the form",
+        description: validationMessage,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsCreatingClient(true);
+      setAddClientError("");
+
+      const normalizedBackground = normalizeRichTextValue(newClientData.background);
+
+      const response = await fetch("/api/admin/clients", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...newClientData,
+          name: newClientData.name.trim(),
+          email: newClientData.email.trim(),
+          phone: formatClientPhoneNumber(newClientData.phone),
+          background: normalizedBackground,
+          password: newClientPassword,
+          sendWelcomeEmail,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => null);
+        throw new Error(errorBody?.message || "Unable to create client");
+      }
+
+      const data = (await response.json()) as {
+        client: ClientListItem;
+        welcomeEmailSent?: boolean;
+        warning?: string;
+      };
+      const createdClient = {
+        ...data.client,
+        status: normalizeClientStatus(data.client.status),
+      };
+
+      setAllClients((prev) => [createdClient, ...prev]);
+      closeAddClientModal();
+      toast({
+        title: "Client created",
+        description: data.warning || (sendWelcomeEmail ? "Client was created and the welcome email was sent." : "Client was created successfully."),
+        variant: data.warning ? "destructive" : undefined,
+      });
+    } catch (error) {
+      const message = getFriendlyClientSaveError(error);
+      setAddClientError(message);
+      toast({
+        title: "Couldn’t create client",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreatingClient(false);
+    }
+  };
+
+  const openEditClientModal = (client: ClientListItem, clientIndex: number) => {
+    setSelectedClientIndex(clientIndex);
+    setEditingClientData({
+      name: client.name,
+      email: client.email || "",
+      phone: formatClientPhoneNumber(client.phone || ""),
+      industry: client.industry || "Mortgage Client",
+      status: normalizeClientStatus(client.status),
+      background: client.background || "",
+      photoUrl: client.photoUrl || "",
+      photoDataUrl: "",
+      photoFileName: "",
+      removePhoto: false,
+      currentAddress: client.currentAddress || "",
+      loanPurpose: client.loanPurpose || "Purchase",
+      propertyType: client.propertyType || "Single Family",
+      estimatedValue: client.estimatedValue || "",
+      downPayment: client.downPayment || "",
+      targetLoanAmount: client.targetLoanAmount || "",
+    });
+    setIsEditorEnabled(Boolean(client.background?.trim()));
+    setEditClientError("");
+    setIsEditClientModalOpen(true);
+  };
+
+  const handleSaveClientChanges = async () => {
+    if (selectedClientIndex === null) {
+      return;
+    }
+
+    const selectedClient = allClients[selectedClientIndex];
+    if (!selectedClient) {
+      const message = "This client could not be found. Refresh the page and try again.";
+      setEditClientError(message);
+      toast({
+        title: "Couldn’t update client",
+        description: message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const validationMessage = validateClientEditForm(editingClientData);
+    if (validationMessage) {
+      setEditClientError(validationMessage);
+      toast({
+        title: "Please check the form",
+        description: validationMessage,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsSavingClient(true);
+      setEditClientError("");
+
+      const normalizedBackground = normalizeRichTextValue(editingClientData.background);
+
+      const response = await fetch(`/api/admin/clients/${selectedClient.id}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...editingClientData,
+          name: editingClientData.name.trim(),
+          email: editingClientData.email.trim(),
+          phone: formatClientPhoneNumber(editingClientData.phone),
+          background: normalizedBackground,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => null);
+        throw new Error(errorBody?.message || "Unable to update client");
+      }
+
+      const data = (await response.json()) as { client: ClientListItem };
+      const updatedClient = {
+        ...data.client,
+        status: normalizeClientStatus(data.client.status),
+      };
+
+      setAllClients((prev) =>
+        prev.map((client) => client.id === selectedClient.id ? updatedClient : client)
+      );
+      setSelectedClientIndex(null);
+      setIsEditClientModalOpen(false);
+      toast({
+        title: "Client profile updated",
+        description: `${updatedClient.name} was saved successfully.`,
+      });
+    } catch (error) {
+      const message = getFriendlyClientSaveError(error);
+      setEditClientError(message);
+      toast({
+        title: "Couldn’t update client",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingClient(false);
+    }
   };
 
   const toggleMenu = (menu: string) => {
@@ -640,6 +867,17 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
 
   const title = isActiveOnly ? "Active Clients" : "Clients";
 
+  useEffect(() => {
+    if (isActiveOnly && activeFilter !== 'All') {
+      setActiveFilter('All');
+      return;
+    }
+
+    if (!isActiveOnly && activeFilter === 'Active') {
+      setActiveFilter('All');
+    }
+  }, [isActiveOnly, activeFilter]);
+
   const [allClients, setAllClients] = useState<ClientListItem[]>([]);
   const [isLoadingClients, setIsLoadingClients] = useState(true);
   const [clientsError, setClientsError] = useState("");
@@ -665,7 +903,14 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
         const data = (await response.json()) as ClientsApiResponse;
 
         if (isMounted) {
-          setAllClients(Array.isArray(data.clients) ? data.clients : []);
+          setAllClients(
+            Array.isArray(data.clients)
+              ? data.clients.map((client) => ({
+                  ...client,
+                  status: normalizeClientStatus(client.status),
+                }))
+              : [],
+          );
         }
       } catch (error) {
         if (isMounted) {
@@ -686,27 +931,56 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
     };
   }, []);
 
-  const filteredClients = allClients.filter(c => {
+  const pageClients = allClients.filter((client) =>
+    isActiveOnly ? client.status === 'Active' : client.status !== 'Active',
+  );
+
+  const filteredClients = pageClients.filter(c => {
     const matchesFilter = activeFilter === 'All' || c.status === activeFilter;
-    const matchesSearch = !appliedSearchQuery || 
-      c.name.toLowerCase().includes(appliedSearchQuery.toLowerCase()) ||
-      c.industry.toLowerCase().includes(appliedSearchQuery.toLowerCase()) ||
-      c.assigned.toLowerCase().includes(appliedSearchQuery.toLowerCase()) ||
-      (c.email ?? "").toLowerCase().includes(appliedSearchQuery.toLowerCase()) ||
-      (c.phone ?? "").toLowerCase().includes(appliedSearchQuery.toLowerCase());
+    const normalizedSearchQuery = appliedSearchQuery.toLowerCase();
+    const searchableClientFields = [
+      c.name,
+      c.assigned,
+      c.email,
+      c.phone,
+      c.currentAddress,
+      c.loanPurpose,
+      c.propertyType,
+      c.estimatedValue,
+      c.downPayment,
+      c.targetLoanAmount,
+    ];
+    const matchesSearch = !appliedSearchQuery || searchableClientFields.some((field) =>
+      (field ?? "").toLowerCase().includes(normalizedSearchQuery),
+    );
     return matchesFilter && matchesSearch;
   });
 
   const stats = [
-    { label: 'Clients', count: allClients.length, colorClass: 'border-purple-500', filterValue: 'All' },
-    { label: 'Active Clients', count: allClients.filter(c=>c.status==='Active').length, colorClass: 'border-purple-400', filterValue: 'Active' },
-    { label: 'Brand New Clients', count: allClients.filter(c=>c.status==='Brand New').length, colorClass: 'border-indigo-400', filterValue: 'Brand New' },
-    { label: 'Lead Clients', count: allClients.filter(c=>c.status==='Lead').length, colorClass: 'border-blue-500', filterValue: 'Lead' },
-    { label: 'Nurture Clients', count: allClients.filter(c=>c.status==='Nurture').length, colorClass: 'border-cyan-500', filterValue: 'Nurture' },
-    { label: 'Suspended Clients', count: allClients.filter(c=>c.status==='Suspended').length, colorClass: 'border-orange-400', filterValue: 'Suspended' },
-    { label: 'Hot Clients', count: allClients.filter(c=>c.status==='Hot').length, colorClass: 'border-orange-300', filterValue: 'Hot' },
-    { label: 'Inactive Clients', count: allClients.filter(c=>c.status==='Inactive').length, colorClass: 'border-rose-400', filterValue: 'Inactive' },
+    { label: 'Clients', count: allClients.length, colorClass: 'border-purple-500', filterValue: 'All', pageScope: 'clients' },
+    { label: 'Active Clients', count: allClients.filter(c=>c.status==='Active').length, colorClass: 'border-purple-400', filterValue: 'All', pageScope: 'active' },
+    { label: 'Brand New Clients', count: allClients.filter(c=>c.status==='Brand New').length, colorClass: 'border-indigo-400', filterValue: 'Brand New', pageScope: 'clients' },
+    { label: 'Lead Clients', count: allClients.filter(c=>c.status==='Lead').length, colorClass: 'border-blue-500', filterValue: 'Lead', pageScope: 'clients' },
+    { label: 'Nurture Clients', count: allClients.filter(c=>c.status==='Nurture').length, colorClass: 'border-cyan-500', filterValue: 'Nurture', pageScope: 'clients' },
+    { label: 'Suspended Clients', count: allClients.filter(c=>c.status==='Suspended').length, colorClass: 'border-orange-400', filterValue: 'Suspended', pageScope: 'clients' },
+    { label: 'Hot Clients', count: allClients.filter(c=>c.status==='Hot').length, colorClass: 'border-orange-300', filterValue: 'Hot', pageScope: 'clients' },
+    { label: 'Inactive Clients', count: allClients.filter(c=>c.status==='Inactive').length, colorClass: 'border-rose-400', filterValue: 'Inactive', pageScope: 'clients' },
   ];
+
+  const handleStatsFilter = (stat: typeof stats[number]) => {
+    const targetPath = stat.pageScope === 'active' ? '/admin/clients/active' : '/admin/clients';
+
+    if (location !== targetPath) {
+      navigate(targetPath);
+    }
+
+    setActiveFilter(stat.filterValue);
+  };
+
+  const isStatsCardSelected = (stat: typeof stats[number]) => {
+    const currentScope = isActiveOnly ? 'active' : 'clients';
+    return stat.pageScope === currentScope && activeFilter === stat.filterValue;
+  };
 
   return (
     <div className="h-screen w-full overflow-hidden bg-transparent flex font-sans text-[#e2e8f0]">
@@ -724,13 +998,13 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
               <div className="flex justify-between items-center mb-8">
                 <div>
                   <h1 className="text-3xl font-bold text-white tracking-tight mb-1">{title}</h1>
-                  <p className="text-slate-400 text-sm">Manage and monitor all agency accounts</p>
+                  <p className="text-slate-400 text-sm">{isActiveOnly ? "Manage and monitor active client accounts" : "Manage and monitor all non-active client accounts"}</p>
                 </div>
                 <Button 
-                  onClick={() => setIsAddClientModalOpen(true)}
+                  onClick={openAddClientModal}
                   className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold px-6 py-2.5 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] transition-all flex items-center gap-2 border-none"
                 >
-                  <Plus className="w-5 h-5" /> New Agency
+                  <Plus className="w-5 h-5" /> New Client
                 </Button>
               </div>
 
@@ -860,8 +1134,8 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
                       {stats.map((stat, idx) => (
                         <div 
                           key={idx}
-                          onClick={() => setActiveFilter(stat.filterValue)}
-                          className={`flex flex-col gap-2 flex-1 border-b-[3px] pb-3 cursor-pointer transition-all hover:bg-slate-800/30 rounded-t-lg px-2 pt-2 -mx-2 hover:-translate-y-1 ${stat.colorClass} ${activeFilter === stat.filterValue ? 'bg-slate-800/50 shadow-[inset_0_-4px_10px_-4px_rgba(255,255,255,0.1)]' : ''}`}
+                          onClick={() => handleStatsFilter(stat)}
+                          className={`flex flex-col gap-2 flex-1 border-b-[3px] pb-3 cursor-pointer transition-all hover:bg-slate-800/30 rounded-t-lg px-2 pt-2 -mx-2 hover:-translate-y-1 ${stat.colorClass} ${isStatsCardSelected(stat) ? 'bg-slate-800/50 shadow-[inset_0_-4px_10px_-4px_rgba(255,255,255,0.1)]' : ''}`}
                         >
                           <span className="text-3xl font-bold text-white">{stat.count}</span>
                           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{stat.label}</span>
@@ -878,9 +1152,9 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
                   <table className="w-full text-left dark-table">
                     <thead>
                       <tr>
-                        <th className="py-4 px-6">Agency Name</th>
-                        <th className="py-4 px-6">Industry</th>
-                        <th className="py-4 px-6 text-right">MRR</th>
+                        <th className="py-4 px-6">Client Name</th>
+                        <th className="py-4 px-6">Loan Purpose</th>
+                        <th className="py-4 px-6 text-right">Target Loan</th>
                         <th className="py-4 px-6">Contacted</th>
                         <th className="py-4 px-6">Assigned To</th>
                         <th className="py-4 px-6 text-center">Status</th>
@@ -897,7 +1171,7 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
                       ) : filteredClients.length === 0 ? (
                         <tr>
                           <td colSpan={7} className="py-8 text-center text-slate-400">
-                            {clientsError || "No agencies found matching your criteria."}
+                            {clientsError || (isActiveOnly ? "No active clients found." : "No non-active clients found matching your criteria.")}
                           </td>
                         </tr>
                       ) : (
@@ -911,8 +1185,12 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
                           <tr key={client.id} className={`group ${isPinned ? 'bg-amber-500/5 border-l-2 border-l-amber-400' : 'border-l-2 border-l-transparent'}`}>
                           <td className="py-4 px-6">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded bg-slate-800 border border-slate-600 bg-slate-950 flex items-center justify-center text-slate-400 group-hover:bg-cyan-500/10 group-hover:text-cyan-400 group-hover:border-cyan-500/30 transition-colors">
-                                <Building2 className="w-4 h-4" />
+                              <div className="w-8 h-8 rounded bg-slate-800 border border-slate-600 bg-slate-950 flex items-center justify-center text-slate-400 group-hover:bg-cyan-500/10 group-hover:text-cyan-400 group-hover:border-cyan-500/30 transition-colors overflow-hidden">
+                                {client.photoUrl ? (
+                                  <img src={client.photoUrl} alt={`${client.name} photo`} className="h-full w-full object-cover" />
+                                ) : (
+                                  <Building2 className="w-4 h-4" />
+                                )}
                               </div>
                               <div className="min-w-0">
                                 <Link href={`/admin/clients/${client.id}`}>
@@ -929,8 +1207,16 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
                               </div>
                             </div>
                           </td>
-                          <td className="py-4 px-6 text-sm text-slate-400">{client.industry}</td>
-                          <td className="py-4 px-6 text-sm font-mono text-emerald-400 text-right">{client.revenue}</td>
+                          <td className="py-4 px-6 text-sm text-slate-300">
+                            <div className="font-medium text-slate-200">{getClientListValue(client.loanPurpose)}</div>
+                            <div className="mt-1 text-xs text-slate-500">{getClientListValue(client.propertyType)}</div>
+                          </td>
+                          <td className="py-4 px-6 text-sm text-right">
+                            <div className="font-mono font-semibold text-emerald-300">{getClientTargetLoanDisplay(client)}</div>
+                            <div className="mt-1 text-xs text-slate-500">
+                              {client.estimatedValue?.trim() ? `Value: ${client.estimatedValue}` : "Value not added"}
+                            </div>
+                          </td>
                           <td className="py-4 px-6 text-sm text-slate-400">{client.contacted}</td>
                           <td className="py-4 px-6 text-sm text-slate-300">
                             <div className="flex items-center gap-2">
@@ -943,9 +1229,7 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
                           <td className="py-4 px-6 text-center">
                             <span className={`inline-flex items-center px-2.5 py-1 rounded text-xs font-bold border ${
                               client.status === 'Active' ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]' :
-                              client.status === 'Pending' ? 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20 shadow-[0_0_10px_rgba(250,204,21,0.1)]' :
                               client.status === 'Suspended' ? 'text-red-400 bg-red-400/10 border-red-400/20 shadow-[0_0_10px_rgba(248,113,113,0.1)]' :
-                              client.status === 'Star Client' ? 'text-blue-400 bg-blue-400/10 border-blue-400/20 shadow-[0_0_10px_rgba(96,165,250,0.1)]' :
                               client.status === 'Brand New' ? 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20 shadow-[0_0_10px_rgba(129,140,248,0.1)]' :
                               client.status === 'Lead' ? 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20 shadow-[0_0_10px_rgba(34,211,238,0.1)]' :
                               client.status === 'Nurture' ? 'text-purple-400 bg-purple-400/10 border-purple-400/20 shadow-[0_0_10px_rgba(192,132,252,0.1)]' :
@@ -978,16 +1262,7 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
                                   <button 
                                     onClick={(e) => { 
                                       e.stopPropagation(); 
-                                      setSelectedClientIndex(listIndex); 
-                                      const client = allClients[listIndex];
-                                      setEditingClientData({
-                                        name: client.name,
-                                        email: client.email || "email@domain.com",
-                                        phone: client.phone || "9000000001",
-                                        industry: client.industry,
-                                        status: client.status
-                                      });
-                                      setIsEditClientModalOpen(true); 
+                                      openEditClientModal(client, listIndex);
                                       setActiveDropdown(null); 
                                     }}
                                     className="w-full px-4 py-2.5 text-left text-sm text-slate-300 hover:bg-slate-800 transition-colors flex items-center gap-3"
@@ -1038,554 +1313,34 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
         />
       )}
 
-      {/* Add Client Modal */}
-      {isAddClientModalOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setIsAddClientModalOpen(false)}
-        >
-          <div 
-            className="bg-slate-900 border border-slate-600 bg-slate-950 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-950">
-              <h2 className="text-xl font-bold text-white">Add Client</h2>
-              <button 
-                onClick={() => setIsAddClientModalOpen(false)}
-                className="text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-8">
-              
-              {/* Client Details Section */}
-              <section className="space-y-6">
-                <h3 className="text-lg font-bold text-white tracking-tight border-b border-slate-800 pb-2">Client Details</h3>
-                
-                <div className="space-y-4">
-                  {/* Photo Upload */}
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Client Photo</label>
-                    <div className="w-32 h-32 bg-slate-800/50 border border-slate-600 bg-slate-950 rounded-xl flex items-center justify-center mb-2 overflow-hidden">
-                      <User className="w-12 h-12 text-slate-500" />
-                    </div>
-                    <button className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-sm font-medium text-white rounded-lg transition-colors border border-slate-600 bg-slate-950">
-                      Upload
-                    </button>
-                  </div>
-
-                  {/* Form Grid 1 */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">First Name*</label>
-                      <input 
-                        type="text" 
-                        placeholder="John"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Last Name*</label>
-                      <input 
-                        type="text" 
-                        placeholder="Doe"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Email Address*</label>
-                      <input 
-                        type="email" 
-                        placeholder="john.doe@example.com"
-                        className="w-full px-4 py-2.5 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-sm text-indigo-300 focus:outline-none transition-all placeholder:text-indigo-400/50" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Phone Number*</label>
-                      <div className="flex">
-                        <select className="px-3 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 border-r-0 rounded-l-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all w-20">
-                          <option>+1</option>
-                        </select>
-                        <input 
-                          type="tel" 
-                          placeholder="555-0123"
-                          className="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-r-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Current Address</label>
-                      <input 
-                        type="text" 
-                        placeholder="123 Main St, Apt 4B, City, State, ZIP"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                  </div>
-
-                  {/* Form Grid 3 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Marital Status</label>
-                      <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                        <option value="">Select Status...</option>
-                        <option value="single">Single</option>
-                        <option value="married">Married</option>
-                        <option value="separated">Separated</option>
-                        <option value="divorced">Divorced</option>
-                      </select>
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Spouse / Co-Borrower Name</label>
-                      <input 
-                        type="text" 
-                        placeholder="Jane Doe (Leave blank if none)"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                  </div>
-
-                  {/* Form Grid 4 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Annual Income (Est.)</label>
-                      <div className="relative">
-                        <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                        <input 
-                          type="text" 
-                          placeholder="120,000"
-                          className="w-full pl-9 pr-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Employment Type</label>
-                      <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                        <option>W-2 Employee</option>
-                        <option>Self-Employed (1099)</option>
-                        <option>Business Owner</option>
-                        <option>Retired / Fixed Income</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Credit Score (Est.)</label>
-                      <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                        <option>Excellent (740+)</option>
-                        <option>Good (670-739)</option>
-                        <option>Fair (580-669)</option>
-                        <option>Poor (Under 580)</option>
-                        <option>Unknown</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              {/* Loan Details Section */}
-              <section className="space-y-6">
-                <h3 className="text-lg font-bold text-white tracking-tight border-b border-slate-800 pb-2">Loan Goals</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Target Purchase Price</label>
-                    <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                      <input 
-                        type="text" 
-                        placeholder="500,000"
-                        className="w-full pl-9 pr-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Available Down Payment</label>
-                    <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                      <input 
-                        type="text" 
-                        placeholder="100,000"
-                        className="w-full pl-9 pr-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Property Type</label>
-                    <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                      <option>Single Family Home</option>
-                      <option>Townhouse</option>
-                      <option>Condo</option>
-                      <option>Multi-Family (2-4 Units)</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Occupancy</label>
-                    <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                      <option>Primary Residence</option>
-                      <option>Second Home</option>
-                      <option>Investment Property</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Timeline</label>
-                    <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                      <option>Immediately (0-30 days)</option>
-                      <option>Soon (1-3 months)</option>
-                      <option>Exploring (3-6 months)</option>
-                      <option>Long term (6+ months)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="space-y-4 pt-4 border-t border-slate-800">
-                  <label className="block text-sm font-medium text-slate-300">Realtor Information</label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <input 
-                        type="text" 
-                        placeholder="Agent Name"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                    <div>
-                      <input 
-                        type="tel" 
-                        placeholder="Agent Phone"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                  </div>
-                </div>
-
-
-                <div className="flex items-center gap-4 mt-6">
-                  <span className="text-sm font-medium text-slate-300">Background</span>
-                  <button 
-                    onClick={() => setIsEditorEnabled(!isEditorEnabled)}
-                    className={`w-11 h-6 rounded-full relative transition-colors focus:outline-none cursor-pointer ${isEditorEnabled ? 'bg-purple-600' : 'bg-slate-700'}`}
-                  >
-                    <span className={`absolute top-1 w-4 h-4 rounded-full transition-transform shadow-[0_0_5px_rgba(0,0,0,0.2)] ${isEditorEnabled ? 'left-[22px] bg-white' : 'left-1 bg-slate-400'}`}></span>
-                  </button>
-                </div>
-
-                {isEditorEnabled && (
-                  <div className="animate-in fade-in slide-in-from-top-4 duration-300 border border-slate-600 bg-slate-950 rounded-xl overflow-hidden bg-slate-950">
-                    <div className="bg-slate-800/80 border-b border-slate-600 bg-slate-950 p-2 flex items-center gap-1 flex-wrap">
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><Bold className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><LinkIcon className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><List className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><AlignLeft className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><ImageIcon className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><Video className="w-4 h-4" /></button>
-                    </div>
-                    <textarea 
-                      className="w-full h-48 bg-slate-400/20 p-4 text-sm text-white focus:outline-none resize-none placeholder:text-slate-500"
-                      placeholder=""
-                    ></textarea>
-                  </div>
-                )}
-              </section>
-
-
-            </div>
-
-            {/* Modal Footer */}
-            <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/80 flex justify-end gap-3">
-              <button 
-                onClick={() => setIsAddClientModalOpen(false)}
-                className="px-6 py-2.5 border border-slate-600 bg-slate-950 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl font-medium transition-colors"
-              >
-                Close
-              </button>
-              <button 
-                onClick={() => setIsAddClientModalOpen(false)}
-                className="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-medium shadow-[0_0_15px_rgba(147,51,234,0.3)] hover:shadow-[0_0_20px_rgba(147,51,234,0.5)] transition-all"
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Edit Client Modal */}
-      {isEditClientModalOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setIsEditClientModalOpen(false)}
-        >
-          <div 
-            className="bg-slate-900 border border-slate-600 bg-slate-950 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-950">
-              <h2 className="text-xl font-bold text-white">Edit Client Profile</h2>
-              <button 
-                onClick={() => setIsEditClientModalOpen(false)}
-                className="text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-8">
-              
-              {/* Company Details Section */}
-              <section className="space-y-6">
-                <h3 className="text-lg font-bold text-white tracking-tight border-b border-slate-800 pb-2">Company Details</h3>
-                
-                <div className="space-y-4">
-                  {/* Logo Upload */}
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Company Logo</label>
-                    <div className="w-32 h-32 bg-slate-800/50 border border-slate-600 bg-slate-950 rounded-xl flex items-center justify-center mb-2">
-                      <Building2 className="w-8 h-8 text-slate-500" />
-                    </div>
-                    <button className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-sm font-medium text-white rounded-lg transition-colors border border-slate-600 bg-slate-950">
-                      Upload
-                    </button>
-                  </div>
-
-                  {/* Form Grid 1 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Company Name*</label>
-                      <input 
-                        type="text" 
-                        value={editingClientData.name}
-                        onChange={(e) => setEditingClientData({...editingClientData, name: e.target.value})}
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Company Email</label>
-                      <input 
-                        type="email" 
-                        value={editingClientData.email}
-                        onChange={(e) => setEditingClientData({...editingClientData, email: e.target.value})}
-                        className="w-full px-4 py-2.5 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-sm text-indigo-300 focus:outline-none transition-all placeholder:text-indigo-400/50" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Company Phone Number*</label>
-                      <div className="flex">
-                        <select className="px-3 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 border-r-0 rounded-l-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all w-20">
-                          <option>+1</option>
-                        </select>
-                        <input 
-                          type="tel" 
-                          value={editingClientData.phone}
-                          onChange={(e) => setEditingClientData({...editingClientData, phone: e.target.value})}
-                          className="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-r-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Form Grid 2 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Website</label>
-                      <input 
-                        type="url" 
-                        defaultValue="https://pinkgorilla.agency"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Company Address</label>
-                      <input 
-                        type="text" 
-                        defaultValue="po 12, ABCD, lame road, LA, CA"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Default Currency</label>
-                      <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                        <option>USD</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Form Grid 3 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Default Time Zone</label>
-                      <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                        <option>America/Denver</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Language</label>
-                      <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                        <option>English - US</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Status</label>
-                      <select 
-                        value={editingClientData.status}
-                        onChange={(e) => setEditingClientData({...editingClientData, status: e.target.value})}
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none"
-                      >
-                        <option value="Active">Active</option>
-                        <option value="Brand New">Brand New</option>
-                        <option value="Lead">Lead</option>
-                        <option value="Nurture">Nurture</option>
-                        <option value="Suspended">Suspended</option>
-                        <option value="Hot">Hot</option>
-                        <option value="Inactive">Inactive</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Form Grid 4 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Industry</label>
-                      <select 
-                        value={editingClientData.industry}
-                        onChange={(e) => setEditingClientData({...editingClientData, industry: e.target.value})}
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none"
-                      >
-                        <option value="Information Technology">Information Technology</option>
-                        <option value="Retail Trade">Retail Trade</option>
-                        <option value="Software">Software</option>
-                        <option value="Utilities">Utilities</option>
-                        <option value="Healthcare">Healthcare</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Real Estate">Real Estate</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Year in Business</label>
-                      <input 
-                        type="text" 
-                        defaultValue="5"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 transition-all" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">No. of Employees</label>
-                      <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                        <option>10 - 50</option>
-                        <option>1 - 3</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              {/* Status Section */}
-              <section className="space-y-6">
-                <h3 className="text-lg font-bold text-white tracking-tight border-b border-slate-800 pb-2">Pipeline Status</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Current Status</label>
-                    <select 
-                      value={editingClientData.status}
-                      onChange={(e) => setEditingClientData({...editingClientData, status: e.target.value})}
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none"
-                    >
-                      <option value="Lead / Prospect">Lead / Prospect</option>
-                      <option value="Pre-Approved">Pre-Approved</option>
-                      <option value="Searching for Home">Searching for Home</option>
-                      <option value="Under Contract">Under Contract</option>
-                      <option value="Closed">Closed</option>
-                      <option value="Archived">Archived</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Assigned Loan Officer</label>
-                    <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 shadow-inner focus:border-sky-500 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                      <option>Greg Wynn</option>
-                      <option>Unassigned</option>
-                    </select>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-4 mt-6">
-                  <span className="text-sm font-medium text-slate-300">Add Note</span>
-                  <button 
-                    onClick={() => setIsEditorEnabled(!isEditorEnabled)}
-                    className={`w-11 h-6 rounded-full relative transition-colors focus:outline-none cursor-pointer ${isEditorEnabled ? 'bg-purple-600' : 'bg-slate-700'}`}
-                  >
-                    <span className={`absolute top-1 w-4 h-4 rounded-full transition-transform shadow-[0_0_5px_rgba(0,0,0,0.2)] ${isEditorEnabled ? 'left-[22px] bg-white' : 'left-1 bg-slate-400'}`}></span>
-                  </button>
-                </div>
-
-                {isEditorEnabled && (
-                  <div className="animate-in fade-in slide-in-from-top-4 duration-300 border border-slate-600 bg-slate-950 rounded-xl overflow-hidden bg-slate-950">
-                    <div className="bg-slate-800/80 border-b border-slate-600 bg-slate-950 p-2 flex items-center gap-1 flex-wrap">
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><Bold className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><LinkIcon className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><List className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><AlignLeft className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><ImageIcon className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><Video className="w-4 h-4" /></button>
-                    </div>
-                    <textarea 
-                      className="w-full h-48 bg-slate-400/20 p-4 text-sm text-white focus:outline-none resize-none placeholder:text-slate-500"
-                      placeholder="Add notes about this borrower..."
-                    ></textarea>
-                  </div>
-                )}
-              </section>
-
-
-            </div>
-
-            {/* Modal Footer */}
-            <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/80 flex justify-end gap-3">
-              <button 
-                onClick={() => setIsEditClientModalOpen(false)}
-                className="px-6 py-2.5 border border-slate-600 bg-slate-950 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl font-medium transition-colors"
-              >
-                Close
-              </button>
-              <button 
-                onClick={() => {
-                  if (selectedClientIndex !== null) {
-                    setAllClients(prev => {
-                      const newClients = [...prev];
-                      newClients[selectedClientIndex] = {
-                        ...newClients[selectedClientIndex],
-                        name: editingClientData.name,
-                        email: editingClientData.email,
-                        phone: editingClientData.phone,
-                        assigned: newClients[selectedClientIndex].assigned,
-                        industry: editingClientData.industry,
-                        status: editingClientData.status
-                      };
-                      return newClients;
-                    });
-                    setSelectedClientIndex(null);
-                  }
-                  setIsEditClientModalOpen(false);
-                }}
-                className="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-medium shadow-[0_0_15px_rgba(147,51,234,0.3)] hover:shadow-[0_0_20px_rgba(147,51,234,0.5)] transition-all"
-              >
-                Save Changes
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <EditClientProfileModal
+        isOpen={isAddClientModalOpen}
+        mode="create"
+        clientData={newClientData}
+        setClientData={setNewClientData}
+        isSaving={isCreatingClient}
+        errorMessage={addClientError}
+        password={newClientPassword}
+        setPassword={setNewClientPassword}
+        sendWelcomeEmail={sendWelcomeEmail}
+        setSendWelcomeEmail={setSendWelcomeEmail}
+        onClose={closeAddClientModal}
+        onSave={handleCreateClient}
+      />
+      <EditClientProfileModal
+        isOpen={isEditClientModalOpen}
+        clientData={editingClientData}
+        setClientData={setEditingClientData}
+        isSaving={isSavingClient}
+        errorMessage={editClientError}
+        isEditorEnabled={isEditorEnabled}
+        setIsEditorEnabled={setIsEditorEnabled}
+        onClose={() => {
+          setIsEditClientModalOpen(false);
+          setEditClientError("");
+        }}
+        onSave={handleSaveClientChanges}
+      />
 
       {/* Send Mail Modal */}
       {isSendMailModalOpen && (
@@ -1776,10 +1531,10 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
                 <h3 className="text-sm font-medium text-slate-300">Fields</h3>
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    "Company Name", "Date Created", 
-                    "Company Email", "Phone No.",
-                    "Industry", "Employee email",
-                    "Assignee", "Status"
+                    "Client Name", "Date Created", 
+                    "Client Email", "Phone No.",
+                    "Loan Purpose", "Target Loan",
+                    "Property Type", "Status"
                   ].map((field) => (
                     <label key={field} className="flex items-center gap-3 cursor-pointer group">
                       <div className="relative flex items-center justify-center">

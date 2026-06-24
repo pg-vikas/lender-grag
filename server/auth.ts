@@ -13,6 +13,7 @@ import {
 import { pool, storage } from "./storage";
 import { sendNotificationEmail } from "./mailer";
 import { renderEmailTemplate } from "./emailTemplates";
+import { hashAuditIdentifier, recordAuditEvent } from "./auditLog";
 
 declare module "express-session" {
   interface SessionData {
@@ -67,7 +68,7 @@ function scryptAsync(password: string, salt: string) {
   });
 }
 
-async function hashPassword(password: string) {
+export async function hashPassword(password: string) {
   const salt = crypto.randomBytes(16).toString("hex");
   const hash = await scryptAsync(password, salt);
   return `${salt}:${hash.toString("hex")}`;
@@ -241,6 +242,22 @@ export function registerAuthRoutes(app: Express) {
       const existingUser = await storage.getUserByEmail(input.email);
 
       if (existingUser) {
+        await recordAuditEvent(req, {
+          category: "authentication",
+          action: "auth.signup.failure",
+          outcome: "failure",
+          severity: "warning",
+          actorEmail: input.email,
+          targetType: "user",
+          targetId: existingUser.id,
+          targetLabel: existingUser.email,
+          entityTable: "users",
+          statusCode: 409,
+          metadata: {
+            reason: "duplicate_email",
+            emailHash: hashAuditIdentifier(input.email),
+          },
+        });
         return res.status(409).json({ message: "An account with that email already exists" });
       }
 
@@ -254,6 +271,26 @@ export function registerAuthRoutes(app: Express) {
       });
 
       req.session.user = toSessionUser(user);
+      await recordAuditEvent(req, {
+        category: "authentication",
+        action: "auth.signup.success",
+        outcome: "success",
+        actorUserId: user.id,
+        actorRole: user.role,
+        actorEmail: user.email,
+        targetType: "user",
+        targetId: user.id,
+        targetLabel: user.email,
+        entityTable: "users",
+        statusCode: 201,
+        after: {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          phone: user.phone,
+          role: user.role,
+        },
+      });
       try {
         await sendWelcomeEmail(req.session.user);
       } catch (mailError) {
@@ -272,22 +309,77 @@ export function registerAuthRoutes(app: Express) {
       const user = await storage.getUserByEmail(input.email);
 
       if (!user) {
+        await recordAuditEvent(req, {
+          category: "authentication",
+          action: "auth.login.failure",
+          outcome: "failure",
+          severity: "warning",
+          actorEmail: input.email,
+          targetType: "user",
+          entityTable: "users",
+          statusCode: 401,
+          metadata: {
+            reason: "invalid_credentials",
+            emailHash: hashAuditIdentifier(input.email),
+          },
+        });
         return res.status(401).json({ message: "Invalid email or password" });
       }
 
       const passwordMatches = await verifyPassword(input.password, user.passwordHash);
       if (!passwordMatches) {
+        await recordAuditEvent(req, {
+          category: "authentication",
+          action: "auth.login.failure",
+          outcome: "failure",
+          severity: "warning",
+          actorEmail: input.email,
+          targetType: "user",
+          targetId: user.id,
+          targetLabel: user.email,
+          entityTable: "users",
+          statusCode: 401,
+          metadata: {
+            reason: "invalid_credentials",
+            emailHash: hashAuditIdentifier(input.email),
+          },
+        });
         return res.status(401).json({ message: "Invalid email or password" });
       }
 
       req.session.user = toSessionUser(user);
+      await recordAuditEvent(req, {
+        category: "authentication",
+        action: "auth.login.success",
+        outcome: "success",
+        actorUserId: user.id,
+        actorRole: user.role,
+        actorEmail: user.email,
+        targetType: "user",
+        targetId: user.id,
+        targetLabel: user.email,
+        entityTable: "users",
+        statusCode: 200,
+        metadata: {
+          role: user.role,
+        },
+      });
       saveSessionAndSendUser(200, req, res, next);
     } catch (error) {
       next(error);
     }
   });
 
-  app.post("/api/auth/logout", (req, res, next) => {
+  app.post("/api/auth/logout", async (req, res, next) => {
+    await recordAuditEvent(req, {
+      category: "authentication",
+      action: "auth.logout.success",
+      outcome: "success",
+      targetType: "session",
+      targetId: req.sessionID,
+      statusCode: 200,
+    });
+
     req.session.destroy((error) => {
       if (error) {
         next(error);

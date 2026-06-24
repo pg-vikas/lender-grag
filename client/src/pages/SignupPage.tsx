@@ -1,13 +1,14 @@
 import { PageLayout } from "./PageLayout";
 import { useState, useEffect, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
+import { ApiError } from "@/lib/queryClient";
 import { useLocation, Link } from "wouter";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Shield, ArrowRight, Eye, EyeOff, Mail, Lock, User, Phone, CheckCircle2 } from "lucide-react";
+import { Shield, ArrowRight, Eye, EyeOff, Mail, Lock, User, Phone, CheckCircle2, AlertCircle } from "lucide-react";
 
 const perks = [
   "Upload documents securely",
@@ -43,6 +44,34 @@ const formatPhoneNumber = (value: string) => {
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
 };
 
+const isValidEmail = (value: string) => /\S+@\S+\.\S+/.test(value.trim());
+
+const getFriendlySignupError = (error: unknown) => {
+  const message = error instanceof Error ? error.message : "";
+
+  if (error instanceof ApiError && error.status === 409) {
+    return "An account already exists with this email. Please log in or reset your password.";
+  }
+
+  if (/already exists/i.test(message)) {
+    return "An account already exists with this email. Please log in or reset your password.";
+  }
+
+  if (/valid email/i.test(message)) {
+    return "Please enter a valid email address.";
+  }
+
+  if (/phone/i.test(message)) {
+    return "Please enter a valid 10-digit phone number.";
+  }
+
+  if (/failed to fetch|network/i.test(message)) {
+    return "We could not connect to the server. Please check your connection and try again.";
+  }
+
+  return "We could not create your account right now. Please try again.";
+};
+
 export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -53,6 +82,7 @@ export default function SignupPage() {
   const [hasAcceptedConsent, setHasAcceptedConsent] = useState(false);
   const [activeConsentInfo, setActiveConsentInfo] = useState<ConsentInfoType | null>(null);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { signup, isAuthenticated, hasLoadedSession, user, loadSession } = useAuth();
   const [, navigate] = useLocation();
@@ -218,10 +248,14 @@ be available to me; and</li>
   }, [hasLoadedSession, loadSession]);
 
   useEffect(() => {
+    if (isSubmitting || success) {
+      return;
+    }
+
     if (hasLoadedSession && isAuthenticated && user) {
       navigate(user.role === "admin" ? "/admin" : "/portal");
     }
-  }, [hasLoadedSession, isAuthenticated, navigate, user]);
+  }, [hasLoadedSession, isAuthenticated, isSubmitting, navigate, success, user]);
 
   const handlePhoneChange = (value: string) => {
     setPhone(formatPhoneNumber(value));
@@ -230,36 +264,78 @@ be available to me; and</li>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
     const phoneDigits = getPhoneDigits(phone);
     const formattedPhone = formatPhoneNumber(phoneDigits);
 
-    if (!name || !email || !phone || !password) {
-      setError("Please fill in all fields");
+    if (!trimmedName) {
+      setError("Please enter your full name.");
       return;
     }
+
+    if (trimmedName.length < 2) {
+      setError("Please enter your full name.");
+      return;
+    }
+
+    if (!trimmedEmail) {
+      setError("Please enter your email address.");
+      return;
+    }
+
+    if (!isValidEmail(trimmedEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (!phone) {
+      setError("Please enter your phone number.");
+      return;
+    }
+
     if (phoneDigits.length !== 10) {
-      setError("Please enter a valid 10-digit phone number");
+      setError("Please enter a valid 10-digit phone number.");
       return;
     }
+
+    if (!password) {
+      setError("Please create a password.");
+      return;
+    }
+
     if (password.length < 8) {
-      setError("Password must be at least 8 characters");
+      setError("Password must be at least 8 characters.");
       return;
     }
+
+    if (!confirmPassword) {
+      setError("Please confirm your password.");
+      return;
+    }
+
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError("Passwords do not match.");
       return;
     }
+
     if (!hasAcceptedConsent) {
-      setError("Please accept the required consent before creating your account");
+      setError("Please accept the required consent before creating your account.");
       return;
     }
+
     setIsSubmitting(true);
     try {
-      await signup(name, email, formattedPhone, password);
-      navigate("/portal");
+      await signup(trimmedName, trimmedEmail, formattedPhone, password);
+      setSuccess("Account created successfully. Redirecting to your portal...");
+
+      window.setTimeout(() => {
+        navigate("/portal");
+      }, 700);
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Something went wrong. Please try again.");
+      setError(getFriendlySignupError(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -308,7 +384,7 @@ be available to me; and</li>
                 <p className="text-gray-500 text-sm mt-1">Free account — no credit card required</p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
                 <div>
                   <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Full Name</label>
                   <div className="relative">
@@ -404,10 +480,22 @@ be available to me; and</li>
                   </div>
                 </div>
 
-                {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
+                {error && (
+                  <div role="alert" className="flex items-start gap-2 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                    <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
 
-                <Button type="submit" disabled={isSubmitting} className="w-full h-12 rounded-xl bg-[#004733] hover:bg-[#003626] text-white font-semibold gap-2 text-[15px] mt-1" data-testid="button-signup-submit">
-                  {isSubmitting ? "Creating Account..." : "Create Account"} <ArrowRight className="w-4 h-4" />
+                {success && (
+                  <div role="status" className="flex items-start gap-2 rounded-2xl border border-[#05a270]/20 bg-[#05a270]/10 px-4 py-3 text-sm font-medium text-[#004733]">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                    <span>{success}</span>
+                  </div>
+                )}
+
+                <Button type="submit" disabled={isSubmitting || Boolean(success)} className="w-full h-12 rounded-xl bg-[#004733] hover:bg-[#003626] text-white font-semibold gap-2 text-[15px] mt-1" data-testid="button-signup-submit">
+                  {success ? "Redirecting..." : isSubmitting ? "Creating Account..." : "Create Account"} <ArrowRight className="w-4 h-4" />
                 </Button>
               </form>
 

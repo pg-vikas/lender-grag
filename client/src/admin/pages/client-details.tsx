@@ -1,8 +1,25 @@
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "wouter";
 import { Sidebar, Header } from "./clients";
-import { Building2, Edit2, Mail, MapPin, Globe, Compass, Plus, Phone, Bell, Search, Info, PlusCircle, CheckCircle2, ChevronDown, Users, User, Briefcase, MessageSquare, Eye, Zap, X, Lock, Trash2, FileText, Bold, Link as LinkIcon, List, AlignLeft, Image as ImageIcon, Video, Paperclip, Smile, Settings, TrendingUp, TrendingDown, UploadCloud, Clock, Download, ArrowRight, Calendar } from "lucide-react";
+import { Building2, Edit2, Mail, MailCheck, MapPin, Globe, Compass, Plus, Phone, Bell, Search, Info, PlusCircle, CheckCircle2, ChevronDown, Users, User, Briefcase, MessageSquare, Eye, EyeOff, Zap, X, Lock, Trash2, FileText, Bold, Link as LinkIcon, List, AlignLeft, Image as ImageIcon, Video, Paperclip, Smile, Settings, TrendingUp, TrendingDown, UploadCloud, Clock, Download, ArrowRight, Calendar } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
+import { useToast } from "@/admin/hooks/use-toast";
+import {
+  EditClientProfileModal,
+  type ClientEditFormData,
+  formatClientPhoneNumber,
+  getDefaultClientEditFormData,
+  getFriendlyClientSaveError,
+  normalizeClientStatus,
+  validateClientEditForm,
+} from "@/admin/components/clients/EditClientProfileModal";
+import {
+  RichTextEditor,
+  getRichTextPlainText,
+  hasRichTextHtml,
+  normalizeRichTextValue,
+  sanitizeRichTextHtml,
+} from "@/admin/components/clients/RichTextEditor";
 
 type ClientDetailsApiItem = {
   id: string;
@@ -10,20 +27,39 @@ type ClientDetailsApiItem = {
   industry: string;
   phone: string;
   email: string;
+  status: string;
+  assigned: string;
+  revenue?: string;
+  billing?: string;
+  compliance?: boolean;
+  photoUrl?: string;
+  background?: string;
+  currentAddress?: string;
+  loanPurpose?: string;
+  propertyType?: string;
+  estimatedValue?: string;
+  downPayment?: string;
+  targetLoanAmount?: string;
+  createdAt?: string;
 };
 
+function isLikelyUrl(value: string) {
+  return /^https?:\/\//i.test(value.trim());
+}
+
 export default function ClientDetailsPage() {
+  const { toast } = useToast();
   const [openMenus, setOpenMenus] = useState<string>('crm');
   const [activeTab, setActiveTab] = useState<string>('email');
   const [location, setLocation] = useLocation();
   const params = useParams<{ id: string }>();
 
   // Array of mock clients to simulate a database
-  const clientsData = [
-    { id: "1", name: "Pink Gorilla Software", industry: "Information Technology Services", phone: "+1 555 123 4567", email: "contact@pinkgorilla.agency" },
-    { id: "2", name: "Estate Landscape", industry: "Retail Trade", phone: "+1 555 987 6543", email: "info@estatelandscape.com" },
-    { id: "3", name: "Summit Cabinets", industry: "Retail Trade", phone: "+1 555 456 7890", email: "sales@summitcabinets.com" },
-    { id: "90", name: "Test demo1", industry: "Health Care & Hospitals", phone: "+1 789 000 0070", email: "test.demo90@example.com" }
+  const clientsData: ClientDetailsApiItem[] = [
+    { id: "1", name: "Pink Gorilla Software", industry: "Information Technology Services", phone: "+1 555 123 4567", email: "contact@pinkgorilla.agency", status: "Brand New", assigned: "Greg Wynn" },
+    { id: "2", name: "Estate Landscape", industry: "Retail Trade", phone: "+1 555 987 6543", email: "info@estatelandscape.com", status: "Brand New", assigned: "Greg Wynn" },
+    { id: "3", name: "Summit Cabinets", industry: "Retail Trade", phone: "+1 555 456 7890", email: "sales@summitcabinets.com", status: "Brand New", assigned: "Greg Wynn" },
+    { id: "90", name: "Test demo1", industry: "Health Care & Hospitals", phone: "+1 789 000 0070", email: "test.demo90@example.com", status: "Brand New", assigned: "Greg Wynn" }
   ];
 
   // Mock data for the specific client based on ID
@@ -35,17 +71,27 @@ export default function ClientDetailsPage() {
 
     async function loadClient() {
       try {
-        const response = await fetch("/api/admin/clients", { credentials: "include" });
+        const response = await fetch(`/api/admin/clients/${clientId}`, { credentials: "include" });
         if (!response.ok) return;
 
-        const data = (await response.json()) as { clients?: ClientDetailsApiItem[] };
-        const matchedClient = data.clients?.find((client) => client.id === clientId) ?? null;
+        const data = (await response.json()) as { client?: ClientDetailsApiItem };
+        const matchedClient = data.client ?? null;
 
         if (isMounted) {
           setLiveClient(matchedClient ? {
             ...matchedClient,
             phone: matchedClient.phone || "---",
             email: matchedClient.email || "---",
+            status: normalizeClientStatus(matchedClient.status),
+            assigned: matchedClient.assigned || "Greg Wynn",
+            background: matchedClient.background || "",
+            photoUrl: matchedClient.photoUrl || "",
+            currentAddress: matchedClient.currentAddress || "",
+            loanPurpose: matchedClient.loanPurpose || "Purchase",
+            propertyType: matchedClient.propertyType || "Single Family",
+            estimatedValue: matchedClient.estimatedValue || "",
+            downPayment: matchedClient.downPayment || "",
+            targetLoanAmount: matchedClient.targetLoanAmount || "",
           } : null);
         }
       } catch {
@@ -67,9 +113,26 @@ export default function ClientDetailsPage() {
     name: `Client ${clientId}`, 
     industry: "Other", 
     phone: "---", 
-    email: "---" 
+    email: "---", 
+    status: "Brand New",
+    assigned: "Greg Wynn",
+    background: "",
+    photoUrl: "",
+    currentAddress: "",
+    loanPurpose: "Purchase",
+    propertyType: "Single Family",
+    estimatedValue: "",
+    downPayment: "",
+    targetLoanAmount: "",
   };
+  const currentBackground = currentClient.background?.trim() || "";
   
+  const [editClientData, setEditClientData] = useState<ClientEditFormData>(getDefaultClientEditFormData());
+  const [isSavingClient, setIsSavingClient] = useState(false);
+  const [editClientError, setEditClientError] = useState("");
+  const [backgroundDraft, setBackgroundDraft] = useState("");
+  const [isSavingBackground, setIsSavingBackground] = useState(false);
+
   const [smsRecipients, setSmsRecipients] = useState<{name: string, phone: string}[]>([{name: "Main Office", phone: currentClient.phone !== "---" ? currentClient.phone : ""}]);
 
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
@@ -167,6 +230,223 @@ export default function ClientDetailsPage() {
     setIsAddTaskModalOpen(false);
     setNewTaskForm({ title: '', dueDate: '', assignee: '' });
   };
+  const openEditClientModal = () => {
+    setEditClientData({
+      name: currentClient.name,
+      email: currentClient.email !== "---" ? currentClient.email : "",
+      phone: currentClient.phone !== "---" ? formatClientPhoneNumber(currentClient.phone) : "",
+      industry: currentClient.industry || "Mortgage Client",
+      status: normalizeClientStatus(currentClient.status),
+      background: currentClient.background || "",
+      photoUrl: currentClient.photoUrl || "",
+      photoDataUrl: "",
+      photoFileName: "",
+      removePhoto: false,
+      currentAddress: currentClient.currentAddress || "",
+      loanPurpose: currentClient.loanPurpose || "Purchase",
+      propertyType: currentClient.propertyType || "Single Family",
+      estimatedValue: currentClient.estimatedValue || "",
+      downPayment: currentClient.downPayment || "",
+      targetLoanAmount: currentClient.targetLoanAmount || "",
+    });
+    setIsEditorEnabled(Boolean(currentClient.background?.trim()));
+    setEditClientError("");
+    setIsEditClientModalOpen(true);
+  };
+
+  const openEditBackgroundModal = () => {
+    setBackgroundDraft(currentClient.background || "");
+    setIsEditBackgroundModalOpen(true);
+  };
+
+  const handleSaveBackground = async () => {
+    const normalizedBackground = normalizeRichTextValue(backgroundDraft);
+
+    if (getRichTextPlainText(normalizedBackground).length > 5000) {
+      toast({
+        title: "Please check the background",
+        description: "Background must be 5,000 characters or less.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsSavingBackground(true);
+      const response = await fetch(`/api/admin/clients/${clientId}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ background: normalizedBackground }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => null);
+        throw new Error(errorBody?.message || "Unable to update background");
+      }
+
+      const data = (await response.json()) as { client: ClientDetailsApiItem };
+      setLiveClient((prev) => ({
+        ...(prev || currentClient),
+        ...data.client,
+        phone: data.client.phone || "---",
+        email: data.client.email || "---",
+        status: normalizeClientStatus(data.client.status),
+        assigned: data.client.assigned || "Greg Wynn",
+        background: data.client.background || "",
+      }));
+      setIsEditBackgroundModalOpen(false);
+      toast({
+        title: "Background updated",
+        description: "Client background was saved successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Couldn’t update background",
+        description: getFriendlyClientSaveError(error),
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingBackground(false);
+    }
+  };
+
+  const handleSaveClientChanges = async () => {
+    const validationMessage = validateClientEditForm(editClientData);
+    if (validationMessage) {
+      setEditClientError(validationMessage);
+      toast({
+        title: "Please check the form",
+        description: validationMessage,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsSavingClient(true);
+      setEditClientError("");
+
+      const normalizedBackground = normalizeRichTextValue(editClientData.background);
+
+      const response = await fetch(`/api/admin/clients/${clientId}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...editClientData,
+          name: editClientData.name.trim(),
+          email: editClientData.email.trim(),
+          phone: formatClientPhoneNumber(editClientData.phone),
+          background: normalizedBackground,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => null);
+        throw new Error(errorBody?.message || "Unable to update client");
+      }
+
+      const data = (await response.json()) as { client: ClientDetailsApiItem };
+      const updatedClient = {
+        ...data.client,
+        phone: data.client.phone || "---",
+        email: data.client.email || "---",
+        status: normalizeClientStatus(data.client.status),
+        assigned: data.client.assigned || "Greg Wynn",
+      };
+
+      setLiveClient(updatedClient);
+      setIsEditClientModalOpen(false);
+      toast({
+        title: "Client profile updated",
+        description: `${updatedClient.name} was saved successfully.`,
+      });
+    } catch (error) {
+      const message = getFriendlyClientSaveError(error);
+      setEditClientError(message);
+      toast({
+        title: "Couldn’t update client",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingClient(false);
+    }
+  };
+
+
+  const openChangeClientPasswordModal = () => {
+    setClientPasswordForm({ newPassword: '', confirmPassword: '', sendPasswordEmail: false });
+    setShowClientPassword(false);
+    setClientPasswordError('');
+    setIsChangeClientPasswordModalOpen(true);
+  };
+
+  const closeChangeClientPasswordModal = () => {
+    if (isChangingClientPassword) return;
+    setIsChangeClientPasswordModalOpen(false);
+    setClientPasswordForm({ newPassword: '', confirmPassword: '', sendPasswordEmail: false });
+    setShowClientPassword(false);
+    setClientPasswordError('');
+  };
+
+  const handleChangeClientPassword = async () => {
+    if (!clientPasswordForm.newPassword.trim()) {
+      setClientPasswordError('Please enter a new password.');
+      return;
+    }
+
+    if (clientPasswordForm.newPassword.length < 8) {
+      setClientPasswordError('Password must be at least 8 characters.');
+      return;
+    }
+
+    if (clientPasswordForm.newPassword !== clientPasswordForm.confirmPassword) {
+      setClientPasswordError('Passwords do not match.');
+      return;
+    }
+
+    try {
+      setIsChangingClientPassword(true);
+      setClientPasswordError('');
+
+      const response = await fetch(`/api/admin/clients/${clientId}/password`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: clientPasswordForm.newPassword, sendPasswordEmail: clientPasswordForm.sendPasswordEmail }),
+      });
+
+      const result = await response.json().catch(() => null) as { message?: string; passwordEmailSent?: boolean; warning?: string } | null;
+
+      if (!response.ok) {
+        throw new Error(result?.message || result?.warning || 'Unable to update client password');
+      }
+
+      toast({
+        title: result?.warning ? 'Password updated with warning' : 'Password updated',
+        description: result?.warning || (clientPasswordForm.sendPasswordEmail
+          ? `Password updated and emailed to ${currentClient.email}.`
+          : `${currentClient.name} can now sign in with the new password.`),
+        variant: result?.warning ? 'destructive' : undefined,
+      });
+      setIsChangeClientPasswordModalOpen(false);
+      setClientPasswordForm({ newPassword: '', confirmPassword: '', sendPasswordEmail: false });
+      setShowClientPassword(false);
+      setClientPasswordError('');
+    } catch (error) {
+      const message = getFriendlyClientSaveError(error);
+      setClientPasswordError(message);
+      toast({
+        title: 'Couldn’t update password',
+        description: message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsChangingClientPassword(false);
+    }
+  };
   const [isEditClientModalOpen, setIsEditClientModalOpen] = useState(false);
   const [isBusinessDiscoveryModalOpen, setIsBusinessDiscoveryModalOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
@@ -213,7 +493,11 @@ export default function ClientDetailsPage() {
   
   const [checkedComplianceItems, setCheckedComplianceItems] = useState<Record<number, boolean>>({});
   const [isGorillaAppsExpanded, setIsGorillaAppsExpanded] = useState(false);
-  const [isEditContactModalOpen, setIsEditContactModalOpen] = useState(false);
+  const [isChangeClientPasswordModalOpen, setIsChangeClientPasswordModalOpen] = useState(false);
+  const [clientPasswordForm, setClientPasswordForm] = useState({ newPassword: '', confirmPassword: '', sendPasswordEmail: false });
+  const [showClientPassword, setShowClientPassword] = useState(false);
+  const [clientPasswordError, setClientPasswordError] = useState('');
+  const [isChangingClientPassword, setIsChangingClientPassword] = useState(false);
   const [isEditWebsiteModalOpen, setIsEditWebsiteModalOpen] = useState(false);
   const [isEditGeneralInfoModalOpen, setIsEditGeneralInfoModalOpen] = useState(false);
 
@@ -504,7 +788,13 @@ export default function ClientDetailsPage() {
     newLinks[index][field] = value;
     setBusinessLinks(newLinks);
   };
-  const [selectedAssignee, setSelectedAssignee] = useState('Maria Christina (maria@pinkgorilla...)');
+  const [selectedAssignee, setSelectedAssignee] = useState('Greg Wynn');
+
+  useEffect(() => {
+    if (liveClient?.assigned) {
+      setSelectedAssignee(liveClient.assigned);
+    }
+  }, [liveClient?.assigned]);
   
   const togglePlanExpansion = (planName: string) => {
     setExpandedPlans(prev => ({
@@ -657,20 +947,29 @@ export default function ClientDetailsPage() {
                       <span className="font-bold text-white text-[15px]">Client Details</span>
                     </div>
                     <button 
-                      onClick={() => setIsEditClientModalOpen(true)}
+                      onClick={openEditClientModal}
                       className="text-indigo-400 text-[13px] font-bold flex items-center gap-1 hover:text-indigo-300 bg-indigo-500/10 px-3 py-1.5 rounded-md transition-colors"
                     >
                       <Edit2 className="w-3.5 h-3.5" /> Edit
                     </button>
                   </div>
                   <div className="p-5 space-y-5">
-                    <div>
-                      <h3 className="text-[18px] font-bold text-white mb-2">{currentClient.name}</h3>
-                      <span className="inline-block px-3 py-1 bg-slate-800 text-slate-300 font-medium text-[12px] rounded-md border-slate-600">No communication yet</span>
+                    <div className="flex items-start gap-4">
+                      <div className="w-16 h-16 rounded-xl bg-slate-950 border border-slate-600 flex items-center justify-center overflow-hidden shrink-0">
+                        {currentClient.photoUrl ? (
+                          <img src={currentClient.photoUrl} alt={`${currentClient.name} photo`} className="h-full w-full object-cover" />
+                        ) : (
+                          <User className="w-7 h-7 text-slate-500" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="text-[18px] font-bold text-white mb-2 break-words">{currentClient.name}</h3>
+                        <span className="inline-block px-3 py-1 bg-slate-800 text-slate-300 font-medium text-[12px] rounded-md border-slate-600">No communication yet</span>
+                      </div>
                     </div>
                     <div className="flex items-center gap-3 bg-slate-950 p-3 rounded-lg border-slate-600/50">
                       <span className="text-[13px] text-slate-400 font-medium w-24">Status:</span>
-                      <span className="inline-flex items-center justify-center px-3 py-1 rounded-md text-[12px] font-bold text-amber-500 border border-amber-500/30 bg-amber-500/10 shadow-sm">Brand New</span>
+                      <span className="inline-flex items-center justify-center px-3 py-1 rounded-md text-[12px] font-bold text-amber-500 border border-amber-500/30 bg-amber-500/10 shadow-sm">{currentClient.status}</span>
                     </div>
                     <div className="flex flex-col gap-2 relative bg-slate-950 p-3 rounded-lg border-slate-600/50">
                       <span className="text-[13px] text-slate-400 font-medium">Assigned to:</span>
@@ -705,121 +1004,53 @@ export default function ClientDetailsPage() {
                   </div>
                 </div>
 
-                {/* Contact Information & Employees */}
-                <div className="bg-slate-800 rounded-xl border-slate-600 border-t-cyan-500 border-t-2 shadow-lg shadow-sm overflow-hidden flex flex-col max-h-[600px]">
+                {/* Contact Information */}
+                <div className="bg-slate-800 rounded-xl border-slate-600 border-t-cyan-500 border-t-2 shadow-lg shadow-sm overflow-hidden flex flex-col">
                   <div className="p-4 bg-cyan-500/5 border-b border-cyan-500/10 flex justify-between items-center sticky top-0 z-10 shrink-0">
                     <div className="flex items-center gap-2">
                       <Users className="w-5 h-5 text-cyan-400" />
                       <span className="font-bold text-white text-[15px]">Contact</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button 
-                        onClick={() => setIsEditContactModalOpen(true)}
-                        className="text-cyan-400 text-[13px] font-bold flex items-center gap-1 hover:text-cyan-300 bg-cyan-500/10 px-3 py-1.5 rounded-md transition-colors"
-                      >
-                        <Edit2 className="w-3.5 h-3.5" /> Edit Main
-                      </button>
-                      <button 
-                        onClick={() => setIsAddEmployeeModalOpen(true)}
-                        className="w-8 h-8 rounded-md bg-cyan-500 hover:bg-cyan-600 flex items-center justify-center text-white transition-colors shadow-sm"
-                        title="Add Team Member"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
+                    <button 
+                      onClick={openChangeClientPasswordModal}
+                      className="text-cyan-400 text-[13px] font-bold flex items-center gap-1 hover:text-cyan-300 bg-cyan-500/10 px-3 py-1.5 rounded-md transition-colors"
+                    >
+                      <Lock className="w-3.5 h-3.5" /> Change Password
+                    </button>
                   </div>
                   
-                  <div className="p-5 overflow-y-auto custom-scrollbar flex-1 space-y-6">
-                    {/* Primary Contact Info */}
-                    <div className="space-y-3">
-                      <h4 className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider pl-1">Primary Contact</h4>
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-3 p-3 bg-slate-900 border-slate-600 rounded-lg hover:border border-cyan-500/30 transition-colors">
-                          <div className="w-8 h-8 rounded-md bg-cyan-500/10 flex items-center justify-center shrink-0">
-                            <Phone className="w-4 h-4 text-cyan-400" />
-                          </div>
-                          <span className="text-[14px] font-medium text-white">+1 973 979 7987</span>
-                        </div>
-                        <div className="flex items-center gap-3 p-3 bg-slate-900 border-slate-600 rounded-lg hover:border border-cyan-500/30 transition-colors">
-                          <div className="w-8 h-8 rounded-md bg-cyan-500/10 flex items-center justify-center shrink-0">
-                            <Mail className="w-4 h-4 text-cyan-400" />
-                          </div>
-                          <span className="text-[14px] font-medium text-slate-400">---</span>
-                        </div>
-                        <div className="flex items-center gap-3 p-3 bg-slate-900 border-slate-600 rounded-lg hover:border border-cyan-500/30 transition-colors">
-                          <div className="w-8 h-8 rounded-md bg-cyan-500/10 flex items-center justify-center shrink-0">
-                            <MapPin className="w-4 h-4 text-cyan-400" />
-                          </div>
-                          <span className="text-[14px] font-medium text-slate-400">---</span>
-                        </div>
+                  <div className="p-5 space-y-3">
+                    <div className="flex items-center gap-3 p-3 bg-slate-900 border-slate-600 rounded-lg hover:border border-cyan-500/30 transition-colors">
+                      <div className="w-8 h-8 rounded-md bg-cyan-500/10 flex items-center justify-center shrink-0">
+                        <Phone className="w-4 h-4 text-cyan-400" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider">Phone</p>
+                        <p className={`text-[14px] font-medium truncate ${currentClient.phone && currentClient.phone !== '---' ? 'text-white' : 'text-slate-500'}`}>
+                          {currentClient.phone && currentClient.phone !== '---' ? currentClient.phone : 'No phone number added'}
+                        </p>
                       </div>
                     </div>
-
-                    {/* Team Members */}
-                    <div className="space-y-3 pt-2 border-t border-slate-800">
-                      <h4 className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider pl-1">Team Members ({employees.length})</h4>
-                      <div className="space-y-3">
-                        {employees.map((employee, index) => (
-                          <div key={employee.id} className="bg-slate-900 border-slate-600 rounded-lg p-4 relative group hover:border border-cyan-500/30 transition-colors">
-                            <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900/90 p-1 rounded-md border-slate-600">
-                              <button 
-                                onClick={() => {
-                                  setEditingEmployee({
-                                    ...employee,
-                                    phoneCode: employee.phone.split(' ')[0] || '+1',
-                                    phoneNumber: employee.phone.split(' ').slice(1).join(' ') || ''
-                                  });
-                                  setIsEditEmployeeModalOpen(true);
-                                }}
-                                className="p-1.5 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded transition-colors"
-                                title="Edit Employee"
-                              >
-                                <Edit2 className="w-3.5 h-3.5" />
-                              </button>
-                              <button 
-                                onClick={() => {
-                                  setUpdatingPasswordEmployee(employee);
-                                  setIsUpdatePasswordModalOpen(true);
-                                }}
-                                className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors"
-                                title="Update Password"
-                              >
-                                <Lock className="w-3.5 h-3.5" />
-                              </button>
-                              <button 
-                                onClick={() => {
-                                  setDeletingEmployee(employee);
-                                  setIsDeleteEmployeeModalOpen(true);
-                                }}
-                                className="p-1.5 text-slate-400 hover:text-blue-400 hover:bg-slate-800 rounded transition-colors"
-                                title="Delete Employee"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                            <div className="space-y-2.5">
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-[14px] shrink-0 border border-cyan-500/30">
-                                  {employee.firstName.charAt(0)}{employee.lastName.charAt(0)}
-                                </div>
-                                <div>
-                                  <span className="font-bold text-white block text-[14px]">{employee.firstName} {employee.lastName}</span>
-                                  <span className="text-cyan-400 text-[12px] font-medium">{employee.designation}</span>
-                                </div>
-                              </div>
-                              <div className="pt-2 border-t border-slate-600/50 space-y-2">
-                                <div className="flex items-center gap-2 text-[12px]">
-                                  <Mail className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                                  <span className="text-slate-300 truncate" title={employee.email}>{employee.email}</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-[12px]">
-                                  <Phone className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                                  <span className="text-slate-300">{employee.phone}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
+                    <div className="flex items-center gap-3 p-3 bg-slate-900 border-slate-600 rounded-lg hover:border border-cyan-500/30 transition-colors">
+                      <div className="w-8 h-8 rounded-md bg-cyan-500/10 flex items-center justify-center shrink-0">
+                        <Mail className="w-4 h-4 text-cyan-400" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider">Email</p>
+                        <p className={`text-[14px] font-medium truncate ${currentClient.email && currentClient.email !== '---' ? 'text-white' : 'text-slate-500'}`} title={currentClient.email && currentClient.email !== '---' ? currentClient.email : undefined}>
+                          {currentClient.email && currentClient.email !== '---' ? currentClient.email : 'No email address added'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-slate-900 border-slate-600 rounded-lg hover:border border-cyan-500/30 transition-colors">
+                      <div className="w-8 h-8 rounded-md bg-cyan-500/10 flex items-center justify-center shrink-0">
+                        <MapPin className="w-4 h-4 text-cyan-400" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider">Address</p>
+                        <p className={`text-[14px] font-medium whitespace-pre-wrap break-words ${currentClient.currentAddress?.trim() ? 'text-white' : 'text-slate-500'}`}>
+                          {currentClient.currentAddress?.trim() || 'No address added'}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -833,7 +1064,7 @@ export default function ClientDetailsPage() {
                       <span className="font-bold text-white text-[15px]">Background</span>
                     </div>
                     <button 
-                      onClick={() => setIsEditBackgroundModalOpen(true)}
+                      onClick={openEditBackgroundModal}
                       className="text-violet-400 text-[13px] font-bold flex items-center gap-1 hover:text-violet-300 bg-violet-500/10 px-3 py-1.5 rounded-md transition-colors"
                     >
                       <Edit2 className="w-3.5 h-3.5" /> Edit
@@ -841,9 +1072,22 @@ export default function ClientDetailsPage() {
                   </div>
                   <div className="p-5">
                     <div className="bg-slate-900 border-slate-600 rounded-lg p-3">
-                      <a href="https://www.yelp.com/biz/luciene-santanna-takagi-psyd-newark?osq=Psychologists" target="_blank" rel="noopener noreferrer" className="text-[13px] font-medium text-violet-400 hover:text-violet-300 hover:underline break-all block">
-                        https://www.yelp.com/biz/luciene-santanna-takagi-psyd-newark?osq=Psychologists
-                      </a>
+                      {currentBackground ? (
+                        hasRichTextHtml(currentBackground) ? (
+                          <div
+                            className="text-[13px] font-medium text-slate-300 break-words [&_a]:text-violet-400 [&_a]:underline [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:my-1 [&_p]:my-2 [&_img]:max-w-full [&_img]:rounded-lg [&_table]:border-collapse [&_td]:border [&_td]:border-slate-600 [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:border-slate-600 [&_th]:px-2 [&_th]:py-1"
+                            dangerouslySetInnerHTML={{ __html: sanitizeRichTextHtml(currentBackground) }}
+                          />
+                        ) : isLikelyUrl(currentBackground) ? (
+                          <a href={currentBackground} target="_blank" rel="noopener noreferrer" className="text-[13px] font-medium text-violet-400 hover:text-violet-300 hover:underline break-all block">
+                            {currentBackground}
+                          </a>
+                        ) : (
+                          <p className="text-[13px] font-medium text-slate-300 whitespace-pre-wrap break-words">{currentBackground}</p>
+                        )
+                      ) : (
+                        <p className="text-[13px] font-medium text-slate-500">No background added yet.</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -865,29 +1109,6 @@ export default function ClientDetailsPage() {
                       <button onClick={() => setIsBusinessDiscoveryModalOpen(true)} className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-md text-[13px] font-bold transition-colors flex items-center justify-center gap-2 shadow-sm">
                         <Plus className="w-4 h-4" /> Add Discovery Links
                       </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Background */}
-                <div className="bg-slate-800 rounded-xl border-slate-600 border-t-violet-500 border-t-2 shadow-lg shadow-sm overflow-hidden">
-                  <div className="p-4 bg-violet-500/5 border-b border-violet-500/10 flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <ImageIcon className="w-5 h-5 text-violet-400" />
-                      <span className="font-bold text-white text-[15px]">Background</span>
-                    </div>
-                    <button 
-                      onClick={() => setIsEditBackgroundModalOpen(true)}
-                      className="text-violet-400 text-[13px] font-bold flex items-center gap-1 hover:text-violet-300 bg-violet-500/10 px-3 py-1.5 rounded-md transition-colors"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" /> Edit
-                    </button>
-                  </div>
-                  <div className="p-5">
-                    <div className="bg-slate-900 border-slate-600 rounded-lg p-3">
-                      <a href="https://www.yelp.com/biz/luciene-santanna-takagi-psyd-newark?osq=Psychologists" target="_blank" rel="noopener noreferrer" className="text-[13px] font-medium text-violet-400 hover:text-violet-300 hover:underline break-all block">
-                        https://www.yelp.com/biz/luciene-santanna-takagi-psyd-newark?osq=Psychologists
-                      </a>
                     </div>
                   </div>
                 </div>
@@ -1394,8 +1615,12 @@ export default function ClientDetailsPage() {
                               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 hidden rounded-full pointer-events-none"></div>
                               
                               <div className="text-center mb-8 relative z-10">
-                                <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3 border-slate-600">
-                                  <User className="w-8 h-8 text-slate-400" />
+                                <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3 border-slate-600 overflow-hidden">
+                                  {currentClient.photoUrl ? (
+                                    <img src={currentClient.photoUrl} alt={`${currentClient.name} photo`} className="h-full w-full object-cover" />
+                                  ) : (
+                                    <User className="w-8 h-8 text-slate-400" />
+                                  )}
                                 </div>
                                 <h3 className="text-xl font-bold text-white mb-1">{currentClient.name}</h3>
                                 
@@ -2111,72 +2336,134 @@ export default function ClientDetailsPage() {
           </div>
         </div>
       )}
-      {/* Edit Contact Information Modal */}
-      {isEditContactModalOpen && (
+      {/* Change Client Password Modal */}
+      {isChangeClientPasswordModalOpen && (
         <div 
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setIsEditContactModalOpen(false)}
+          onClick={closeChangeClientPasswordModal}
         >
           <div 
-            className="bg-slate-900 border-slate-600 rounded-2xl w-full max-w-xl overflow-hidden flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+            className="bg-slate-900 border-slate-600 rounded-2xl w-full max-w-md overflow-hidden flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-950">
               <div className="flex items-center gap-2">
-                <Phone className="w-5 h-5 text-cyan-400" />
-                <h2 className="text-xl font-bold text-white">Edit Contact Information</h2>
+                <Lock className="w-5 h-5 text-cyan-400" />
+                <h2 className="text-xl font-bold text-white">Change Password</h2>
               </div>
               <button 
-                onClick={() => setIsEditContactModalOpen(false)}
-                className="text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-lg transition-colors"
+                onClick={closeChangeClientPasswordModal}
+                disabled={isChangingClientPassword}
+                className="text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-60"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-6 space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Primary Phone Number</label>
-                <div className="flex">
-                  <select className="px-3 py-2.5 bg-slate-950 border border-slate-600 text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500 border-r-0 rounded-l-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all w-20">
-                    <option>+1</option>
-                  </select>
-                  <input 
-                    type="tel" 
-                    defaultValue="973 979 7987"
-                    className="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-600 text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500 rounded-r-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                  />
+              {clientPasswordError && (
+                <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                  {clientPasswordError}
                 </div>
-              </div>
+              )}
+
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Primary Email</label>
-                <input 
-                  type="email" 
-                  placeholder="contact@company.com"
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all placeholder:text-slate-500" 
-                />
+                <label className="block text-sm font-bold text-slate-200 mb-2">New Password*</label>
+                <div className="relative">
+                  <input 
+                    type={showClientPassword ? "text" : "password"}
+                    value={clientPasswordForm.newPassword}
+                    onChange={(e) => {
+                      setClientPasswordForm({ ...clientPasswordForm, newPassword: e.target.value });
+                      setClientPasswordError('');
+                    }}
+                    placeholder="Enter new password"
+                    autoComplete="new-password"
+                    className="w-full px-4 py-2.5 pr-11 bg-slate-950 border border-slate-600 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder:text-slate-500" 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowClientPassword((value) => !value)}
+                    disabled={isChangingClientPassword}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors disabled:opacity-50"
+                    aria-label={showClientPassword ? "Hide password" : "Show password"}
+                  >
+                    {showClientPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {clientPasswordForm.newPassword && clientPasswordForm.newPassword.length < 8 && (
+                  <p className="text-red-300 text-[11px] mt-1">Password must be at least 8 characters.</p>
+                )}
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Office Address</label>
-                <textarea 
-                  placeholder="123 Business Ave, Suite 100&#10;City, State 12345"
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all placeholder:text-slate-500 min-h-[80px] resize-none" 
-                ></textarea>
+                <label className="block text-sm font-bold text-slate-200 mb-2">Confirm Password*</label>
+                <div className="relative">
+                  <input 
+                    type={showClientPassword ? "text" : "password"}
+                    value={clientPasswordForm.confirmPassword}
+                    onChange={(e) => {
+                      setClientPasswordForm({ ...clientPasswordForm, confirmPassword: e.target.value });
+                      setClientPasswordError('');
+                    }}
+                    placeholder="Confirm new password"
+                    autoComplete="new-password"
+                    className={`w-full px-4 py-2.5 pr-11 bg-slate-950 border rounded-xl text-sm text-white focus:outline-none focus:ring-1 transition-all placeholder:text-slate-500 ${clientPasswordForm.confirmPassword && clientPasswordForm.newPassword !== clientPasswordForm.confirmPassword ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500' : 'border-slate-600 focus:border-cyan-500 focus:ring-cyan-500'}`} 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowClientPassword((value) => !value)}
+                    disabled={isChangingClientPassword}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors disabled:opacity-50"
+                    aria-label={showClientPassword ? "Hide password" : "Show password"}
+                  >
+                    {showClientPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {clientPasswordForm.confirmPassword && clientPasswordForm.newPassword !== clientPasswordForm.confirmPassword && (
+                  <p className="text-red-300 text-[11px] mt-1">Passwords do not match.</p>
+                )}
               </div>
+
+              <button
+                type="button"
+                onClick={() => setClientPasswordForm({ ...clientPasswordForm, sendPasswordEmail: !clientPasswordForm.sendPasswordEmail })}
+                className={`w-full rounded-xl border px-4 py-3 text-left transition-colors ${
+                  clientPasswordForm.sendPasswordEmail
+                    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-100"
+                    : "border-slate-700 bg-slate-950 text-slate-300 hover:border-slate-500"
+                }`}
+                aria-pressed={clientPasswordForm.sendPasswordEmail}
+              >
+                <span className="flex items-center justify-between gap-4">
+                  <span className="flex items-center gap-2 font-semibold">
+                    <MailCheck className="w-4 h-4" />
+                    Send password by mail
+                  </span>
+                  <span className={`relative h-6 w-11 rounded-full transition-colors ${clientPasswordForm.sendPasswordEmail ? "bg-emerald-500" : "bg-slate-700"}`}>
+                    <span className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${clientPasswordForm.sendPasswordEmail ? "translate-x-6" : "translate-x-1"}`} />
+                  </span>
+                </span>
+                <span className="mt-2 block text-xs text-slate-400">
+                  When enabled, the new password will be emailed to the client.
+                </span>
+              </button>
             </div>
 
             <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/90 flex justify-end gap-3">
               <button 
-                onClick={() => setIsEditContactModalOpen(false)}
-                className="px-6 py-2.5 border-slate-600 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl font-medium transition-colors"
+                onClick={closeChangeClientPasswordModal}
+                disabled={isChangingClientPassword}
+                className="px-6 py-2.5 border-slate-600 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl font-medium transition-colors disabled:opacity-60"
               >
                 Cancel
               </button>
               <button 
-                onClick={() => setIsEditContactModalOpen(false)}
-                className="px-6 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-medium shadow-sm hover:shadow-sm transition-all"
+                onClick={handleChangeClientPassword}
+                disabled={isChangingClientPassword || !clientPasswordForm.newPassword || clientPasswordForm.newPassword.length < 8 || clientPasswordForm.newPassword !== clientPasswordForm.confirmPassword}
+                className="px-6 py-2.5 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-60 disabled:hover:bg-cyan-600 text-white rounded-xl font-medium shadow-sm hover:shadow-sm transition-all"
               >
-                Save Changes
+                {isChangingClientPassword ? 'Saving...' : 'Save Password'}
               </button>
             </div>
           </div>
@@ -2383,267 +2670,20 @@ export default function ClientDetailsPage() {
         </div>
       )}
 
-      {/* Edit Background Modal */}
-      {isEditBackgroundModalOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setIsEditBackgroundModalOpen(false)}
-        >
-          <div 
-            className="bg-slate-900 border-slate-600 rounded-2xl w-full max-w-2xl overflow-hidden flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-950">
-              <div className="flex items-center gap-2">
-                <ImageIcon className="w-5 h-5 text-violet-400" />
-                <h2 className="text-xl font-bold text-white">Edit Background</h2>
-              </div>
-              <button 
-                onClick={() => setIsEditBackgroundModalOpen(false)}
-                className="text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-6">
-              <div className="border-slate-600 rounded-xl overflow-hidden bg-slate-950 focus-within:border-violet-500/50 focus-within:ring-1 focus-within:ring-violet-500/50 transition-all">
-                <div className="bg-slate-800/80 border-b border-slate-600 p-2 flex items-center gap-1 flex-wrap">
-                  <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><Bold className="w-4 h-4" /></button>
-                  <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><LinkIcon className="w-4 h-4" /></button>
-                  <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><List className="w-4 h-4" /></button>
-                  <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><AlignLeft className="w-4 h-4" /></button>
-                  <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><ImageIcon className="w-4 h-4" /></button>
-                  <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><Video className="w-4 h-4" /></button>
-                </div>
-                <textarea 
-                  className="w-full h-64 bg-slate-900/20 p-4 text-sm text-white focus:outline-none resize-none placeholder:text-slate-500"
-                  placeholder="Enter client background information..."
-                  defaultValue="https://www.yelp.com/biz/luciene-santanna-takagi-psyd-newark?osq=Psychologists"
-                ></textarea>
-              </div>
-            </div>
-
-            <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/90 flex justify-end gap-3">
-              <button 
-                onClick={() => setIsEditBackgroundModalOpen(false)}
-                className="px-6 py-2.5 border-slate-600 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl font-medium transition-colors"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={() => setIsEditBackgroundModalOpen(false)}
-                className="px-6 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-medium shadow-sm hover:shadow-sm transition-all"
-              >
-                Save Background
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Client Modal */}
-      {isEditClientModalOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setIsEditClientModalOpen(false)}
-        >
-          <div 
-            className="bg-slate-900 border-slate-600 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-950">
-              <h2 className="text-xl font-bold text-white">Edit Client Profile</h2>
-              <button 
-                onClick={() => setIsEditClientModalOpen(false)}
-                className="text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-8">
-              
-              {/* Client Details Section */}
-              <section className="space-y-6">
-                <h3 className="text-lg font-bold text-white tracking-tight border-b border-slate-800 pb-2">Client Details</h3>
-                
-                <div className="space-y-4">
-                  {/* Photo Upload */}
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Client Photo</label>
-                    <div className="w-32 h-32 bg-slate-950 border border-slate-600 rounded-xl text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500 flex items-center justify-center mb-2">
-                      <User className="w-8 h-8 text-slate-500" />
-                    </div>
-                    <button className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-sm font-medium text-white rounded-lg transition-colors border-slate-600">
-                      Upload
-                    </button>
-                  </div>
-
-                  {/* Form Grid 1 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Client Name*</label>
-                      <input 
-                        type="text" 
-                        defaultValue={currentClient.name}
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
-                      <input 
-                        type="email" 
-                        defaultValue={currentClient.email !== '---' ? currentClient.email : ''}
-                        className="w-full px-4 py-2.5 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-sm text-indigo-300 focus:outline-none transition-all placeholder:text-indigo-400/50" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Phone Number*</label>
-                      <div className="flex">
-                        <select className="px-3 py-2.5 bg-slate-950 border border-slate-600 text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500 border-r-0 rounded-l-xl text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all w-20">
-                          <option>+1</option>
-                        </select>
-                        <input 
-                          type="tel" 
-                          defaultValue={currentClient.phone !== '---' ? currentClient.phone.replace('+1 ', '') : ''}
-                          className="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-600 text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500 rounded-r-xl text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500" 
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Form Grid 2 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Current Address</label>
-                      <input 
-                        type="text" 
-                        defaultValue="123 Main St, Anytown, CA 90210"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 rounded-xl text-sm text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all placeholder:text-slate-500" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Status</label>
-                      <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 rounded-xl text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500 text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                        <option>Brand New</option>
-                        <option>Pre-Approved</option>
-                        <option>In Processing</option>
-                        <option>Clear to Close</option>
-                        <option>Funded</option>
-                        <option>Lost/Dead</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              {/* Loan Goals Section */}
-              <section className="space-y-6">
-                <h3 className="text-lg font-bold text-white tracking-tight border-b border-slate-800 pb-2">Loan Goals</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Loan Purpose</label>
-                    <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 rounded-xl text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500 text-sm text-white focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                      <option>Purchase</option>
-                      <option>Rate/Term Refinance</option>
-                      <option>Cash-Out Refinance</option>
-                      <option>Home Equity Loan</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Property Type</label>
-                    <select className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 rounded-xl text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500 text-sm text-white focus:outline-none focus:border-cyan-500/50 transition-all appearance-none">
-                      <option>Single Family</option>
-                      <option>Condominium</option>
-                      <option>Townhouse</option>
-                      <option>Multi-Family (2-4 Units)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Estimated Value / Purchase Price</label>
-                    <input 
-                      type="text" 
-                      placeholder="$"
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 rounded-xl text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500 text-sm text-white focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Down Payment / Equity</label>
-                    <input 
-                      type="text" 
-                      placeholder="$ or %"
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 rounded-xl text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500 text-sm text-white focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Target Loan Amount</label>
-                    <input 
-                      type="text" 
-                      placeholder="$"
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-600 rounded-xl text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500 text-sm text-white focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500" 
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4 border-t border-slate-800 pt-6">
-                  <span className="text-sm font-medium text-slate-300">Background</span>
-                  <button 
-                    onClick={() => setIsEditorEnabled(!isEditorEnabled)}
-                    className={`w-11 h-6 rounded-full relative transition-colors focus:outline-none cursor-pointer ${isEditorEnabled ? 'bg-purple-600' : 'bg-slate-700'}`}
-                  >
-                    <span className={`absolute top-1 w-4 h-4 rounded-full transition-transform shadow-sm ${isEditorEnabled ? 'left-[22px] bg-white' : 'left-1 bg-slate-400'}`}></span>
-                  </button>
-                </div>
-
-                {isEditorEnabled && (
-                  <div className="animate-in fade-in slide-in-from-top-4 duration-300 border-slate-600 rounded-xl overflow-hidden bg-slate-950">
-                    <div className="bg-slate-800/80 border-b border-slate-600 p-2 flex items-center gap-1 flex-wrap">
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><Bold className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><LinkIcon className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><List className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><AlignLeft className="w-4 h-4" /></button>
-                      <button className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><ImageIcon className="w-4 h-4" /></button>
-                  <div className="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded transition-colors"><Video className="w-4 h-4" /></div>
-                </div>
-                <textarea 
-                  className="w-full h-48 bg-slate-400/20 p-4 text-sm text-white focus:outline-none resize-none placeholder:text-slate-500"
-                  placeholder="Enter client background information..."
-                ></textarea>
-                <div className="bg-slate-800/80 border-t border-slate-600 p-3 flex justify-end">
-                  <button className="bg-purple-600 hover:bg-purple-500 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors shadow-sm">
-                    Save Notes
-                  </button>
-                </div>
-              </div>
-            )}
-          </section>
-        </div>
-        
-        {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/90 flex justify-end gap-3">
-              <button 
-                onClick={() => setIsEditClientModalOpen(false)}
-                className="px-6 py-2.5 border-slate-600 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl font-medium transition-colors"
-              >
-                Close
-              </button>
-              <button 
-                onClick={() => setIsEditClientModalOpen(false)}
-                className="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-medium shadow-sm hover:shadow-sm transition-all"
-              >
-                Save Changes
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <EditClientProfileModal
+        isOpen={isEditClientModalOpen}
+        clientData={editClientData}
+        setClientData={setEditClientData}
+        isSaving={isSavingClient}
+        errorMessage={editClientError}
+        isEditorEnabled={isEditorEnabled}
+        setIsEditorEnabled={setIsEditorEnabled}
+        onClose={() => {
+          setIsEditClientModalOpen(false);
+          setEditClientError("");
+        }}
+        onSave={handleSaveClientChanges}
+      />
 
       {/* Business Discovery Modal */}
       {isBusinessDiscoveryModalOpen && (
@@ -3682,41 +3722,15 @@ export default function ClientDetailsPage() {
             {/* Body */}
             <div className="p-6">
               <div className="mb-4">
-                <label className="block text-[13px] font-medium text-slate-300 mb-2">Background</label>
-                
-                {/* Mock Rich Text Editor */}
-                <div className="border-slate-600 rounded-lg overflow-hidden bg-slate-950">
-                  {/* Toolbar */}
-                  <div className="flex flex-wrap items-center gap-1 p-2 border-b border-slate-600 text-slate-400">
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><span className="font-bold font-serif px-1">B</span></button>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></button>
-                    <div className="w-[1px] h-4 bg-slate-700 mx-1"></div>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></button>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><polyline points="3 6 4 7 6 5"></polyline><polyline points="3 12 4 13 6 11"></polyline><polyline points="3 18 4 19 6 17"></polyline></svg></button>
-                    <div className="w-[1px] h-4 bg-slate-700 mx-1"></div>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></button>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></button>
-                    <div className="w-[1px] h-4 bg-slate-700 mx-1"></div>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="21" y1="6" x2="3" y2="6"></line><line x1="15" y1="12" x2="3" y2="12"></line><line x1="17" y1="18" x2="3" y2="18"></line></svg></button>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="12" x2="3" y2="12"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg></button>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="21" y1="6" x2="3" y2="6"></line><line x1="19" y1="12" x2="5" y2="12"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg></button>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="21" y1="6" x2="9" y2="6"></line><line x1="21" y1="12" x2="3" y2="12"></line><line x1="21" y1="18" x2="9" y2="18"></line></svg></button>
-                    <div className="w-[1px] h-4 bg-slate-700 mx-1"></div>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg></button>
-                    <div className="w-[1px] h-4 bg-slate-700 mx-1"></div>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
-                    <button className="p-1.5 hover:bg-slate-700 hover:text-white rounded transition-colors"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></button>
-                  </div>
-                  
-                  {/* Editor Area */}
-                  <div className="p-3 bg-slate-900/30">
-                    <textarea 
-                      defaultValue="https://www.yelp.com/biz/luciene-santanna-takagi-psyd-newark?osq=Psychologists"
-                      className="w-full h-48 bg-slate-900 border-slate-600 rounded p-4 text-[13px] text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 resize-none custom-scrollbar"
-                    ></textarea>
-                  </div>
-                </div>
+                <RichTextEditor
+                  label="Background"
+                  value={backgroundDraft}
+                  onChange={setBackgroundDraft}
+                  placeholder="Enter client background information..."
+                  minHeightClassName="min-h-[260px] max-h-[420px]"
+                  footerText="Background will be saved with the client profile."
+                  disabled={isSavingBackground}
+                />
               </div>
             </div>
             
@@ -3729,10 +3743,11 @@ export default function ClientDetailsPage() {
                 Close
               </button>
               <button 
-                onClick={() => setIsEditBackgroundModalOpen(false)}
-                className="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[13px] font-medium transition-colors shadow-sm"
+                onClick={handleSaveBackground}
+                disabled={isSavingBackground}
+                className="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[13px] font-medium transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Submit
+                {isSavingBackground ? "Saving..." : "Save Background"}
               </button>
             </div>
           </div>

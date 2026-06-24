@@ -5,6 +5,8 @@ import { serveStatic } from "./static";
 import { createServer } from "http";
 import { ZodError } from "zod";
 import { configureSessions, ensureAdminUser, registerAuthRoutes } from "./auth";
+import { registerClientPhotoStaticRoute } from "./clientPhotos";
+import { auditRequestContext, ensureAuditLogsTable, getAuditErrorMetadata, recordAuditEvent } from "./auditLog";
 
 const app = express();
 const httpServer = createServer(app)
@@ -17,6 +19,7 @@ declare module "http" {
 
 app.use(
   express.json({
+    limit: "7mb",
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     },
@@ -25,6 +28,7 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 configureSessions(app);
+app.use(auditRequestContext);
 registerAuthRoutes(app);
 
 export function log(message: string, source = "express") {
@@ -41,23 +45,11 @@ export function log(message: string, source = "express") {
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
 
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      log(logLine);
+      log(`${req.method} ${path} ${res.statusCode} in ${duration}ms`);
     }
   });
 
@@ -66,9 +58,11 @@ app.use((req, res, next) => {
 
 (async () => {
   await ensureAdminUser();
+  await ensureAuditLogsTable();
   await registerRoutes(httpServer, app);
+  registerClientPhotoStaticRoute(app);
 
-  app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
+  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     const status =
       err instanceof ZodError
         ? 400
@@ -79,6 +73,22 @@ app.use((req, res, next) => {
         : err.message || "Internal Server Error";
 
     console.error("Internal Server Error:", err);
+
+    if (req.path.startsWith("/api") && ["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
+      const errorMetadata = getAuditErrorMetadata(err);
+      void recordAuditEvent(req, {
+        category: "api",
+        action: "api.mutation.failure",
+        outcome: "failure",
+        severity: status >= 500 ? "critical" : "warning",
+        statusCode: status,
+        metadata: {
+          ...errorMetadata,
+          route: req.originalUrl || req.path,
+          method: req.method,
+        },
+      });
+    }
 
     if (res.headersSent) {
       return next(err);

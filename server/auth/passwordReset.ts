@@ -3,6 +3,7 @@ import { promisify } from "util";
 import type { Express, Request, Response } from "express";
 import { getPublicAppUrl } from "../emails/commonEmailLayout";
 import { renderPasswordResetEmail } from "../emails/passwordResetEmail";
+import { hashAuditIdentifier, recordAuditEvent } from "../auditLog";
 
 const scryptAsync = promisify(crypto.scrypt);
 
@@ -87,11 +88,34 @@ export function registerPasswordResetRoutes(
     const email = normalizeEmail(req.body?.email);
 
     if (!isValidEmail(email)) {
+      await recordAuditEvent(req, {
+        category: "authentication",
+        action: "auth.password_reset.request",
+        outcome: "failure",
+        severity: "warning",
+        statusCode: 200,
+        metadata: {
+          reason: "invalid_email_format",
+        },
+      });
       return res.json(genericForgotPasswordMessage);
     }
 
     const user = await storage.getUserByEmail(email);
     if (!user) {
+      await recordAuditEvent(req, {
+        category: "authentication",
+        action: "auth.password_reset.request",
+        outcome: "success",
+        actorEmail: email,
+        targetType: "user",
+        entityTable: "users",
+        statusCode: 200,
+        metadata: {
+          emailHash: hashAuditIdentifier(email),
+          accountFound: false,
+        },
+      });
       return res.json(genericForgotPasswordMessage);
     }
 
@@ -121,6 +145,23 @@ export function registerPasswordResetRoutes(
       ...emailMessage,
     });
 
+    await recordAuditEvent(req, {
+      category: "authentication",
+      action: "auth.password_reset.request",
+      outcome: "success",
+      actorEmail: email,
+      targetType: "user",
+      targetId: user.id,
+      targetLabel: user.email,
+      entityTable: "password_reset_tokens",
+      statusCode: 200,
+      metadata: {
+        emailHash: hashAuditIdentifier(email),
+        accountFound: true,
+        tokenTtlMinutes,
+      },
+    });
+
     return res.json(genericForgotPasswordMessage);
   });
 
@@ -129,10 +170,30 @@ export function registerPasswordResetRoutes(
     const password = String(req.body?.password ?? "");
 
     if (!token) {
+      await recordAuditEvent(req, {
+        category: "authentication",
+        action: "auth.password_reset.complete",
+        outcome: "failure",
+        severity: "warning",
+        statusCode: 400,
+        metadata: {
+          reason: "missing_token",
+        },
+      });
       return sendJsonError(res, 400, "Reset token is required");
     }
 
     if (password.length < 8) {
+      await recordAuditEvent(req, {
+        category: "authentication",
+        action: "auth.password_reset.complete",
+        outcome: "failure",
+        severity: "warning",
+        statusCode: 400,
+        metadata: {
+          reason: "password_too_short",
+        },
+      });
       return sendJsonError(res, 400, "Password must be at least 8 characters");
     }
 
@@ -142,12 +203,37 @@ export function registerPasswordResetRoutes(
     const expiresAtTime = new Date(resetToken?.expiresAt ?? 0).getTime();
 
     if (!resetToken || resetToken.usedAt || Number.isNaN(expiresAtTime) || expiresAtTime < Date.now()) {
+      await recordAuditEvent(req, {
+        category: "authentication",
+        action: "auth.password_reset.complete",
+        outcome: "failure",
+        severity: "warning",
+        targetType: "password_reset_token",
+        entityTable: "password_reset_tokens",
+        statusCode: 400,
+        metadata: {
+          reason: "invalid_or_expired_token",
+        },
+      });
       return sendJsonError(res, 400, "This reset link is invalid or has expired");
     }
 
     const passwordHash = await hashPassword(password);
     await storage.updateUserPassword(resetToken.userId, passwordHash);
     await storage.deletePasswordResetToken(tokenHash);
+
+    await recordAuditEvent(req, {
+      category: "authentication",
+      action: "auth.password_reset.complete",
+      outcome: "success",
+      targetType: "user",
+      targetId: resetToken.userId,
+      entityTable: "users",
+      statusCode: 200,
+      metadata: {
+        resetTokenDeleted: true,
+      },
+    });
 
     return res.json({ message: "Password has been reset successfully." });
   });

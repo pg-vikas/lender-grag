@@ -1,9 +1,51 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+export class ApiError extends Error {
+  status: number;
+  responseText: string;
+
+  constructor(status: number, message: string, responseText = "") {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.responseText = responseText;
+  }
+}
+
+const getErrorMessageFromResponse = (text: string, fallback: string) => {
+  if (!text) {
+    return fallback;
+  }
+
+  try {
+    const data = JSON.parse(text) as { message?: unknown; error?: unknown; errors?: unknown };
+
+    if (typeof data.message === "string" && data.message.trim()) {
+      return data.message.trim();
+    }
+
+    if (typeof data.error === "string" && data.error.trim()) {
+      return data.error.trim();
+    }
+
+    if (Array.isArray(data.errors)) {
+      const firstError = data.errors.find((item) => typeof item === "string" && item.trim());
+      if (typeof firstError === "string") {
+        return firstError.trim();
+      }
+    }
+  } catch {
+    // The response was not JSON, so use the plain text below.
+  }
+
+  return text.trim() || fallback;
+};
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    const text = await res.text();
+    const message = getErrorMessageFromResponse(text, res.statusText || "Request failed");
+    throw new ApiError(res.status, message, text);
   }
 }
 

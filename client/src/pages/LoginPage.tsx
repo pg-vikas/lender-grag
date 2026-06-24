@@ -1,17 +1,43 @@
 import { PageLayout } from "./PageLayout";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
+import { ApiError } from "@/lib/queryClient";
 import { useLocation, Link } from "wouter";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Shield, ArrowRight, Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Shield, ArrowRight, Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle2 } from "lucide-react";
+
+const isValidEmail = (value: string) => /\S+@\S+\.\S+/.test(value.trim());
+
+const getFriendlyLoginError = (error: unknown) => {
+  const message = error instanceof Error ? error.message : "";
+
+  if (error instanceof ApiError && error.status === 401) {
+    return "The email or password is incorrect. Please check and try again.";
+  }
+
+  if (/invalid email or password/i.test(message)) {
+    return "The email or password is incorrect. Please check and try again.";
+  }
+
+  if (/valid email/i.test(message)) {
+    return "Please enter a valid email address.";
+  }
+
+  if (/failed to fetch|network/i.test(message)) {
+    return "We could not connect to the server. Please check your connection and try again.";
+  }
+
+  return "We could not log you in right now. Please try again.";
+};
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login, isAuthenticated, isLoading, hasLoadedSession, user, loadSession } = useAuth();
   const [, navigate] = useLocation();
@@ -23,28 +49,55 @@ export default function LoginPage() {
   }, [hasLoadedSession, loadSession]);
 
   useEffect(() => {
+    if (isSubmitting || success) {
+      return;
+    }
+
     if (hasLoadedSession && isAuthenticated && user) {
       navigate(user.role === "admin" ? "/admin" : "/portal");
     }
-  }, [hasLoadedSession, isAuthenticated, navigate, user]);
+  }, [hasLoadedSession, isAuthenticated, isSubmitting, navigate, success, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (!email || !password) {
-      setError("Please fill in all fields");
+    setSuccess("");
+
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail && !password) {
+      setError("Please enter your email and password.");
       return;
     }
+
+    if (!trimmedEmail) {
+      setError("Please enter your email address.");
+      return;
+    }
+
+    if (!isValidEmail(trimmedEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      await login(email, password);
+      await login(trimmedEmail, password);
       const loggedInUser = useAuth.getState().user;
+      setSuccess("Login successful. Redirecting to your portal...");
 
-      if (loggedInUser) {
-        navigate(loggedInUser.role === "admin" ? "/admin" : "/portal");
-      }
+      window.setTimeout(() => {
+        if (loggedInUser) {
+          navigate(loggedInUser.role === "admin" ? "/admin" : "/portal");
+        }
+      }, 700);
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Invalid credentials");
+      setError(getFriendlyLoginError(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -73,7 +126,7 @@ export default function LoginPage() {
               <p className="text-gray-500 text-sm mt-2">Log in to your Lender Greg portal</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               <div>
                 <label className="text-sm font-medium text-[#0c1a14] mb-1.5 block">Email Address</label>
                 <div className="relative">
@@ -120,16 +173,26 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <p className="text-sm text-red-500 font-medium">{error}</p>
+                <div role="alert" className="flex items-start gap-2 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                  <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              {success && (
+                <div role="status" className="flex items-start gap-2 rounded-2xl border border-[#05a270]/20 bg-[#05a270]/10 px-4 py-3 text-sm font-medium text-[#004733]">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                  <span>{success}</span>
+                </div>
               )}
 
               <Button
                 type="submit"
-                disabled={isSubmitting || isLoading}
+                disabled={isSubmitting || isLoading || Boolean(success)}
                 className="w-full h-12 rounded-xl bg-[#004733] hover:bg-[#003626] text-white font-semibold gap-2 text-[15px] mt-2"
                 data-testid="button-login-submit"
               >
-                {isSubmitting ? "Logging In..." : "Log In"} <ArrowRight className="w-4 h-4" />
+                {success ? "Redirecting..." : isSubmitting ? "Logging In..." : "Log In"} <ArrowRight className="w-4 h-4" />
               </Button>
             </form>
 
