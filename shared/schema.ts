@@ -92,6 +92,52 @@ export const loanApplicationSensitiveData = pgTable("loan_application_sensitive_
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const loanRecords = pgTable("loan_records", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clientUserId: varchar("client_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  loanNumber: text("loan_number").notNull(),
+  stage: text("stage").notNull().default("application"),
+
+  // Loan details (visible in pipeline view)
+  loanType: text("loan_type").notNull().default(""),
+  loanPurpose: text("loan_purpose").notNull().default("Purchase"),
+  loanAmount: text("loan_amount").notNull().default(""),
+  propertyType: text("property_type").notNull().default(""),
+  propertyAddress: text("property_address").notNull().default(""),
+  ltv: text("ltv").notNull().default(""),
+
+  // Pre-qualification fields (sourced from client form)
+  estimatedValue: text("estimated_value").notNull().default(""),
+  downPayment: text("down_payment").notNull().default(""),
+
+  // Status fields
+  loanStatus: text("loan_status").notNull().default("active"),
+
+  // Credit & co-borrower
+  ficoScore: text("fico_score").notNull().default(""),
+  coBorrowerName: text("co_borrower_name").notNull().default(""),
+
+  // Rate & lock info
+  interestRate: text("interest_rate").notNull().default(""),
+  rateType: text("rate_type").notNull().default(""),
+  rateLockExpiresAt: timestamp("rate_lock_expires_at", { withTimezone: true }),
+
+  // SOC2: immutable stage-transition timestamps — set once, never cleared
+  applicationSubmittedAt: timestamp("application_submitted_at", { withTimezone: true }).notNull().defaultNow(),
+  documentsReceivedAt: timestamp("documents_received_at", { withTimezone: true }),
+  processingStartedAt: timestamp("processing_started_at", { withTimezone: true }),
+  underwritingStartedAt: timestamp("underwriting_started_at", { withTimezone: true }),
+  conditionalApprovalAt: timestamp("conditional_approval_at", { withTimezone: true }),
+  clearToCloseAt: timestamp("clear_to_close_at", { withTimezone: true }),
+  fundedAt: timestamp("funded_at", { withTimezone: true }),
+
+  assignedTo: text("assigned_to").notNull().default("Greg Wynn"),
+  source: text("source").notNull().default("signup"),
+
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const loanApplicationAuditEvents = pgTable("loan_application_audit_events", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   applicationId: varchar("application_id")
@@ -155,6 +201,7 @@ export type ClientProfile = typeof clientProfiles.$inferSelect;
 export type LoanApplication = typeof loanApplications.$inferSelect;
 export type LoanApplicationSensitiveData = typeof loanApplicationSensitiveData.$inferSelect;
 export type LoanApplicationAuditEvent = typeof loanApplicationAuditEvents.$inferSelect;
+export type LoanRecord = typeof loanRecords.$inferSelect;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type AuditLog = typeof auditLogs.$inferSelect;
 
@@ -209,6 +256,64 @@ export const sessionUserSchema = z.object({
 
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+
+export const loanRecordStageSchema = z.enum([
+  "application",
+  "processing",
+  "underwriting",
+  "conditional_approval",
+  "clear_to_close",
+  "funded",
+], { errorMap: () => ({ message: "Invalid loan stage" }) });
+
+export type LoanRecordStage = z.infer<typeof loanRecordStageSchema>;
+
+const optionalLoanField = z.string().trim().max(200).optional().default("");
+
+export const loanStatusSchema = z.enum(["active", "cancelled", "archived", "funded"]);
+export type LoanStatus = z.infer<typeof loanStatusSchema>;
+
+export const adminLoanRecordCreateSchema = z.object({
+  clientUserId: z.string().uuid("Valid client is required"),
+  coBorrowerName: optionalLoanField,
+  stage: loanRecordStageSchema.optional().default("application"),
+  loanType: optionalLoanField,
+  loanPurpose: z.string().trim().max(100).optional().default("Purchase"),
+  loanAmount: optionalLoanField,
+  propertyType: optionalLoanField,
+  propertyAddress: z.string().trim().max(500).optional().default(""),
+  estimatedValue: optionalLoanField,
+  downPayment: optionalLoanField,
+  loanStatus: loanStatusSchema.optional().default("active"),
+  ltv: optionalLoanField,
+  ficoScore: optionalLoanField,
+  interestRate: optionalLoanField,
+  rateType: optionalLoanField,
+  rateLockExpiresAt: z.string().datetime({ offset: true }).optional().nullable(),
+  assignedTo: z.string().trim().max(200).optional().default("Greg Wynn"),
+});
+
+export const adminLoanRecordUpdateSchema = z.object({
+  coBorrowerName: z.string().trim().max(200).optional(),
+  stage: loanRecordStageSchema.optional(),
+  loanType: z.string().trim().max(200).optional(),
+  loanPurpose: z.string().trim().max(100).optional(),
+  loanAmount: z.string().trim().max(200).optional(),
+  propertyType: z.string().trim().max(200).optional(),
+  propertyAddress: z.string().trim().max(500).optional(),
+  estimatedValue: z.string().trim().max(200).optional(),
+  downPayment: z.string().trim().max(200).optional(),
+  loanStatus: loanStatusSchema.optional(),
+  ltv: z.string().trim().max(20).optional(),
+  ficoScore: z.string().trim().max(20).optional(),
+  interestRate: z.string().trim().max(20).optional(),
+  rateType: z.string().trim().max(50).optional(),
+  rateLockExpiresAt: z.string().datetime({ offset: true }).optional().nullable(),
+  assignedTo: z.string().trim().max(200).optional(),
+}).refine((v) => Object.keys(v).length > 0, "No fields to update");
+
+export type AdminLoanRecordCreateInput = z.infer<typeof adminLoanRecordCreateSchema>;
+export type AdminLoanRecordUpdateInput = z.infer<typeof adminLoanRecordUpdateSchema>;
 
 export const adminClientStatusSchema = z.enum([
   "Active",

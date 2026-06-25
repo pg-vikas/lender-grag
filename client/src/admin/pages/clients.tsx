@@ -595,8 +595,10 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
   const [sendWelcomeEmail, setSendWelcomeEmail] = useState(true);
   const [isSavingClient, setIsSavingClient] = useState(false);
   const [isCreatingClient, setIsCreatingClient] = useState(false);
+  const [isDeletingClient, setIsDeletingClient] = useState(false);
   const [editClientError, setEditClientError] = useState("");
   const [addClientError, setAddClientError] = useState("");
+  const [deleteClientError, setDeleteClientError] = useState("");
   
   // State for dynamic links and toggles
   const [isEditorEnabled, setIsEditorEnabled] = useState(false);
@@ -1254,7 +1256,7 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
                               <div className="absolute right-6 top-full mt-2 w-48 bg-slate-900 border border-slate-600 bg-slate-950 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95">
                                 <div className="py-1">
                                   <button 
-                                    onClick={(e) => { e.stopPropagation(); setSelectedClientIndex(listIndex); setIsSuspendModalOpen(true); setActiveDropdown(null); }}
+                                    onClick={(e) => { e.stopPropagation(); setSelectedClientIndex(listIndex); setDeleteClientError(""); setIsSuspendModalOpen(true); setActiveDropdown(null); }}
                                     className="w-full px-4 py-2.5 text-left text-sm text-slate-300 hover:bg-slate-800 transition-colors flex items-center gap-3"
                                   >
                                     <Trash2 className="w-4 h-4 text-rose-400" /> Delete
@@ -1440,28 +1442,50 @@ export default function ClientsPage({ isActiveOnly = false }: { isActiveOnly?: b
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
           <div className="bg-[#111827] rounded-2xl border border-slate-800 shadow-2xl w-full max-w-[400px] p-8 flex flex-col items-center animate-in zoom-in-95 duration-200">
             <h2 className="text-[20px] font-bold text-white mb-2">Delete Client</h2>
-            <p className="text-[15px] text-slate-300 mb-8">
+            <p className="text-[15px] text-slate-300 mb-6">
               Are you sure?
             </p>
-            
+            {deleteClientError && (
+              <p className="text-sm text-rose-400 mb-4 text-center">{deleteClientError}</p>
+            )}
+
             <div className="flex items-center justify-center gap-4 w-full">
-              <button 
-                onClick={() => setIsSuspendModalOpen(false)}
-                className="px-6 py-2.5 bg-[#1e293b] border border-slate-600 bg-slate-950 hover:bg-slate-800 text-white rounded-xl text-sm font-medium transition-colors w-28"
+              <button
+                disabled={isDeletingClient}
+                onClick={() => { setIsSuspendModalOpen(false); setDeleteClientError(""); }}
+                className="px-6 py-2.5 bg-[#1e293b] border border-slate-600 bg-slate-950 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-medium transition-colors w-28"
               >
                 Cancel
               </button>
-              <button 
-                onClick={() => {
-                  if (selectedClientIndex !== null) {
+              <button
+                disabled={isDeletingClient}
+                onClick={async () => {
+                  if (selectedClientIndex === null) return;
+                  const clientToDelete = allClients[selectedClientIndex];
+                  if (!clientToDelete) return;
+                  setIsDeletingClient(true);
+                  setDeleteClientError("");
+                  try {
+                    const response = await fetch(`/api/admin/clients/${clientToDelete.id}`, {
+                      method: "DELETE",
+                      credentials: "include",
+                    });
+                    if (!response.ok) {
+                      const errorBody = await response.json().catch(() => null);
+                      throw new Error(errorBody?.message || "Failed to delete client");
+                    }
                     setAllClients(prev => prev.filter((_, i) => i !== selectedClientIndex));
                     setSelectedClientIndex(null);
+                    setIsSuspendModalOpen(false);
+                  } catch (err) {
+                    setDeleteClientError(err instanceof Error ? err.message : "Failed to delete client");
+                  } finally {
+                    setIsDeletingClient(false);
                   }
-                  setIsSuspendModalOpen(false);
                 }}
-                className="px-6 py-2.5 bg-[#8b5cf6] hover:bg-[#7c3aed] text-white rounded-xl text-sm font-medium transition-all w-28 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                className="px-6 py-2.5 bg-[#8b5cf6] hover:bg-[#7c3aed] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-medium transition-all w-28 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
               >
-                Continue
+                {isDeletingClient ? "Deleting..." : "Continue"}
               </button>
             </div>
           </div>

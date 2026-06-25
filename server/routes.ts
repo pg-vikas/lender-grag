@@ -5,8 +5,11 @@ import {
   adminClientCreateSchema,
   adminClientPasswordUpdateSchema,
   adminClientUpdateSchema,
+  adminLoanRecordCreateSchema,
+  adminLoanRecordUpdateSchema,
   applyFormSchema,
   contactFormSchema,
+  type AdminLoanRecordUpdateInput,
   type ApplyFormSubmission,
   type ContactFormSubmission,
 } from "@shared/schema";
@@ -207,6 +210,20 @@ export async function registerRoutes(
         }
       }
 
+      // Create a pipeline loan record pre-populated with the client's loan fields
+      try {
+        await storage.createLoanRecordForAdmin({
+          clientUserId: client.id,
+          loanPurpose: input.loanPurpose || "Purchase",
+          propertyType: input.propertyType || "",
+          loanAmount: input.targetLoanAmount || "",
+          estimatedValue: input.estimatedValue || "",
+          downPayment: input.downPayment || "",
+        } as Parameters<typeof storage.createLoanRecordForAdmin>[0]);
+      } catch (loanError) {
+        console.error("Failed to create initial loan record for client:", loanError);
+      }
+
       await recordAuditEvent(req, {
         category: "client_management",
         action: "client.create",
@@ -294,6 +311,41 @@ export async function registerRoutes(
 
       if (!mappedClient) {
         return res.status(404).json({ message: "Client not found" });
+      }
+
+      // Sync loan fields to the pipeline loan record when any loan-related field changes
+      const loanFieldsInUpdate = input.loanPurpose !== undefined
+        || input.propertyType !== undefined
+        || input.targetLoanAmount !== undefined
+        || input.estimatedValue !== undefined
+        || input.downPayment !== undefined;
+
+      if (loanFieldsInUpdate) {
+        try {
+          const existingLoan = await storage.getLoanRecordForClient(req.params.id);
+          if (existingLoan) {
+            const loanUpdate: Partial<AdminLoanRecordUpdateInput> = {};
+            if (input.loanPurpose !== undefined) loanUpdate.loanPurpose = input.loanPurpose;
+            if (input.propertyType !== undefined) loanUpdate.propertyType = input.propertyType;
+            if (input.targetLoanAmount !== undefined) loanUpdate.loanAmount = input.targetLoanAmount;
+            if (input.estimatedValue !== undefined) loanUpdate.estimatedValue = input.estimatedValue;
+            if (input.downPayment !== undefined) loanUpdate.downPayment = input.downPayment;
+            if (Object.keys(loanUpdate).length > 0) {
+              await storage.updateLoanRecord(existingLoan.id, loanUpdate as AdminLoanRecordUpdateInput);
+            }
+          } else {
+            await storage.createLoanRecordForAdmin({
+              clientUserId: req.params.id,
+              loanPurpose: input.loanPurpose ?? mappedClient.loanPurpose ?? "Purchase",
+              propertyType: input.propertyType ?? mappedClient.propertyType ?? "",
+              loanAmount: input.targetLoanAmount ?? mappedClient.targetLoanAmount ?? "",
+              estimatedValue: input.estimatedValue ?? mappedClient.estimatedValue ?? "",
+              downPayment: input.downPayment ?? mappedClient.downPayment ?? "",
+            });
+          }
+        } catch (loanError) {
+          console.error("Failed to sync loan record for client update:", loanError);
+        }
       }
 
       await recordAuditEvent(req, {
@@ -458,6 +510,117 @@ export async function registerRoutes(
       });
 
       res.status(200).json({ message: "Contact message sent successfully" });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // ── Admin Pipeline CRUD ────────────────────────────────────────────────────
+
+  app.get("/api/admin/pipeline", requireRole("admin"), async (req, res, next) => {
+    try {
+      const loans = await storage.listLoanRecordsForAdmin();
+      res.status(200).json({ loans });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/admin/pipeline/:id", requireRole("admin"), async (req, res, next) => {
+    try {
+      const loan = await storage.getLoanRecordById(req.params.id);
+      if (!loan) return res.status(404).json({ message: "Loan record not found" });
+      res.status(200).json({ loan });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/admin/pipeline", requireRole("admin"), async (req, res, next) => {
+    try {
+      const input = adminLoanRecordCreateSchema.parse(req.body);
+      const loan = await storage.createLoanRecordForAdmin(input);
+
+      await recordAuditEvent(req, {
+        category: "pipeline",
+        action: "loan_record.create",
+        outcome: "success",
+        targetType: "loan_record",
+        targetId: loan.id,
+        targetLabel: `Loan #${loan.loanNumber} – ${loan.borrowerName}`,
+        entityTable: "loan_records",
+        statusCode: 201,
+        after: { loanNumber: loan.loanNumber, clientUserId: loan.clientUserId, stage: loan.stage },
+      });
+
+      res.status(201).json({ loan });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.patch("/api/admin/pipeline/:id", requireRole("admin"), async (req, res, next) => {
+    try {
+      const input = adminLoanRecordUpdateSchema.parse(req.body);
+      const before = await storage.getLoanRecordById(req.params.id);
+
+      if (!before) {
+        return res.status(404).json({ message: "Loan record not found" });
+      }
+
+      const loan = await storage.updateLoanRecord(req.params.id, input);
+      if (!loan) return res.status(404).json({ message: "Loan record not found" });
+
+      await recordAuditEvent(req, {
+        category: "pipeline",
+        action: "loan_record.update",
+        outcome: "success",
+        targetType: "loan_record",
+        targetId: loan.id,
+        targetLabel: `Loan #${loan.loanNumber} – ${loan.borrowerName}`,
+        entityTable: "loan_records",
+        statusCode: 200,
+        before: { stage: before.stage },
+        after: { stage: loan.stage },
+        metadata: { changedFields: Object.keys(input) },
+      });
+
+      res.status(200).json({ loan });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+
+  app.get("/api/admin/team", requireRole("admin"), async (_req, res, next) => {
+    try {
+      const admins = await storage.listAdminUsers();
+      res.status(200).json({ admins });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // ── Portal ──────────────────────────────────────────────────────────────────
+
+  app.get("/api/portal/loan", requireRole("client"), async (req, res, next) => {
+    try {
+      const userId = req.session.user!.id;
+      const loanRecord = await storage.getLoanRecordForClient(userId);
+
+      await recordAuditEvent(req, {
+        category: "portal",
+        action: "portal.loan_record.view",
+        outcome: "success",
+        actorUserId: userId,
+        actorRole: "client",
+        targetType: "loan_record",
+        targetId: loanRecord?.id ?? null,
+        entityTable: "loan_records",
+        statusCode: 200,
+      });
+
+      res.status(200).json({ loanRecord: loanRecord ?? null });
     } catch (error) {
       next(error);
     }

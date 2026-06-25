@@ -21,15 +21,54 @@ import {
   CheckSquare2,
   Circle,
 } from "lucide-react";
+import type { LoanRecord } from "@shared/schema";
 
-const loanSteps = [
-  { label: "Application Submitted", done: true, date: "Mar 28" },
-  { label: "Documents Received", done: true, date: "Apr 1" },
-  { label: "Processing", done: true, date: "Apr 4" },
-  { label: "Underwriting Review", active: true, date: "In Progress" },
-  { label: "Conditional Approval", done: false, date: "" },
-  { label: "Clear to Close", done: false, date: "" },
-];
+const STAGE_ORDER = [
+  "application",
+  "processing",
+  "underwriting",
+  "conditional_approval",
+  "clear_to_close",
+  "funded",
+] as const;
+
+const STAGE_LABELS: Record<string, string> = {
+  application: "Application Submitted",
+  processing: "Processing",
+  underwriting: "Underwriting Review",
+  conditional_approval: "Conditional Approval",
+  clear_to_close: "Clear to Close",
+  funded: "Funded",
+};
+
+// Each step: done when currentIdx >= doneAtIdx; active when currentIdx === activeAtIdx (-1 = never)
+const STEP_DEFS = [
+  { label: "Application Submitted", doneAtIdx: 0, activeAtIdx: -1, tsKey: "applicationSubmittedAt" },
+  { label: "Documents Received",    doneAtIdx: 1, activeAtIdx: -1, tsKey: "documentsReceivedAt" },
+  { label: "Processing",            doneAtIdx: 2, activeAtIdx: 1,  tsKey: "processingStartedAt" },
+  { label: "Underwriting Review",   doneAtIdx: 3, activeAtIdx: 2,  tsKey: "underwritingStartedAt" },
+  { label: "Conditional Approval",  doneAtIdx: 4, activeAtIdx: 3,  tsKey: "conditionalApprovalAt" },
+  { label: "Clear to Close",        doneAtIdx: 5, activeAtIdx: 4,  tsKey: "clearToCloseAt" },
+] as const;
+
+function formatStepDate(ts: string | Date | null | undefined): string {
+  if (!ts) return "";
+  const d = new Date(ts);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function buildLoanSteps(record: LoanRecord | null) {
+  const stage = record?.stage ?? "application";
+  const currentIdx = STAGE_ORDER.indexOf(stage as typeof STAGE_ORDER[number]);
+
+  return STEP_DEFS.map((def) => {
+    const done = currentIdx >= def.doneAtIdx;
+    const active = !done && currentIdx === def.activeAtIdx;
+    const rawTs = record?.[def.tsKey as keyof LoanRecord] as string | Date | null | undefined;
+    const date = active ? "In Progress" : done ? formatStepDate(rawTs) : "";
+    return { label: def.label, done, active, date };
+  });
+}
 
 const checklist = [
   { label: "Upload 2 recent pay stubs", done: false },
@@ -55,6 +94,7 @@ export default function PortalPage() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState("overview");
   const [messageText, setMessageText] = useState("");
+  const [loanRecord, setLoanRecord] = useState<LoanRecord | null>(null);
 
   useEffect(() => {
     if (!hasLoadedSession) {
@@ -68,6 +108,16 @@ export default function PortalPage() {
     }
   }, [hasLoadedSession, isAuthenticated, isLoading, navigate, user]);
 
+  useEffect(() => {
+    if (!isAuthenticated || !hasLoadedSession) return;
+    fetch("/api/portal/loan", { credentials: "include" })
+      .then((r) => r.ok ? r.json() : null)
+      .then((data: { loanRecord: LoanRecord | null } | null) => {
+        if (data?.loanRecord) setLoanRecord(data.loanRecord);
+      })
+      .catch(() => undefined);
+  }, [isAuthenticated, hasLoadedSession]);
+
   if (isLoading || !hasLoadedSession || !user) return (
     <div className="min-h-screen bg-[#fafdf9] flex items-center justify-center">
       <div className="w-8 h-8 border-2 border-[#004733]/30 border-t-[#004733] rounded-full animate-spin" />
@@ -75,6 +125,8 @@ export default function PortalPage() {
   );
 
   const firstName = user.name.split(" ")[0] || user.name;
+  const loanSteps = buildLoanSteps(loanRecord);
+  const currentStageLabel = STAGE_LABELS[loanRecord?.stage ?? "application"] ?? "Application Submitted";
 
   return (
     <div className="min-h-screen bg-[#fafdf9]">
@@ -111,7 +163,7 @@ export default function PortalPage() {
           </div>
           <div className="grid md:grid-cols-4 gap-3">
             {[
-              { label: "Current Stage", value: "Underwriting Review", icon: CheckCircle2 },
+              { label: "Current Stage", value: currentStageLabel, icon: CheckCircle2 },
               { label: "Docs Needed", value: "2 items", icon: Upload },
               { label: "Pre-Approval", value: "Ready to view", icon: FileText },
               { label: "Messages", value: "1 unread", icon: MessageSquare },
@@ -141,7 +193,7 @@ export default function PortalPage() {
                   <h3 className="text-[18px] font-black text-[#0c1a14]">Loan Progress</h3>
                   <p className="text-[13px] font-medium text-gray-500">Your mortgage file status at a glance</p>
                 </div>
-                <div className="px-3 py-1.5 rounded-full bg-[#004733]/5 text-[#004733] text-[12px] font-bold">Underwriting Review</div>
+                <div className="px-3 py-1.5 rounded-full bg-[#004733]/5 text-[#004733] text-[12px] font-bold">{currentStageLabel}</div>
               </div>
               <div className="space-y-0">
                 {loanSteps.map((step, i) => (

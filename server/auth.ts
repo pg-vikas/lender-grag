@@ -270,6 +270,13 @@ export function registerAuthRoutes(app: Express) {
         passwordHash,
       });
 
+      try {
+        await storage.createDefaultLoanRecord(user.id);
+      } catch (loanError) {
+        // Non-fatal: user account is still created successfully
+        console.error("Failed to create default loan record for user:", user.id, loanError);
+      }
+
       req.session.user = toSessionUser(user);
       await recordAuditEvent(req, {
         category: "authentication",
